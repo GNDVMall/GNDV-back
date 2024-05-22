@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.gndv.member.mapper.MemberMapper">
+
+    <insert id="insertMember" parameterType="com.gnvb.member.domain.entity.Member">
+        INSERT INTO Member (email, password)
+        VALUES (#{email}, #{password});
+    </insert>
+
+    <update id="updateMember" parameterType="com.gnvb.member.domain.dto.UpdateFormDTO">
+        UPDATE Member
+        SET email = #{email},
+            password = #{password},
+            nickname = #{nickname},
+            phone = #{phone},
+            introduction = #{introduction}
+        WHERE member_id = #{memberId};
+    </update>
+
+    <select id="selectMemberById" parameterType="Long" resultType="com.gnvb.member.domain.entity.Member">
+        SELECT * FROM Member WHERE member_id = #{member_id};
+    </select>
+
+    <select id="selectMemberByEmail" parameterType="string" resultType="com.gnvb.member.domain.entity.Member">
+        SELECT * FROM Member WHERE email = #{email};
+    </select>
+
+    <select id="selectAllMember" resultType="com.gnvb.member.domain.entity.Member">
+        SELECT * FROM Member;
+    </select>
+
+    <delete id="deleteMemberById" parameterType="Long">
+        DELETE FROM Member WHERE member_id = #{member_id};
+    </delete>
+
+</mapper>
