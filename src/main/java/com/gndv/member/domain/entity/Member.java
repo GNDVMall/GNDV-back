@@ -1,7 +1,7 @@
 package com.gndv.member.domain.entity;
 
-import com.gndv.member.domain.constant.Boolean;
-import com.gndv.member.domain.constant.Status;
+import com.gndv.constant.Boolean;
+import com.gndv.constant.Status;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

@@ -1,4 +1,4 @@
-package com.gndv.member.domain.constant;
+package com.gndv.constant;
 
 public enum Status {
 
