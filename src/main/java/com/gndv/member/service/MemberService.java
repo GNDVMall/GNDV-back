@@ -1,48 +1,35 @@
 package com.gndv.member.service;
 
-import com.gndv.member.domain.dto.InsertFormDTO;
-import com.gndv.member.domain.dto.UpdateFormDTO;
+import com.gndv.member.domain.dto.JoinRequest;
 import com.gndv.member.domain.entity.Member;
 import com.gndv.member.mapper.MemberMapper;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-import java.util.Set;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
-@Slf4j
 public class MemberService {
 
     private final MemberMapper memberMapper;
+    private final ModelMapper mapper;
 
-    @Transactional
-    public Member insertMember(Member member) {
-       return memberMapper.insertMember(member);
+    public int save(Member member) {
+        validateDuplicationMember(member);
+        return memberMapper.save(member);
     }
 
-    @Transactional
-    public void updateMember(UpdateFormDTO updateForm) {
-        memberMapper.updateMember(updateForm);
+    private void validateDuplicationMember(Member member) {
+        Optional<Member> findMember = memberMapper.findByEmail(member.getEmail());
+        if (findMember.isPresent()) {
+            throw new IllegalStateException("이미 존재하는 이메일입니다.");
+        }
     }
 
-    public Member selectMemberById(Long member_id) {
-        return memberMapper.selectMemberById(member_id);
-    }
-
-    public Member selectMemberByEmail(String email) {
-        return memberMapper.selectMemberByEmail(email);
-    }
-
-    public List<Member> selectAllMember() {
-        return memberMapper.selectAllMember();
-    }
-
-    @Transactional
-    public void deleteMemberById(Long member_id) {
-        memberMapper.deleteMemberById(member_id);
+    public Member createMember(JoinRequest request) {
+        // ModelMapper를 이용하여 JoinRequest를 Member로 변환
+        return mapper.map(request, Member.class);
     }
 }

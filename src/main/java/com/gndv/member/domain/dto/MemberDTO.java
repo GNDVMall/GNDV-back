@@ -1,17 +1,15 @@
-package com.gndv.member.domain.entity;
+package com.gndv.member.domain.dto;
 
 import com.gndv.member.domain.constant.Boolean;
 import com.gndv.member.domain.constant.Status;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
 
 import java.util.Date;
 
-@Getter
-@AllArgsConstructor
-@NoArgsConstructor
-public class Member {
+@Data
+@Builder
+public class MemberDTO {
 
     private Long member_id;
     private String email;
