@@ -36,7 +36,8 @@ public class MemberController {
             Map<String, Object> result = new HashMap<>();
             result.put("SUCCESS", successResult);
             return ResponseEntity.ok(result);
-        } catch (IllegalStateException e) {
+        }
+        catch (IllegalStateException e) {
             Map<String, Object> result = new HashMap<>();
             result.put("error", e.getMessage());
             return ResponseEntity.badRequest().body(result);
