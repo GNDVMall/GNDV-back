@@ -1,7 +1,10 @@
 package com.gndv.item.domain.entity;
 
+import lombok.Getter;
+
 import java.time.LocalDateTime;
 
+@Getter
 public class Item {
     private Long item_id;
     private String item_number;
