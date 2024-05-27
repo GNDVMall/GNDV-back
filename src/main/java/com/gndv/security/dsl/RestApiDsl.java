@@ -1,7 +1,6 @@
 package com.gndv.security.dsl;
 
 import com.gndv.security.filters.RestAuthenticationFilter;
-import io.security.springsecuritymaster.security.filters.RestAuthenticationFilter;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.web.HttpSecurityBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
