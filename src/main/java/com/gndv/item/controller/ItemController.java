@@ -1,7 +1,7 @@
 package com.gndv.item.controller;
 
 import com.gndv.common.CustomResponse;
-import com.gndv.item.domain.entity.Item;
+import com.gndv.item.domain.dto.ItemResponse;
 import com.gndv.item.service.ItemService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -19,9 +19,9 @@ public class ItemController {
     private final ItemService itemService;
 
     @GetMapping("/{item_id}")
-    public CustomResponse<Item> getItem(@PathVariable Long item_id) throws Exception {
+    public CustomResponse<ItemResponse> getItem(@PathVariable Long item_id) throws Exception {
         log.info("Get One Item by id {}", item_id);
-        Item findItem = itemService.getItem(item_id);
+        ItemResponse findItem = itemService.getItem(item_id);
         return CustomResponse.ok("Get a Item", findItem);
     }
 }

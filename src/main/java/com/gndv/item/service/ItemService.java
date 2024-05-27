@@ -1,5 +1,7 @@
 package com.gndv.item.service;
 
+import com.gndv.image.domain.entity.Image;
+import com.gndv.item.domain.dto.ItemResponse;
 import com.gndv.item.domain.entity.Item;
 import com.gndv.item.mapper.ItemMapper;
 import lombok.RequiredArgsConstructor;
@@ -12,11 +14,12 @@ import java.util.Optional;
 public class ItemService {
     private final ItemMapper itemMapper;
 
-    public Item getItem(Long item_id) throws Exception {
+    public ItemResponse getItem(Long item_id) throws Exception {
         Optional<Item> findById = itemMapper.findById(item_id);
+        Optional<Image> image = itemMapper.findImages(item_id, "item");
 
         if (findById.isPresent()) {
-            return findById.get();
+            return new ItemResponse(findById.get(), image.get());
         }
         throw new Exception();
     }
