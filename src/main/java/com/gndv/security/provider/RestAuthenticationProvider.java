@@ -20,9 +20,9 @@ public class RestAuthenticationProvider implements AuthenticationProvider {
 
     @Override
     public Authentication authenticate(Authentication authentication) throws AuthenticationException {
-        String loginId = authentication.getName();
+        String email = authentication.getName();
         String password = (String) authentication.getCredentials();
-        MemberContext memberContext = (MemberContext) userDetailsService.loadUserByUsername(loginId);
+        MemberContext memberContext = (MemberContext) userDetailsService.loadUserByUsername(email);
 
         if (!passwordEncoder.matches(password, memberContext.getPassword())) {
             throw new BadCredentialsException("Invalid password");
