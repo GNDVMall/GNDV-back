@@ -1,5 +1,6 @@
 package com.gndv.member.mapper;
 
+import com.gndv.member.domain.dto.JoinRequest;
 import com.gndv.member.domain.entity.Member;
 import org.apache.ibatis.annotations.*;
 
@@ -10,6 +11,7 @@ import java.util.Optional;
 public interface MemberMapper {
 
     @Insert("INSERT INTO Member (email, password) VALUES (#{email}, #{password})")
+    @Options(useGeneratedKeys = true, keyProperty = "member_id")
     int save(Member member);
 
     @Select("SELECT * FROM Member WHERE member_id = #{member_id}")
@@ -22,7 +24,7 @@ public interface MemberMapper {
     List<Member> findAll();
 
     @Delete("DELETE FROM Member WHERE member_id = #{member_id}")
-    void deleteMemberById(Long memberId);
+    void deleteById(Long member_id);
 
     @Select("SELECT CASE WHEN COUNT(*) > 0 THEN TRUE ELSE FALSE END FROM Member WHERE email = #{email}")
     Boolean existsByEmail(String email);

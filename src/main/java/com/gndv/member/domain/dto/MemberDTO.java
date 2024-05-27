@@ -1,19 +1,20 @@
-package com.gndv.member.domain.entity;
+package com.gndv.member.domain.dto;
 
 import com.gndv.constant.Boolean;
 import com.gndv.constant.Status;
 import lombok.AllArgsConstructor;
-import lombok.Getter;
+import lombok.Builder;
+import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.Date;
 
-@Getter
+@Data
+@Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class Member implements Serializable {
+public class MemberDTO {
 
     private Long member_id;
     private String email;
@@ -24,7 +25,6 @@ public class Member implements Serializable {
     private LocalDateTime create_at;
     private Long rating;
     private String roles;
-    private Boolean account_locked;
     private Long report_count;
     private Status member_status;
     private LocalDateTime last_login;

@@ -1,5 +1,6 @@
 package com.gndv.member.controller;
 
+import com.gndv.common.CustomResponse;
 import com.gndv.member.domain.dto.JoinRequest;
 import com.gndv.member.domain.entity.Member;
 import com.gndv.member.service.MemberService;
@@ -7,12 +8,14 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
-import org.springframework.ui.Model;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/members")
@@ -23,24 +26,24 @@ public class MemberController {
     private final MemberService memberService;
 
     @PostMapping("/new")
-    public ResponseEntity<?> create(@Valid @RequestBody JoinRequest request, BindingResult bindingResult) {
-        if (bindingResult.hasErrors()) {
-            Map<String, String> errors = new HashMap<>();
-            bindingResult.getFieldErrors().forEach(error -> errors.put(error.getField(), error.getDefaultMessage()));
-            return ResponseEntity.badRequest().body(errors);
-        }
+    public CustomResponse<JoinRequest> create(@RequestBody JoinRequest request) {
+        memberService.save(request);
+        return CustomResponse.ok("create", request);
+    }
 
-        try {
-            Member member = memberService.createMember(request);
-            int successResult = memberService.save(member);
-            Map<String, Object> result = new HashMap<>();
-            result.put("SUCCESS", successResult);
-            return ResponseEntity.ok(result);
-        }
-        catch (IllegalStateException e) {
-            Map<String, Object> result = new HashMap<>();
-            result.put("error", e.getMessage());
-            return ResponseEntity.badRequest().body(result);
-        }
+    @GetMapping("/{member_id}")
+    public CustomResponse<Optional<Member>> getMemberById(@PathVariable Long member_id) {
+        return CustomResponse.ok("getMemberById", memberService.findById(member_id));
+    }
+
+    @GetMapping
+    public CustomResponse<List<Member>> getAllMembers() {
+        return CustomResponse.ok("getAllMembers", memberService.findAll());
+    }
+
+    @DeleteMapping("/{member_id}")
+    public CustomResponse<Void> deleteMemberById(@PathVariable Long member_id) {
+        memberService.deleteById(member_id);
+        return CustomResponse.ok("deleteMemberById", null);
     }
 }
