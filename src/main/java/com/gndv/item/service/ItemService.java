@@ -6,6 +6,7 @@ import com.gndv.item.mapper.ItemMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -22,7 +23,8 @@ public class ItemService {
         throw new Exception();
     }
 
-//    public List<ItemResponse> getItemList() {
-//        Optional<List<Item>> findList = itemMapper.findList();
-//    }
+    public List<ItemDetailResponse> getItems() throws Exception {
+        List<ItemDetailResponse> findList = itemMapper.findList();
+        return findList;
+    }
 }

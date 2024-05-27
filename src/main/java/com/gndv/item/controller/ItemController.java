@@ -10,6 +10,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/item")
 @RequiredArgsConstructor
@@ -25,9 +27,11 @@ public class ItemController {
         return CustomResponse.ok("Get a Item", findItem);
     }
 
-//    @GetMapping("")
-//    public CustomResponse<List<ItemResponse>> getItemList() throws Exception {
-//        log.info("Get All Item List");
-//        List <ItemResponse>  list = itemService.getItemList();
-//    }
+    @GetMapping("")
+    public CustomResponse<List<ItemDetailResponse>> getItemList() throws Exception {
+        log.info("Get All Item List");
+        List <ItemDetailResponse>  items = itemService.getItems();
+        log.info("items {}", items);
+        return CustomResponse.ok("Get Items", items);
+    }
 }

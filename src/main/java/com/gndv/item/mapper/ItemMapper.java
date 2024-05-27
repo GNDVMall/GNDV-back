@@ -11,5 +11,7 @@ import java.util.Optional;
 public interface ItemMapper {
     @Select("SELECT * FROM Item i INNER JOIN Image i2 ON i.item_id = i2.use_id WHERE i2.image_type = 'item' AND i.item_id = #{item_id}")
     Optional<ItemDetailResponse> findById(Long item_id);
-    Optional<List<ItemDetailResponse>> findList();
+
+    @Select("SELECT * FROM Item i INNER JOIN Image i2 ON i.item_id = i2.use_id WHERE i2.image_type = 'item'")
+    List<ItemDetailResponse> findList();
 }
