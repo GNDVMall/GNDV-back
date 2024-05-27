@@ -1,0 +1,60 @@
+package com.gndv.common;
+
+import lombok.Getter;
+import org.springframework.http.HttpStatus;
+
+@Getter
+public class CustomResponse<T> {
+    private int code;
+    private HttpStatus status;
+    private String message;
+    private T data; // = body
+
+    // Constructor without data
+    public CustomResponse(HttpStatus status, String message) {
+        this(status, message, null);
+    }
+
+    // Constructor with data
+    public CustomResponse(HttpStatus status, String message, T data) {
+        this.code = status.value();
+        this.status = status;
+        this.message = message;
+        this.data = data;
+    }
+
+    // Static factory method without data
+    public static <T> CustomResponse<T> of(HttpStatus status, String message) {
+        return new CustomResponse<>(status, message);
+    }
+
+    // Static factory method with data
+    public static <T> CustomResponse<T> of(HttpStatus status, String message, T data) {
+        return new CustomResponse<>(status, message, data);
+    }
+
+    // Convenience method for OK status with data
+    public static <T> CustomResponse<T> ok(String message, T data) {
+        return CustomResponse.of(HttpStatus.OK, message, data);
+    }
+
+    // Convenience method for creating a success response
+    public static <T> CustomResponse<T> success(String message, T data) {
+        return CustomResponse.of(HttpStatus.OK, message, data);
+    }
+
+    // Convenience method for creating a failure response
+    public static <T> CustomResponse<T> failure(String message) {
+        return CustomResponse.of(HttpStatus.BAD_REQUEST, message);
+    }
+
+    // Convenience method for creating an error response
+    public static <T> CustomResponse<T> error(String message) {
+        return CustomResponse.of(HttpStatus.INTERNAL_SERVER_ERROR, message);
+    }
+
+    // Convenience method for creating a response from an existing data object
+    public static <T> CustomResponse<T> from(T data) {
+        return CustomResponse.of(HttpStatus.OK, "Operation successful", data);
+    }
+}
