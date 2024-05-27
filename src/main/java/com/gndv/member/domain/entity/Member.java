@@ -21,10 +21,9 @@ public class Member implements Serializable {
     private String nickname;
     private String phone;
     private String introduction;
-    private LocalDateTime create_at;
+    private LocalDateTime created_at;
     private Long rating;
     private String roles;
-    private Boolean account_locked;
     private Long report_count;
     private Status member_status;
     private LocalDateTime last_login;

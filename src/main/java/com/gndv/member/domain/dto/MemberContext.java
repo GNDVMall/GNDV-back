@@ -14,7 +14,7 @@ public class MemberContext implements UserDetails {
     private final List<GrantedAuthority> roles;
 
     public MemberContext(MemberDTO memberDTO, List<GrantedAuthority> roles) {
-        this.memberDTO = this.memberDTO;
+        this.memberDTO = memberDTO;
         this.roles = roles;
     }
 

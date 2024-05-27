@@ -22,7 +22,7 @@ public class MemberDTO {
     private String nickname;
     private String phone;
     private String introduction;
-    private LocalDateTime create_at;
+    private LocalDateTime created_at;
     private Long rating;
     private String roles;
     private Long report_count;
