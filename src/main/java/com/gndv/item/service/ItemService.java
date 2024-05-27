@@ -1,7 +1,6 @@
 package com.gndv.item.service;
 
 import com.gndv.item.domain.dto.response.ItemDetailResponse;
-import com.gndv.item.domain.entity.Item;
 import com.gndv.item.mapper.ItemMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
