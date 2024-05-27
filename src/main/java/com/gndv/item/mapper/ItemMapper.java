@@ -1,7 +1,6 @@
 package com.gndv.item.mapper;
 
-import com.gndv.image.domain.entity.Image;
-import com.gndv.item.domain.entity.Item;
+import com.gndv.item.domain.dto.response.ItemDetailResponse;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
 
@@ -10,9 +9,7 @@ import java.util.Optional;
 
 @Mapper
 public interface ItemMapper {
-    @Select("SELECT * FROM Item WHERE item_id = #{item_id}")
-    Optional<Item> findById(Long item_id);
-
-    @Select("SELECT * from Image WHERE image_id = #{item_id} and image_type = #{image_type}")
-    Optional<Image> findImages(Long item_id, String image_type);
+    @Select("SELECT * FROM Item i INNER JOIN Image i2 ON i.item_id = i2.use_id WHERE i2.image_type = 'item' AND i.item_id = #{item_id}")
+    Optional<ItemDetailResponse> findById(Long item_id);
+    Optional<List<ItemDetailResponse>> findList();
 }
