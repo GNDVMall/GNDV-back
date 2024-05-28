@@ -2,6 +2,7 @@ package com.gndv.product.controller;
 
 import com.gndv.common.CustomResponse;
 import com.gndv.product.domain.dto.request.ProductInsertRequest;
+import com.gndv.product.domain.dto.request.ProductUpdateRequest;
 import com.gndv.product.domain.dto.response.ProductDetailResponse;
 import com.gndv.product.domain.dto.response.ProductListResponse;
 import com.gndv.product.domain.dto.response.ProductResponse;
@@ -15,7 +16,7 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @Slf4j
-@RequestMapping("/product")
+@RequestMapping("/products")
 public class ProductController {
     private final ProductService productService;
 
@@ -27,7 +28,7 @@ public class ProductController {
     }
 
     @GetMapping("")
-    public CustomResponse<ProductListResponse> getProducts(){
+    public CustomResponse<ProductListResponse> getProducts() {
         log.info("Get Products");
         List<ProductResponse> products = productService.getProducts();
 
@@ -35,11 +36,19 @@ public class ProductController {
     }
 
     @PostMapping("")
-    public CustomResponse insertProduct(@RequestBody ProductInsertRequest request){
+    public CustomResponse insertProduct(@RequestBody ProductInsertRequest request) {
         log.info("Insert New Product {}", request);
         // member_id는 로그인 시, 시큐리티 컨텍스트와 입력값을 비교하기
         productService.insertProduct(request);
         return CustomResponse.ok("Insert new Product");
     }
 
+    @PutMapping("/{product_id}")
+    public CustomResponse<Integer> updateProduct(@RequestBody ProductUpdateRequest request, @PathVariable Long product_id) {
+        log.info("Update a Product {}", request);
+        request.setProduct_id(product_id);
+        // member_id는 로그인 시, 시큐리티 컨텍스트와 입력값을 비교하기
+        int updated = productService.updateProduct(request);
+        return CustomResponse.ok("Update a Product", updated);
+    }
 }
