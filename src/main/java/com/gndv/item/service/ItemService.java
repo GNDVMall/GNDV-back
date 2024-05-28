@@ -23,7 +23,7 @@ public class ItemService {
     }
 
     public List<ItemDetailResponse> getItems() throws Exception {
-        List<ItemDetailResponse> findList = itemMapper.findList();
+        List<ItemDetailResponse> findList = itemMapper.findAll();
         return findList;
     }
 }
