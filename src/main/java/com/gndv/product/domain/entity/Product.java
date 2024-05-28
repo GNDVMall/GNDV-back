@@ -1,6 +1,7 @@
 package com.gndv.product.domain.entity;
 
 import com.gndv.constant.Boolean;
+import com.gndv.constant.ProductStatus;
 import lombok.Getter;
 
 @Getter
@@ -11,6 +12,7 @@ public class Product {
     private String content;
     private Long price;
     private Long member_id;
-    private Boolean trade_option1;
-    private Boolean trade_option2;
+    private Boolean product_trade_opt1;
+    private Boolean product_trade_opt2;
+    private ProductStatus product_status;
 }
