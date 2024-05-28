@@ -1,16 +1,14 @@
 package com.gndv.product.controller;
 
 import com.gndv.common.CustomResponse;
+import com.gndv.product.domain.dto.request.ProductInsertRequest;
 import com.gndv.product.domain.dto.response.ProductDetailResponse;
 import com.gndv.product.domain.dto.response.ProductListResponse;
 import com.gndv.product.domain.dto.response.ProductResponse;
 import com.gndv.product.service.ProductService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -34,5 +32,13 @@ public class ProductController {
         List<ProductResponse> products = productService.getProducts();
 
         return CustomResponse.ok("Get Products", ProductListResponse.builder().products(products).total(products.size()).build());
+    }
+
+    @PostMapping("")
+    public CustomResponse<Object> insertProduct(@RequestBody ProductInsertRequest request){
+        log.info("Insert New Product {}", request);
+        // member_id는 로그인 시, 시큐리티 컨텍스트와 입력값을 비교하기
+        productService.insertProduct(request);
+        return CustomResponse.ok("Insert new Product");
     }
 }

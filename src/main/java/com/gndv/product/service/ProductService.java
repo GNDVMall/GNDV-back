@@ -1,5 +1,6 @@
 package com.gndv.product.service;
 
+import com.gndv.product.domain.dto.request.ProductInsertRequest;
 import com.gndv.product.domain.dto.response.ProductDetailResponse;
 import com.gndv.product.domain.dto.response.ProductResponse;
 import com.gndv.product.mapper.ProductMapper;
@@ -25,5 +26,9 @@ public class ProductService {
     public List<ProductResponse> getProducts() {
         List<ProductResponse> findList = productMapper.findAll();
         return findList;
+    }
+
+    public void insertProduct(ProductInsertRequest request) {
+        productMapper.insert(request);
     }
 }

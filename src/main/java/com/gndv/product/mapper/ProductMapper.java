@@ -1,7 +1,9 @@
 package com.gndv.product.mapper;
 
+import com.gndv.product.domain.dto.request.ProductInsertRequest;
 import com.gndv.product.domain.dto.response.ProductDetailResponse;
 import com.gndv.product.domain.dto.response.ProductResponse;
+import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
 
@@ -15,4 +17,7 @@ public interface ProductMapper {
 
     @Select("SELECT p.* , GROUP_CONCAT(i.real_filename) AS images FROM  Product p LEFT JOIN Image i ON p.product_id = i.use_id GROUP BY p.product_id")
     List<ProductResponse> findAll();
+
+    @Insert("INSERT INTO Product (item_id, title, price, content, product_status, product_trade_opt1, product_trade_opt2, member_id) VALUES (#{item_id},#{title},#{price}, #{content}, #{product_status}, #{product_trade_opt1}, #{product_trade_opt2},#{member_id})")
+    void insert(ProductInsertRequest request);
 }
