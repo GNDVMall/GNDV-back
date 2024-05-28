@@ -5,5 +5,14 @@ import lombok.Getter;
 
 @Getter
 public class ProductDetailResponse extends Product {
-    private String image_ids;
+    private String[] images; // 판매 이미지들
+
+    // 판매자 정보
+    private String nickname;
+    private String introduction;
+    private Long rating;
+
+    public void setImages(String images) {
+        this.images = images.split(",");
+    }
 }
