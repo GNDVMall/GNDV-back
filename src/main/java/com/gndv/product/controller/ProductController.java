@@ -35,10 +35,11 @@ public class ProductController {
     }
 
     @PostMapping("")
-    public CustomResponse<Object> insertProduct(@RequestBody ProductInsertRequest request){
+    public CustomResponse insertProduct(@RequestBody ProductInsertRequest request){
         log.info("Insert New Product {}", request);
         // member_id는 로그인 시, 시큐리티 컨텍스트와 입력값을 비교하기
         productService.insertProduct(request);
         return CustomResponse.ok("Insert new Product");
     }
+
 }
