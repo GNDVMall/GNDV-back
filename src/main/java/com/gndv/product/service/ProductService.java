@@ -1,10 +1,12 @@
 package com.gndv.product.service;
 
 import com.gndv.product.domain.dto.response.ProductDetailResponse;
+import com.gndv.product.domain.dto.response.ProductResponse;
 import com.gndv.product.mapper.ProductMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -18,5 +20,10 @@ public class ProductService {
             return findById.get();
         }
         throw new Exception();
+    }
+
+    public List<ProductResponse> getProducts() {
+        List<ProductResponse> findList = productMapper.findAll();
+        return findList;
     }
 }
