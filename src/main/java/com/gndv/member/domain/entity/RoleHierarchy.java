@@ -18,7 +18,7 @@ public class RoleHierarchy implements Serializable {
     /*
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "parent_id", referencedColumnName = "id", insertable = false, updatable = false)
-   */
+    */
     private RoleHierarchy parent;
 
     /*

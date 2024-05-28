@@ -11,10 +11,12 @@ import org.springframework.core.annotation.Order;
 import org.springframework.security.authentication.AuthenticationDetailsSource;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
+import org.springframework.security.authorization.AuthorizationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.access.intercept.RequestAuthorizationContext;
 import org.springframework.security.web.authentication.WebAuthenticationDetails;
 
 @Configuration
@@ -25,25 +27,21 @@ public class SecurityConfig {
     private final AuthenticationProvider authenticationProvider;
     private final AuthenticationProvider restAuthenticationProvider;
 
-    private final AuthenticationDetailsSource<HttpServletRequest, WebAuthenticationDetails> authenticationDetailsSource;
-
     private final FormAuthenticationSuccessHandler successHandler;
     private final FormAuthenticationFailureHandler failureHandler;
-
     private final RestAuthenticationSuccessHandler restSuccessHandler;
     private final RestAuthenticationFailureHandler restFailureHandler;
+
+    private final AuthenticationDetailsSource<HttpServletRequest, WebAuthenticationDetails> authenticationDetailsSource;
+    private final AuthorizationManager<RequestAuthorizationContext> authorizationManager;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 
         http
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/css/**", "/images/**", "/js/**", "/favicon.*", "/*/icon-*").permitAll()
-                        .requestMatchers("/", "/signup", "/login*").permitAll()
-                        .requestMatchers("/user").hasAuthority("ROLE_USER")
-                        .requestMatchers("/manager").hasAuthority("ROLE_MANAGER")
-                        .requestMatchers("/admin").hasAuthority("ROLE_ADMIN")
-                        .anyRequest().authenticated())
+                        .anyRequest().access(authorizationManager))
+
                 .formLogin(form -> form
                         .loginPage("/login")
                         .authenticationDetailsSource(authenticationDetailsSource)
@@ -53,7 +51,8 @@ public class SecurityConfig {
                 .authenticationProvider(authenticationProvider)
                 .exceptionHandling(exception -> exception
                         .accessDeniedHandler(new FormAccessDeniedHandler("/denied"))
-                );
+                )
+        ;
 
         return http.build();
     }
@@ -64,7 +63,7 @@ public class SecurityConfig {
 
         AuthenticationManagerBuilder authenticationManagerBuilder = http.getSharedObject(AuthenticationManagerBuilder.class);
         authenticationManagerBuilder.authenticationProvider(restAuthenticationProvider);
-        AuthenticationManager authenticationManager = authenticationManagerBuilder.build();
+        AuthenticationManager authenticationManager = authenticationManagerBuilder.build(); // build()는 최초 한번만 호출
 
         http
                 .securityMatcher("/api/**")
@@ -75,6 +74,7 @@ public class SecurityConfig {
                         .requestMatchers("/api/manager").hasAuthority("ROLE_MANAGER")
                         .requestMatchers("/api/admin").hasAuthority("ROLE_ADMIN")
                         .anyRequest().authenticated())
+                //.csrf(AbstractHttpConfigurer::disable)
                 .authenticationManager(authenticationManager)
                 .exceptionHandling(exception -> exception
                         .authenticationEntryPoint(new RestAuthenticationEntryPoint())
@@ -83,8 +83,8 @@ public class SecurityConfig {
                         .restSuccessHandler(restSuccessHandler)
                         .restFailureHandler(restFailureHandler)
                         .loginPage("/api/login")
-                        .loginProcessingUrl("/api/login")
-                );
+                        .loginProcessingUrl("/api/login"))
+        ;
 
         return http.build();
     }

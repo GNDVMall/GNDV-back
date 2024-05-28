@@ -1,12 +1,20 @@
 package com.gndv.admin.mapper;
 
 import com.gndv.member.domain.entity.Role;
-import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Select;
+import com.gndv.member.domain.entity.RoleHierarchy;
+import org.apache.ibatis.annotations.*;
+
+import java.util.List;
 
 @Mapper
 public interface RoleHierarchyMapper {
 
-    @Select("SELECT * FROM Role WHERE role_name = #{role_name}")
-    Role findByRoleName(String role_name);
+    @Select("SELECT * FROM role_hierarchy")
+    @Results({
+            @Result(property = "role_hierarchy_id", column = "role_hierarchy_id"),
+            @Result(property = "role_name", column = "role_name"),
+            @Result(property = "parent", column = "parent_id", one = @One(select = "findById")),
+            @Result(property = "children", column = "role_hierarchy_id", many = @Many(select = "findChildren"))
+    })
+    List<RoleHierarchy> findAll();
 }

@@ -25,6 +25,7 @@ public class FormUserDetailsService implements UserDetailsService {
 
     private final MemberMapper memberMapper;
 
+    @Override
     @Transactional
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
 
@@ -38,6 +39,7 @@ public class FormUserDetailsService implements UserDetailsService {
                 .map(Role::getRole_name)
                 .collect(Collectors.toSet())
                 .stream().map(SimpleGrantedAuthority::new).collect(Collectors.toList());
+
         ModelMapper mapper = new ModelMapper();
         MemberDTO memberDTO = mapper.map(member, MemberDTO.class);
 

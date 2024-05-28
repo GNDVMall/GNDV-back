@@ -10,10 +10,6 @@ import java.util.Optional;
 @Mapper
 public interface MemberMapper {
 
-    @Insert("INSERT INTO Member (email, password) VALUES (#{email}, #{password})")
-    @Options(useGeneratedKeys = true, keyProperty = "member_id")
-    int save(Member member);
-
     @Select("SELECT * FROM Member WHERE member_id = #{member_id}")
     Optional<Member> findById(Long member_id);
 
@@ -22,6 +18,10 @@ public interface MemberMapper {
 
     @Select("SELECT * FROM Member")
     List<Member> findAll();
+
+    @Insert("INSERT INTO Member (email, password) VALUES (#{email}, #{password})")
+    @Options(useGeneratedKeys = true, keyProperty = "member_id")
+    int save(Member member);
 
     @Delete("DELETE FROM Member WHERE member_id = #{member_id}")
     void deleteById(Long member_id);

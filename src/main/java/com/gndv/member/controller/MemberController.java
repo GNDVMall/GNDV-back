@@ -42,19 +42,4 @@ public class MemberController {
         memberService.deleteById(member_id);
         return CustomResponse.ok("deleteMemberById", null);
     }
-
-    @GetMapping(value="/user")
-    public MemberDTO restUser(@AuthenticationPrincipal MemberDTO memberDTO) {
-        return memberDTO;
-    }
-
-    @GetMapping(value="/seller")
-    public MemberDTO restManager(@AuthenticationPrincipal MemberDTO memberDTO) {
-        return memberDTO;
-    }
-
-    @GetMapping(value="/admin")
-    public MemberDTO restAdmin(@AuthenticationPrincipal MemberDTO memberDTO) {
-        return memberDTO;
-    }
 }

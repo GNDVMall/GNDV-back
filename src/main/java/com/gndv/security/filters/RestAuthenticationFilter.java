@@ -35,6 +35,7 @@ public class RestAuthenticationFilter extends AbstractAuthenticationProcessingFi
             securityContextRepository = new DelegatingSecurityContextRepository(
                     new RequestAttributeSecurityContextRepository(), new HttpSessionSecurityContextRepository());
         }
+
         return securityContextRepository;
     }
 

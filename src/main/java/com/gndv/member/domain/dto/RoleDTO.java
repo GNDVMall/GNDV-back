@@ -12,7 +12,7 @@ import lombok.NoArgsConstructor;
 public class RoleDTO {
 
     private String role_id;
-    private String role_Name;
+    private String role_name;
     private String role_desc;
     private String is_expression;
 }
