@@ -4,10 +4,7 @@ import com.gndv.product.domain.dto.request.ProductInsertRequest;
 import com.gndv.product.domain.dto.request.ProductUpdateRequest;
 import com.gndv.product.domain.dto.response.ProductDetailResponse;
 import com.gndv.product.domain.dto.response.ProductResponse;
-import org.apache.ibatis.annotations.Insert;
-import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Select;
-import org.apache.ibatis.annotations.Update;
+import org.apache.ibatis.annotations.*;
 
 import java.util.List;
 import java.util.Optional;
@@ -25,4 +22,7 @@ public interface ProductMapper {
 
     @Update("UPDATE Product SET title = #{title}, content = #{content}, price = #{price}, product_status = #{product_status}, product_trade_opt1 = #{product_trade_opt1}, product_trade_opt2 = #{product_trade_opt2} WHERE product_id = #{product_id}")
     int update(ProductUpdateRequest request);
+
+    @Delete("DELETE FROM Product WHERE product_id = #{product_id}")
+    int delete(Long product_id);
 }

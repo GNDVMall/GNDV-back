@@ -38,7 +38,6 @@ public class ProductController {
     @PostMapping("")
     public CustomResponse insertProduct(@RequestBody ProductInsertRequest request) {
         log.info("Insert New Product {}", request);
-        // member_id는 로그인 시, 시큐리티 컨텍스트와 입력값을 비교하기
         productService.insertProduct(request);
         return CustomResponse.ok("Insert new Product");
     }
@@ -47,8 +46,14 @@ public class ProductController {
     public CustomResponse<Integer> updateProduct(@RequestBody ProductUpdateRequest request, @PathVariable Long product_id) {
         log.info("Update a Product {}", request);
         request.setProduct_id(product_id);
-        // member_id는 로그인 시, 시큐리티 컨텍스트와 입력값을 비교하기
         int updated = productService.updateProduct(request);
         return CustomResponse.ok("Update a Product", updated);
+    }
+
+    @DeleteMapping("/{product_id}")
+    public CustomResponse<Integer> deleteProduct(@PathVariable Long product_id){
+        log.info("Delete a Product");
+        int updated = productService.deleteProduct(product_id);
+        return CustomResponse.ok("Delete a Product", updated);
     }
 }

@@ -38,4 +38,9 @@ public class ProductService {
         int updated = productMapper.update(request);
         return updated;
     }
+
+    public int deleteProduct(Long product_id) {
+        int update = productMapper.delete(product_id);
+        return update;
+    }
 }
