@@ -35,8 +35,11 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 
         http
+                .csrf(csrf -> csrf
+                        .ignoringRequestMatchers("/images/upload/*") // /upload 엔드포인트에 대한 CSRF 보호 비활성화
+                )
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/", "/members/*", "/login*").permitAll()
+                        .requestMatchers("/", "/members/*", "/login*", "/images/upload/*").permitAll()
                         .requestMatchers("/members").hasAuthority("ROLE_MEMBER")
                         .anyRequest().authenticated())
 
