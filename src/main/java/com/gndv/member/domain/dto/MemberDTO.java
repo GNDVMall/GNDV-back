@@ -28,7 +28,7 @@ public class MemberDTO {
     private Long rating;
     private Long report_count;
     private Status member_status;
-    private LocalDateTime last_login;
+    private Date last_login;
 
     // Enum
     private Role role;

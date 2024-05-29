@@ -6,8 +6,7 @@ import lombok.*;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.Date;
 
 @Getter
 @Builder
@@ -22,11 +21,11 @@ public class Member implements Serializable {
     private String nickname;
     private String phone;
     private String introduction;
-    private LocalDateTime created_at;
+    private Date created_at;
     private Long rating;
     private Long report_count;
     private Status member_status;
-    private LocalDateTime last_login;
+    private Date last_login;
 
     // Enum
     private Role role;
