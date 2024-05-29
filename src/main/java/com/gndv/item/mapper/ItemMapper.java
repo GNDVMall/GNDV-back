@@ -13,5 +13,5 @@ public interface ItemMapper {
     Optional<ItemDetailResponse> findById(Long item_id);
 
     @Select("SELECT * FROM Item i INNER JOIN Image i2 ON i.item_id = i2.use_id WHERE i2.image_type = 'item'")
-    List<ItemDetailResponse> findList();
+    List<ItemDetailResponse> findAll();
 }
