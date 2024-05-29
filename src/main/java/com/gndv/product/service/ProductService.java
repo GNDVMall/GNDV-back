@@ -39,8 +39,8 @@ public class ProductService {
         return updated;
     }
 
-    public int deleteProduct(Long product_id) {
-        int update = productMapper.delete(product_id);
+    public int deleteProduct(Long product_id, Long member_id) {
+        int update = productMapper.delete(product_id, member_id);
         return update;
     }
 }
