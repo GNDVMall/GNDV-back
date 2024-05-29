@@ -20,9 +20,9 @@ public interface ProductMapper {
     @Insert("INSERT INTO Product (item_id, title, price, content, product_status, product_trade_opt1, product_trade_opt2, member_id) VALUES (#{item_id},#{title},#{price}, #{content}, #{product_status}, #{product_trade_opt1}, #{product_trade_opt2},#{member_id})")
     void insert(ProductInsertRequest request);
 
-    @Update("UPDATE Product SET title = #{title}, content = #{content}, price = #{price}, product_status = #{product_status}, product_trade_opt1 = #{product_trade_opt1}, product_trade_opt2 = #{product_trade_opt2} WHERE product_id = #{product_id}")
+    @Update("UPDATE Product SET title = #{title}, content = #{content}, price = #{price}, product_status = #{product_status}, product_trade_opt1 = #{product_trade_opt1}, product_trade_opt2 = #{product_trade_opt2} WHERE product_id = #{product_id} AND member_id = #{member_id}")
     int update(ProductUpdateRequest request);
 
-    @Delete("DELETE FROM Product WHERE product_id = #{product_id}")
-    int delete(Long product_id);
+    @Delete("DELETE FROM Product WHERE product_id = #{product_id} AND member_id = #{member_id}")
+    int delete(Long product_id, Long member_id);
 }
