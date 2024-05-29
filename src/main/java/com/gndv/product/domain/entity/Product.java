@@ -4,6 +4,8 @@ import com.gndv.constant.Boolean;
 import com.gndv.constant.ProductStatus;
 import lombok.Getter;
 
+import java.time.LocalDateTime;
+
 @Getter
 public class Product {
     private Long product_id;
@@ -15,4 +17,5 @@ public class Product {
     private Boolean product_trade_opt1;
     private Boolean product_trade_opt2;
     private ProductStatus product_status;
+    private LocalDateTime created_at;
 }

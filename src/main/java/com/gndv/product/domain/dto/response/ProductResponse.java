@@ -5,8 +5,9 @@ import lombok.Getter;
 
 @Getter
 public class ProductResponse extends Product {
-    private String[] images; // 판매 이미지들
+    private String[] images;
+
     public void setImages(String images) {
-        this.images = images.split(",");
+        this.images = images != null ? images.split(",") : new String[0];
     }
 }
