@@ -2,5 +2,5 @@ package com.gndv.constant;
 
 public enum Role {
 
-    Member, Seller, Admin
+    MEMBER, SELLER, ADMIN
 }
