@@ -4,10 +4,10 @@ import com.gndv.common.CustomResponse;
 import com.gndv.image.service.ImageService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
 
 @RestController
 @RequestMapping("/images")
@@ -22,5 +22,12 @@ public class ImageController {
         Object imageStream = imageService.getImage(image_type, image_id);
 
         return CustomResponse.ok("Get Image URL", imageStream);
+    }
+
+    @PostMapping("/upload/{image_type}")
+    public CustomResponse<String> uploadImage(@PathVariable String image_type, @RequestParam MultipartFile file) throws IOException {
+        log.info("Upload a image file");
+        String fileUrl = imageService.uploadCloud(image_type, file);
+        return CustomResponse.ok("Upload a file", fileUrl);
     }
 }
