@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationDetailsSource;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
@@ -40,6 +41,7 @@ public class SecurityConfig {
                 )
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/", "/members/*", "/login*", "/images/upload/*").permitAll()
+                        .requestMatchers(HttpMethod.GET,"/products", "/products/*").permitAll()
                         .requestMatchers("/members").hasAuthority("ROLE_MEMBER")
                         .anyRequest().authenticated())
 
