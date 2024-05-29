@@ -35,13 +35,13 @@ public class RestAuthenticationFilter extends AbstractAuthenticationProcessingFi
             securityContextRepository = new DelegatingSecurityContextRepository(
                     new RequestAttributeSecurityContextRepository(), new HttpSessionSecurityContextRepository());
         }
-
         return securityContextRepository;
     }
 
     @Override
     public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response)
             throws AuthenticationException, IOException {
+
         if (!HttpMethod.POST.name().equals(request.getMethod()) || !WebUtil.isAjax(request)) {
             throw new IllegalArgumentException("Authentication method not supported");
         }
@@ -55,6 +55,4 @@ public class RestAuthenticationFilter extends AbstractAuthenticationProcessingFi
 
         return this.getAuthenticationManager().authenticate(token);
     }
-
-
 }

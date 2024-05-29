@@ -3,7 +3,6 @@ package com.gndv.security.service;
 import com.gndv.member.domain.dto.MemberContext;
 import com.gndv.member.domain.dto.MemberDTO;
 import com.gndv.member.domain.entity.Member;
-import com.gndv.member.domain.entity.Role;
 import com.gndv.member.mapper.MemberMapper;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
@@ -29,16 +28,14 @@ public class FormUserDetailsService implements UserDetailsService {
     @Transactional
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
 
-        Optional<Member> member = memberMapper.findByEmail(email);
-        if (member.isEmpty()) {
+        Optional<Member> memberOptional = memberMapper.findByEmail(email);
+        if (memberOptional.isEmpty()) {
             throw new UsernameNotFoundException("No user found with username: " + email);
         }
 
-        List<GrantedAuthority> authorities = member.get().getRoles()
-                .stream()
-                .map(Role::getRole_name)
-                .collect(Collectors.toSet())
-                .stream().map(SimpleGrantedAuthority::new).collect(Collectors.toList());
+        Member member = memberOptional.get();
+
+        List<GrantedAuthority> authorities = List.of(new SimpleGrantedAuthority(member.getRole().toString()));
 
         ModelMapper mapper = new ModelMapper();
         MemberDTO memberDTO = mapper.map(member, MemberDTO.class);

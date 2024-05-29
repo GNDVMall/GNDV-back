@@ -14,7 +14,8 @@ import org.springframework.security.web.context.SecurityContextRepository;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.security.web.util.matcher.RequestMatcher;
 
-public class RestApiDsl<H extends HttpSecurityBuilder<H>> extends AbstractAuthenticationFilterConfigurer<H, RestApiDsl<H>, RestAuthenticationFilter> {
+public class RestApiDsl<H extends HttpSecurityBuilder<H>> extends
+        AbstractAuthenticationFilterConfigurer<H, RestApiDsl<H>, RestAuthenticationFilter> {
 
     private AuthenticationSuccessHandler successHandler;
     private AuthenticationFailureHandler failureHandler;
@@ -30,6 +31,7 @@ public class RestApiDsl<H extends HttpSecurityBuilder<H>> extends AbstractAuthen
 
     @Override
     public void configure(H http) {
+
         AuthenticationManager authenticationManager = http.getSharedObject(AuthenticationManager.class);
         getAuthenticationFilter().setAuthenticationManager(authenticationManager);
         getAuthenticationFilter().setAuthenticationSuccessHandler(successHandler);
@@ -41,11 +43,9 @@ public class RestApiDsl<H extends HttpSecurityBuilder<H>> extends AbstractAuthen
             getAuthenticationFilter().setSessionAuthenticationStrategy(sessionAuthenticationStrategy);
         }
         RememberMeServices rememberMeServices = http.getSharedObject(RememberMeServices.class);
-
         if (rememberMeServices != null) {
             getAuthenticationFilter().setRememberMeServices(rememberMeServices);
         }
-
         http.setSharedObject(RestAuthenticationFilter.class, getAuthenticationFilter());
         http.addFilterBefore(getAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
     }
@@ -72,4 +72,5 @@ public class RestApiDsl<H extends HttpSecurityBuilder<H>> extends AbstractAuthen
     protected RequestMatcher createLoginProcessingUrlMatcher(String loginProcessingUrl) {
         return new AntPathRequestMatcher(loginProcessingUrl, "POST");
     }
+
 }

@@ -17,6 +17,7 @@ public class RestAuthenticationFailureHandler implements AuthenticationFailureHa
 
     @Override
     public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response, AuthenticationException exception) throws IOException {
+
         ObjectMapper mapper = new ObjectMapper();
 
         response.setStatus(HttpStatus.UNAUTHORIZED.value());
@@ -26,7 +27,6 @@ public class RestAuthenticationFailureHandler implements AuthenticationFailureHa
             mapper.writeValue(response.getWriter(), "Invalid username or password");
 
         }
-
         mapper.writeValue(response.getWriter(), "Authentication failed");
     }
 }

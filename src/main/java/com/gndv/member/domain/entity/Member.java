@@ -1,5 +1,6 @@
 package com.gndv.member.domain.entity;
 
+import com.gndv.constant.Role;
 import com.gndv.constant.Status;
 import lombok.*;
 
@@ -27,20 +28,12 @@ public class Member implements Serializable {
     private Status member_status;
     private LocalDateTime last_login;
 
-    // Join
-    private Long role_id;
+    // Enum
+    private Role role;
 
     // UserDetails
     private boolean is_account_non_expired;
     private boolean is_account_non_locked;
     private boolean is_credentials_non_expired;
     private boolean is_enabled;
-
-    /*
-    @ManyToMany(fetch = FetchType.LAZY, cascade={CascadeType.MERGE})
-    @JoinTable(name = "member_roles", joinColumns = { @JoinColumn(name = "member_id") }, inverseJoinColumns = {
-            @JoinColumn(name = "role_id") })
-    @ToString.Exclude
-    */
-    private Set<Role> Roles = new HashSet<>();
 }
