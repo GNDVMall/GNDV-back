@@ -17,19 +17,19 @@ import org.springframework.web.bind.annotation.*;
 @Slf4j
 public class LoginController {
 
-    @PostMapping(value = "/login")
+    @PostMapping("/login")
     public CustomResponse<LoginRequest> login(@RequestBody LoginRequest request) {
         return CustomResponse.ok("LoginRequest", request);
     }
 
-    @GetMapping(value = "/logout")
-    public String logout(HttpServletRequest request, HttpServletResponse response) {
+    @GetMapping("/logout")
+    public CustomResponse<HttpServletRequest> logout(HttpServletRequest request, HttpServletResponse response) {
         Authentication authentication = SecurityContextHolder.getContextHolderStrategy().getContext().getAuthentication();
 
         if (authentication != null) {
             new SecurityContextLogoutHandler().logout(request, response, authentication);
         }
 
-        return "redirect:/login";
+        return CustomResponse.ok("logout", request);
     }
 }
