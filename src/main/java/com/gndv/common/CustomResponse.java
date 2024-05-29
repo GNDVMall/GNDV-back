@@ -29,22 +29,27 @@ public class CustomResponse<T> {
         return new CustomResponse<>(status, message, data);
     }
 
+    // Convenience method for OK status with data
     public static <T> CustomResponse<T> ok(String message, T data) {
         return CustomResponse.of(HttpStatus.OK, message, data);
     }
 
+    // Convenience method for creating a success response
     public static <T> CustomResponse<T> success(String message, T data) {
         return CustomResponse.of(HttpStatus.OK, message, data);
     }
 
+    // Convenience method for creating a failure response
     public static <T> CustomResponse<T> failure(String message) {
         return CustomResponse.of(HttpStatus.BAD_REQUEST, message);
     }
 
+    // Convenience method for creating an error response
     public static <T> CustomResponse<T> error(String message) {
         return CustomResponse.of(HttpStatus.INTERNAL_SERVER_ERROR, message);
     }
 
+    // Convenience method for creating a response from an existing data object
     public static <T> CustomResponse<T> from(T data) {
         return CustomResponse.of(HttpStatus.OK, "Operation successful", data);
     }
