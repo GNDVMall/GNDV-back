@@ -1,10 +1,10 @@
 package com.gndv.member.service;
 
+import com.gndv.member.domain.dto.EditRequest;
 import com.gndv.member.domain.dto.JoinRequest;
 import com.gndv.member.domain.entity.Member;
 import com.gndv.member.mapper.MemberMapper;
 import lombok.RequiredArgsConstructor;
-import org.modelmapper.ModelMapper;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,24 +22,37 @@ public class MemberService {
     @Transactional
     public void createMember(JoinRequest request) {
         String encodedPassword = passwordEncoder.encode(request.getPassword());
+
         Member member = Member.builder()
                 .email(request.getEmail())
                 .password(encodedPassword)
                 .build();
 
-       memberMapper.save(member);
+       memberMapper.insert(member);
     }
 
     public Optional<Member> getMember(Long member_id) {
         return memberMapper.findById(member_id);
     }
 
-    public List<Member> getMembers() {
-        return memberMapper.findAll();
+    @Transactional
+    public void editMember(Long member_id, EditRequest request) {
+        String encodedPassword = passwordEncoder.encode(request.getPassword());
+
+        Member member = Member.builder()
+                .member_id(member_id)
+                .email(request.getEmail())
+                .password(encodedPassword)
+                .nickname(request.getNickname())
+                .phone(request.getPhone())
+                .introduction(request.getIntroduction())
+                .build();
+
+        memberMapper.update(member);
     }
 
     @Transactional
     public void removeMember(Long member_id) {
-        memberMapper.deleteById(member_id);
+        memberMapper.delete(member_id);
     }
 }

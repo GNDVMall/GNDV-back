@@ -4,11 +4,12 @@ import lombok.Data;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import java.io.Serializable;
 import java.util.Collection;
 import java.util.List;
 
 @Data
-public class MemberContext implements UserDetails {
+public class MemberContext implements UserDetails, Serializable {
 
     private MemberDTO memberDTO;
     private final List<GrantedAuthority> roles;
