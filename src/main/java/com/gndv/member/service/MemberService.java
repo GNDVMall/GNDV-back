@@ -37,18 +37,12 @@ public class MemberService {
 
     @Transactional
     public void editMember(Long member_id, EditRequest request) {
-        String encodedPassword = passwordEncoder.encode(request.getPassword());
+        String encodedPassword = null;
+        if (request.getPassword() != null) {
+            encodedPassword = passwordEncoder.encode(request.getPassword());
+        }
 
-        Member member = Member.builder()
-                .member_id(member_id)
-                .email(request.getEmail())
-                .password(encodedPassword)
-                .nickname(request.getNickname())
-                .phone(request.getPhone())
-                .introduction(request.getIntroduction())
-                .build();
-
-        memberMapper.update(member);
+        memberMapper.update(member_id, request.getEmail(), encodedPassword, request.getNickname(), request.getPhone(), request.getIntroduction());
     }
 
     @Transactional

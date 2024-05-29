@@ -27,9 +27,9 @@ public class MemberController {
     }
 
     @GetMapping("/{member_id}")
-    public CustomResponse getMember(@PathVariable Long member_id) {
-        memberService.getMember(member_id);
-        return CustomResponse.ok("getMember");
+    public CustomResponse<Optional<Member>> getMember(@PathVariable Long member_id) {
+        Optional<Member> member = memberService.getMember(member_id);
+        return CustomResponse.ok("getMember", member);
     }
 
     @PutMapping("/{member_id}")

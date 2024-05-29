@@ -66,8 +66,8 @@ public class SecurityConfig {
         http
                 .securityMatcher("/api/**")
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api", "/api/login", "/api/members/new").permitAll()
-                        .requestMatchers("/api/members").hasRole("MEMBER")
+                        .requestMatchers("/api/login", "/api/members/new").permitAll()
+                        .requestMatchers("/api/logout", "/api/members").hasRole("MEMBER")
                         .anyRequest().authenticated())
                 .csrf(AbstractHttpConfigurer::disable)
                 .authenticationManager(authenticationManager)

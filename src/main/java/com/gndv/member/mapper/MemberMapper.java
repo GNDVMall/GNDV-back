@@ -4,6 +4,7 @@ import com.gndv.constant.Role;
 import com.gndv.constant.Status;
 import com.gndv.member.domain.entity.Member;
 import org.apache.ibatis.annotations.*;
+import org.springframework.security.core.parameters.P;
 
 import java.util.List;
 import java.util.Optional;
@@ -23,9 +24,25 @@ public interface MemberMapper {
     @Insert("INSERT INTO Member (email, password) VALUES (#{email}, #{password})")
     void insert(Member member);
 
-    @Update("UPDATE Member SET email=#{email}, password=#{password}, nickname=#{nickname}, phone=#{phone}, introduction=#{introduction}" +
-            "WHERE member_id=#{member_id}")
-    void update(Member member);
+    @Update({
+            "<script>",
+            "UPDATE Member",
+            "<set>" +
+            "<if test='email != null'>email = #{email},</if>" +
+            "<if test='password != null'>password = #{password},</if>" +
+            "<if test='nickname != null'>nickname = #{nickname},</if>" +
+            "<if test='phone != null'>phone = #{phone},</if>" +
+            "<if test='introduction != null'>introduction = #{introduction},</if>" +
+            "</set>" +
+            "WHERE member_id = #{member_id}" +
+            "</script>"
+    })
+    void update(@Param("member_id") Long member_id,
+                @Param("email") String email,
+                @Param("password") String password,
+                @Param("nickname") String nickname,
+                @Param("phone") String phone,
+                @P("introduction") String introduction);
 
     @Delete("DELETE FROM Member WHERE member_id = #{member_id}")
     void delete(Long member_id);
