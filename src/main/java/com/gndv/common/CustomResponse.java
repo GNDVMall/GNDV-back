@@ -38,6 +38,10 @@ public class CustomResponse<T> {
         return CustomResponse.of(HttpStatus.OK, message, data);
     }
 
+    public static CustomResponse ok(String message) {
+        return CustomResponse.of(HttpStatus.OK, message);
+    }
+
     // Convenience method for creating a success response
     public static <T> CustomResponse<T> success(String message, T data) {
         return CustomResponse.of(HttpStatus.OK, message, data);
