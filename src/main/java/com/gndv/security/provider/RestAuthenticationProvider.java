@@ -29,7 +29,7 @@ public class RestAuthenticationProvider implements AuthenticationProvider {
             throw new BadCredentialsException("Invalid password");
         }
 
-        return new RestAuthenticationToken(memberContext.getAuthorities(), memberContext.getMemberDTO(), null);
+        return new RestAuthenticationToken(memberContext.getAuthorities(), memberContext, null);
     }
 
     @Override
