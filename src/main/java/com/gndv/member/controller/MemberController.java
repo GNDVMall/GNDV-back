@@ -1,6 +1,7 @@
 package com.gndv.member.controller;
 
 import com.gndv.common.CustomResponse;
+import com.gndv.member.domain.dto.EditRequest;
 import com.gndv.member.domain.dto.JoinRequest;
 import com.gndv.member.domain.entity.Member;
 import com.gndv.member.service.MemberService;
@@ -12,7 +13,7 @@ import java.util.Optional;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/members")
+@RequestMapping("/api/members")
 @Slf4j
 public class MemberController {
 
@@ -25,12 +26,23 @@ public class MemberController {
         return CustomResponse.ok("createMember", request);
     }
 
-    @GetMapping("/members/{member_id}")
+    @GetMapping("/{member_id}")
     public CustomResponse<Optional<Member>> getMember(@PathVariable Long member_id) {
-        return CustomResponse.ok("getMemberById", memberService.getMember(member_id));
+        Optional<Member> member = memberService.getMember(member_id);
+        return CustomResponse.ok("getMember", member);
     }
 
-    @DeleteMapping("/members/{member_id}")
+    @PutMapping("/{member_id}")
+    public CustomResponse<EditRequest> editMember(@PathVariable Long member_id, @RequestBody EditRequest request) {
+        Optional<Member> findMember = memberService.getMember(member_id);
+        if (findMember.isEmpty()) {
+            return CustomResponse.failure("Member not found");
+        }
+        memberService.editMember(member_id, request);
+        return CustomResponse.ok("modify", request);
+    }
+
+    @DeleteMapping("/{member_id}")
     public CustomResponse<Void> deleteMember(@PathVariable Long member_id) {
         memberService.removeMember(member_id);
         return CustomResponse.ok("deleteMemberById", null);

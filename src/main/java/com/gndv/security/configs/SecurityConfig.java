@@ -71,9 +71,9 @@ public class SecurityConfig {
                 .cors(cors -> cors.configurationSource(corsConfigurationSource))
                 .securityMatcher("/api/**")
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api", "/api/login","/api/items","/api/items/*").permitAll()
+                        .requestMatchers("/api/login", "/api/members/new","/api/items","/api/items/*").permitAll()
+                        .requestMatchers("/api/logout", "/api/members").hasRole("MEMBER")
                         .requestMatchers(HttpMethod.GET, "/api/products", "/api/products/*").permitAll()
-                        .requestMatchers("/api/members","/api/").hasAuthority("ROLE_MEMBER")
                         .anyRequest().authenticated())
                 .csrf(AbstractHttpConfigurer::disable)
                 .authenticationManager(authenticationManager)
