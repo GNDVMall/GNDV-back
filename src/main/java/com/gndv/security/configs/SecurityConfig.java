@@ -22,7 +22,7 @@ import org.springframework.web.cors.CorsConfigurationSource;
 
 @Configuration
 @EnableWebSecurity
-@EnableMethodSecurity(securedEnabled = true)
+@EnableMethodSecurity
 @RequiredArgsConstructor
 public class SecurityConfig {
 
@@ -56,7 +56,6 @@ public class SecurityConfig {
         return http.build();
     }
 
-
     @Bean
     @Order(1)
     public SecurityFilterChain restSecurityFilterChain(HttpSecurity http) throws Exception {
@@ -83,5 +82,4 @@ public class SecurityConfig {
         ;
         return http.build();
     }
-
 }
