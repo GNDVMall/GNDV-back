@@ -35,4 +35,15 @@ public class Member implements Serializable {
     private boolean is_account_non_locked;
     private boolean is_credentials_non_expired;
     private boolean is_enabled;
+
+    // JWT
+    private String refreshToken;
+
+    public void updateRefreshToken(String refreshToken) {
+        this.refreshToken = refreshToken;
+    }
+
+    public void destroyRefreshToken() {
+        this.refreshToken = null;
+    }
 }
