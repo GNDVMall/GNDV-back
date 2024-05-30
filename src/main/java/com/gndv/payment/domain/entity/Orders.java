@@ -22,6 +22,15 @@ public class Orders {
     private Member seller;
     private LocalPayment payment;
 
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Builder
     public static class LocalPayment {
+        private Long payment_id;
+        private Long price;
+        private String status;
+        private String payment_uid;
+        private Long member_id;
     }
 }

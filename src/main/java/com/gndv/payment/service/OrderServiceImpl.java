@@ -1,6 +1,5 @@
 package com.gndv.payment.service;
 
-
 import com.gndv.member.domain.entity.Member;
 import com.gndv.payment.domain.entity.Orders;
 import com.gndv.payment.mapper.OrderMapper;
@@ -15,11 +14,11 @@ import java.util.UUID;
 public class OrderServiceImpl implements OrderService {
 
     private final OrderMapper ordersMapper;
-//    private final PaymentMapper paymentMapper;
     private final IamportClient iamportClient;
 
     @Override
     public Orders autoOrder(Member member) {
+        // 자동 주문 로직 구현 (필요한 경우)
         return null;
     }
 

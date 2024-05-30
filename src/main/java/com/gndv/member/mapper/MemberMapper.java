@@ -10,9 +10,13 @@ import java.util.Optional;
 @Mapper
 public interface MemberMapper {
 
-    @Select("SELECT * FROM Member WHERE member_id = #{member_id}")
-    Optional<Member> findById(Long member_id);
-
+    @Select("SELECT * FROM Member WHERE member_id = #{memberId}")
+    @Results({
+            @Result(property = "member_id", column = "member_id"),
+            @Result(property = "name", column = "name"),
+            @Result(property = "email", column = "email")
+    })
+    Optional<Member> findById(Long memberId);
     @Select("SELECT * FROM Member WHERE email = #{email}")
     Optional<Member> findByEmail(@Param("email") String email);
 

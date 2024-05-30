@@ -9,6 +9,7 @@ import com.gndv.product.domain.dto.response.ProductResponse;
 import com.gndv.product.service.ProductService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -16,6 +17,7 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @Slf4j
+@EnableMethodSecurity
 @RequestMapping("/api/products")
 public class ProductController {
     private final ProductService productService;
