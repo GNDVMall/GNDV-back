@@ -40,8 +40,11 @@ public interface MemberMapper {
                 @Param("password") String password,
                 @Param("nickname") String nickname,
                 @Param("phone") String phone,
-                @P("introduction") String introduction);
+                @Param("introduction") String introduction);
 
     @Delete("DELETE FROM Member WHERE member_id = #{member_id}")
     void delete(Long member_id);
+
+    @Select("SELECT * FROM member WHERE refreshToken = #{refreshToken}")
+    Optional<Member> findByRefreshToken(String refreshToken);
 }
