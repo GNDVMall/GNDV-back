@@ -11,7 +11,7 @@ import java.util.Date;
 @Getter
 @Builder
 @AllArgsConstructor
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Member implements Serializable {
 
     // Member
