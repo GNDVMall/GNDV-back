@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationDetailsSource;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
@@ -35,11 +36,8 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 
         http
-                .csrf(csrf -> csrf
-                        .ignoringRequestMatchers("/images/upload/*") // /upload 엔드포인트에 대한 CSRF 보호 비활성화
-                )
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/", "/members/*", "/login*", "/images/upload/*").permitAll()
+                        .requestMatchers("/", "/members/*", "/login*").permitAll()
                         .requestMatchers("/members").hasAuthority("ROLE_MEMBER")
                         .anyRequest().authenticated())
 
@@ -69,8 +67,9 @@ public class SecurityConfig {
         http
                 .securityMatcher("/api/**")
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api", "/api/login").permitAll()
-                        .requestMatchers("/api/members").hasAuthority("ROLE_MEMBER")
+                        .requestMatchers("/api/login", "/api/members/new","/api/items","/api/items/*").permitAll()
+                        .requestMatchers("/api/logout", "/api/members").hasRole("MEMBER")
+                        .requestMatchers(HttpMethod.GET, "/api/products", "/api/products/*").permitAll()
                         .anyRequest().authenticated())
                 .csrf(AbstractHttpConfigurer::disable)
                 .authenticationManager(authenticationManager)
