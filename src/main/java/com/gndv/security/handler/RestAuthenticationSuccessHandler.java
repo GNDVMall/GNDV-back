@@ -1,6 +1,7 @@
 package com.gndv.security.handler;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.gndv.member.domain.dto.MemberContext;
 import com.gndv.member.domain.dto.MemberDTO;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -21,11 +22,11 @@ public class RestAuthenticationSuccessHandler implements AuthenticationSuccessHa
 
         ObjectMapper mapper = new ObjectMapper();
 
-        MemberDTO memberDTO = (MemberDTO) authentication.getPrincipal();
+        MemberContext memberContext = (MemberContext) authentication.getPrincipal();
         response.setStatus(HttpStatus.OK.value());
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
-        memberDTO.setPassword(null);
-        mapper.writeValue(response.getWriter(), memberDTO);
+        memberContext.getMemberDTO().setPassword(null);
+        mapper.writeValue(response.getWriter(), memberContext.getMemberDTO());
 
         clearAuthenticationAttributes(request);
     }
