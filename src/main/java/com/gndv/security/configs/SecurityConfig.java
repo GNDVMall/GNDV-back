@@ -8,11 +8,11 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
-import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationDetailsSource;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
@@ -21,6 +21,7 @@ import org.springframework.security.web.authentication.WebAuthenticationDetails;
 
 @Configuration
 @EnableWebSecurity
+@EnableMethodSecurity(securedEnabled = true)
 @RequiredArgsConstructor
 public class SecurityConfig {
 
@@ -37,10 +38,7 @@ public class SecurityConfig {
 
         http
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/", "/members/*", "/login*").permitAll()
-                        .requestMatchers("/members").hasAuthority("ROLE_MEMBER")
-                        .anyRequest().authenticated())
-
+                        .anyRequest().permitAll())
                 .formLogin(form -> form
                         .loginPage("/login")
                         .authenticationDetailsSource(authenticationDetailsSource)
@@ -49,9 +47,9 @@ public class SecurityConfig {
                         .permitAll())
                 .authenticationProvider(authenticationProvider)
                 .exceptionHandling(exception -> exception
-                        .accessDeniedHandler(new FormAccessDeniedHandler("/denied"))
-                )
+                        .accessDeniedHandler(new FormAccessDeniedHandler("/denied")))
         ;
+
         return http.build();
     }
 
@@ -67,10 +65,7 @@ public class SecurityConfig {
         http
                 .securityMatcher("/api/**")
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/login", "/api/members/new","/api/items","/api/items/*").permitAll()
-                        .requestMatchers("/api/logout", "/api/members").hasRole("MEMBER")
-                        .requestMatchers(HttpMethod.GET, "/api/products", "/api/products/*").permitAll()
-                        .anyRequest().authenticated())
+                        .anyRequest().permitAll())
                 .csrf(AbstractHttpConfigurer::disable)
                 .authenticationManager(authenticationManager)
                 .exceptionHandling(exception -> exception
