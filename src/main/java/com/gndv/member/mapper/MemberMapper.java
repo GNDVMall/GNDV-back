@@ -45,6 +45,6 @@ public interface MemberMapper {
     @Delete("DELETE FROM Member WHERE member_id = #{member_id}")
     void delete(Long member_id);
 
-    @Select("SELECT * FROM member WHERE refreshToken = #{refreshToken}")
-    Optional<Member> findByRefreshToken(String refreshToken);
+    @Select("SELECT * FROM Member WHERE refreshToke = #{refreshToke}")
+    Optional<Member> findByRefreshToken(String refreshToke);
 }

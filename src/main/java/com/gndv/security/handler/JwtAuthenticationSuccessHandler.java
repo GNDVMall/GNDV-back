@@ -14,11 +14,15 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.web.WebAttributes;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
+
 import java.io.IOException;
 
-@Component("restSuccessHandler")
+@Component("jwtSuccessHandler")
 @RequiredArgsConstructor
-public class RestAuthenticationSuccessHandler implements AuthenticationSuccessHandler {
+public class JwtAuthenticationSuccessHandler implements AuthenticationSuccessHandler {
+
+    private final JwtUtil jwtUtil;
+    private final MemberMapper memberMapper;
 
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException {
@@ -26,10 +30,19 @@ public class RestAuthenticationSuccessHandler implements AuthenticationSuccessHa
         ObjectMapper mapper = new ObjectMapper();
 
         MemberContext memberContext = (MemberContext) authentication.getPrincipal();
+        String email = memberContext.getMemberDTO().getEmail();
+
+        String accessToken = jwtUtil.createAccessToken(email);
+        String refreshToken = jwtUtil.createRefreshToken();
+
+        jwtUtil.sendAccessAndRefreshToken(response, accessToken, refreshToken);
+        memberMapper.findByEmail(email).ifPresent(
+                member -> member.updateRefreshToken(refreshToken)
+        );
+
         response.setStatus(HttpStatus.OK.value());
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
-        memberContext.getMemberDTO().setPassword(null);
-        mapper.writeValue(response.getWriter(), memberContext.getMemberDTO());
+        response.getWriter().write("success");
 
         clearAuthenticationAttributes(request);
     }

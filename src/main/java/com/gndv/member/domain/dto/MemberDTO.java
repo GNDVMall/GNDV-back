@@ -2,10 +2,12 @@ package com.gndv.member.domain.dto;
 
 import com.gndv.constant.Role;
 import com.gndv.constant.Status;
+import com.gndv.member.domain.entity.Member;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.modelmapper.ModelMapper;
 
 import java.util.Date;
 
@@ -36,4 +38,16 @@ public class MemberDTO {
     private boolean is_account_non_locked;
     private boolean is_credentials_non_expired;
     private boolean is_enabled;
+
+    // Jwt
+    private String refreshToken;
+
+    public void updateRefreshToken(String refreshToken) {
+        this.refreshToken = refreshToken;
+    }
+
+    public void destroyRefreshToken() {
+        this.refreshToken = null;
+    }
+
 }

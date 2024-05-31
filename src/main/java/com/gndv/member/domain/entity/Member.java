@@ -5,7 +5,6 @@ import com.gndv.constant.Status;
 import lombok.*;
 
 import java.io.Serializable;
-import java.time.LocalDateTime;
 import java.util.Date;
 
 @Getter
@@ -36,7 +35,7 @@ public class Member implements Serializable {
     private boolean is_credentials_non_expired;
     private boolean is_enabled;
 
-    // JWT
+    // Jwt
     private String refreshToken;
 
     public void updateRefreshToken(String refreshToken) {
