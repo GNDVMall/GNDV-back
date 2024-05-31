@@ -15,4 +15,9 @@ public class ChatService {
         // 채팅방 만들기
         chatMapper.createChatRoom(chatRoomCreateRequest);
     }
+
+    public int deleteUserFromChatroom(Long chatroom_id, String name) {
+        int updated = chatMapper.deleteUserFromChatroom(chatroom_id, name);
+        return updated;
+    }
 }
