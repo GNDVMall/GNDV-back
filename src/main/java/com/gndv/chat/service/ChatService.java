@@ -1,0 +1,18 @@
+package com.gndv.chat.service;
+
+import com.gndv.chat.domain.dto.request.ChatRoomCreateRequest;
+import com.gndv.chat.mapper.ChatMapper;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Service;
+
+@Service
+@RequiredArgsConstructor
+@Slf4j
+public class ChatService {
+    private final ChatMapper chatMapper;
+    public void createChatRoom(ChatRoomCreateRequest chatRoomCreateRequest) {
+        // 채팅방 만들기
+        chatMapper.createChatRoom(chatRoomCreateRequest);
+    }
+}
