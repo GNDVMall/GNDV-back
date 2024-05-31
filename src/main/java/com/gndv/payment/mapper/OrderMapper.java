@@ -14,7 +14,7 @@ public interface OrderMapper {
     @Select("SELECT o.order_id, o.order_uid, o.buyer_id, o.seller_id, o.item_name, o.price, o.payment_id, " +
             "b.member_id AS buyer_id, b.nickname AS buyer_name, b.email AS buyer_email, b.phone AS buyer_phone, " +
             "s.member_id AS seller_id, s.nickname AS seller_name, s.email AS seller_email, s.phone AS seller_phone, " +
-            "p.payment_id, p.price AS payment_price, p.status AS payment_status, p.payment_uid " +
+            "p.payment_id, p.price AS payment_price, p.status AS payment_status, p.payment_uid, p.member_id AS payment_member_id " +
             "FROM Orders o " +
             "JOIN Member b ON o.buyer_id = b.member_id " +
             "JOIN Member s ON o.seller_id = s.member_id " +
@@ -29,6 +29,7 @@ public interface OrderMapper {
             @Result(property = "payment.price", column = "payment_price"),
             @Result(property = "payment.status", column = "payment_status"),
             @Result(property = "payment.payment_uid", column = "payment_uid"),
+            @Result(property = "payment.member_id", column = "payment_member_id"),
             @Result(property = "buyer.member_id", column = "buyer_id"),
             @Result(property = "buyer.nickname", column = "buyer_name"),
             @Result(property = "buyer.email", column = "buyer_email"),

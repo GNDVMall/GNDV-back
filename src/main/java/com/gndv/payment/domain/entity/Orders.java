@@ -1,6 +1,7 @@
 package com.gndv.payment.domain.entity;
 
 import com.gndv.member.domain.entity.Member;
+import com.gndv.payment.constain.PaymentStatus;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -30,7 +31,8 @@ public class Orders {
         private Long payment_id;
         private Long price;
         private String status;
+        private PaymentStatus payment_status;
         private String payment_uid;
-        private Long member_id;
+        private Long member_id;  // Included member_id
     }
 }
