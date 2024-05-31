@@ -1,6 +1,8 @@
 package com.gndv.chat.controller;
 
 import com.gndv.chat.domain.dto.request.ChatRoomCreateRequest;
+import com.gndv.chat.domain.dto.response.ChatRoomListResponse;
+import com.gndv.chat.domain.dto.response.ChatRoomResponse;
 import com.gndv.chat.service.ChatService;
 import com.gndv.common.CustomResponse;
 import lombok.RequiredArgsConstructor;
@@ -10,12 +12,27 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @Slf4j
 @RequiredArgsConstructor
 @RequestMapping("/api/chat")
 public class ChatController {
     private final ChatService chatService;
+
+    @GetMapping("")
+    @PreAuthorize("isAuthenticated()")
+    public CustomResponse<ChatRoomListResponse> getChatRooms(){
+        log.info("Get ChatRoom list");
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        List<ChatRoomResponse> chatrooms = chatService.getChatRooms(auth.getName());
+
+        return CustomResponse.ok("Get ChatRoom list",
+                ChatRoomListResponse.builder()
+                        .total(chatrooms.size())
+                        .chatRoomResponses(chatrooms).build());
+    }
 
     @PostMapping("")
     @PreAuthorize("#chatRoomCreateRequest.email == authentication.name")
@@ -30,7 +47,7 @@ public class ChatController {
 
     @DeleteMapping("/{chatroom_id}")
     @PreAuthorize("isAuthenticated()")
-    public CustomResponse<Object> deleteUserFromChatroom(@PathVariable Long chatroom_id) throws Exception {
+    public CustomResponse deleteUserFromChatroom(@PathVariable Long chatroom_id) throws Exception {
         log.info("Leave ChatRoom {}", chatroom_id);
         // 현재 로그인한 사용자가 채팅방을 떠나야함
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
