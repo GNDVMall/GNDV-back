@@ -1,5 +1,8 @@
 package com.gndv.payment.controller;
 
+import com.gndv.common.CustomResponse;
+import com.gndv.payment.domain.dto.OrderCreateRequestDTO;
+import com.gndv.payment.domain.dto.OrderResponseDTO;
 import com.gndv.payment.domain.entity.Orders;
 import com.gndv.payment.service.OrderService;
 import com.gndv.product.domain.dto.request.ProductInsertRequest;
@@ -7,16 +10,12 @@ import com.gndv.product.service.ProductService;
 import com.gndv.member.domain.dto.MemberContext;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
 
 @RestController
 @RequiredArgsConstructor
@@ -28,75 +27,128 @@ public class OrderController {
     private final ProductService productService;
 
     @GetMapping("/order")
-    public ResponseEntity<?> order(@RequestParam(name = "message", required = false) String message,
-                                   @RequestParam(name = "order_uid", required = false) String orderUid) {
-
-        Map<String, Object> response = new HashMap<>();
-        response.put("message", message != null ? message : "");
-        response.put("orderUid", orderUid != null ? orderUid : "");
-
-        return ResponseEntity.ok().body(response);
+    public CustomResponse<OrderResponseDTO> order(@RequestParam(name = "order_uid") String orderUid) {
+        Orders order = orderService.findOrderAndPaymentAndMember(orderUid);
+        OrderResponseDTO response = OrderResponseDTO.builder()
+                .order_uid(order.getOrder_uid())
+                .item_name(order.getItem_name())
+                .price(order.getPrice())
+                .buyer_name(order.getBuyer().getNickname())
+                .buyer_email(order.getBuyer().getEmail())
+                .buyer_tel(order.getBuyer().getPhone())
+                .buyer_postcode("123-456") // 임의의 우편번호 값
+                .build();
+        return CustomResponse.ok("주문을 성공적으로 조회했습니다.", response);
     }
 
     @GetMapping("/order/selectProduct")
-    public ResponseEntity<?> selectProduct(@RequestParam("product_id") Long productId) {
+    public CustomResponse<ProductInsertRequest> selectProduct(@RequestParam("product_id") Long productId) {
         ProductInsertRequest product = productService.findProductInsertRequestById(productId);
         log.info("선택된 상품 = {}", product);
-        return ResponseEntity.ok().body(product);
+        return CustomResponse.ok("상품을 성공적으로 조회했습니다.", product);
     }
 
     @PostMapping("/order")
-    public ResponseEntity<?> createOrder(@RequestParam("product_id") Long productId) {
-
+    public CustomResponse<OrderResponseDTO> createOrder(@RequestBody OrderCreateRequestDTO orderRequest) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         MemberContext memberContext = (MemberContext) authentication.getPrincipal();
         Long buyerId = memberContext.getMemberDTO().getMember_id();
 
-        ProductInsertRequest product = productService.findProductInsertRequestById(productId);
-        Long sellerId = product.getMember_id();
-
-        log.info("받은 주문 파라미터: buyer_id={}, seller_id={}, product_id={}, price={}, item_name={}",
-                buyerId, sellerId, product.getItem_id(), product.getPrice(), product.getTitle());
+        log.info("받은 주문 파라미터: buyer_id={}, product_id={}", buyerId, orderRequest.getProduct_id());
 
         try {
-            Orders order = orderService.createOrder(buyerId, sellerId, product.getPrice(), product.getTitle());
-
+            Orders order = orderService.createOrder(buyerId, orderRequest.getProduct_id());
             if (order != null) {
                 String encodedOrderUid = URLEncoder.encode(order.getOrder_uid(), StandardCharsets.UTF_8);
-                return ResponseEntity.ok().body(Map.of("orderUid", encodedOrderUid));
+                OrderResponseDTO response = OrderResponseDTO.builder()
+                        .order_uid(encodedOrderUid)
+                        .item_name(order.getItem_name())
+                        .price(order.getPrice())
+                        .buyer_name(order.getBuyer().getNickname())
+                        .buyer_email(order.getBuyer().getEmail())
+                        .buyer_tel(order.getBuyer().getPhone())
+                        .buyer_postcode("123-456")
+                        .build();
+                return CustomResponse.ok("주문이 성공적으로 생성되었습니다.", response);
             } else {
-                String message = "주문 실패";
-                String encodedMessage = URLEncoder.encode(message, StandardCharsets.UTF_8);
-                return ResponseEntity.badRequest().body(Map.of("message", encodedMessage));
+                return CustomResponse.failure("주문 생성 실패");
             }
         } catch (Exception e) {
-            log.error("Order creation failed", e);
-            return ResponseEntity.status(500).body(Map.of("error", e.getMessage()));
+            log.error("주문 생성 실패", e);
+            return CustomResponse.error("주문 생성 실패: " + e.getMessage());
         }
     }
 
     @GetMapping("/order/payment")
-    public ResponseEntity<?> payment(@RequestParam("order_uid") String orderUid) {
+    public CustomResponse<OrderResponseDTO> payment(@RequestParam("order_uid") String orderUid) {
         try {
-            Optional<Orders> optionalOrder = Optional.ofNullable(orderService.findOrderAndPaymentAndMember(orderUid));
+            Orders order = orderService.findOrderAndPaymentAndMember(orderUid);
+            OrderResponseDTO response = OrderResponseDTO.builder()
+                    .order_uid(order.getOrder_uid())
+                    .item_name(order.getItem_name())
+                    .price(order.getPrice())
+                    .buyer_name(order.getBuyer().getNickname())
+                    .buyer_email(order.getBuyer().getEmail())
+                    .buyer_tel(order.getBuyer().getPhone())
+                    .buyer_postcode("123-456")
+                    .build();
 
-            if (optionalOrder.isPresent()) {
-                Orders order = optionalOrder.get();
-                Map<String, Object> response = new HashMap<>();
-                response.put("order_uid", order.getOrder_uid());
-                response.put("item_name", order.getItem_name());
-                response.put("price", order.getPrice());
-                response.put("buyer_name", order.getBuyer().getNickname());
-                response.put("buyer_email", order.getBuyer().getEmail());
-                response.put("buyer_tel", order.getBuyer().getPhone());
-                response.put("buyer_postcode", "123-456"); // 임의의 우편번호 값
-
-                return ResponseEntity.ok().body(response);
-            } else {
-                return ResponseEntity.badRequest().body(Map.of("error", "Order not found"));
+            if (order.getPayment() != null) {
+                response.setPaymentStatus(order.getPayment().getStatus());
+                response.setPaymentPrice(order.getPayment().getPrice());
             }
+
+            return CustomResponse.ok("주문 결제 정보를 성공적으로 조회했습니다.", response);
         } catch (IllegalArgumentException e) {
-            return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
+            return CustomResponse.failure("주문을 찾을 수 없습니다: " + e.getMessage());
+        }
+    }
+
+    @PutMapping("/order/{order_uid}")
+    public CustomResponse<OrderResponseDTO> updateOrder(@PathVariable("order_uid") String orderUid,
+                                                        @RequestBody OrderCreateRequestDTO orderRequest) {
+        try {
+            Orders existingOrder = orderService.findOrderAndPaymentAndMember(orderUid);
+
+            Orders updatedOrder = Orders.builder()
+                    .order_id(existingOrder.getOrder_id())
+                    .order_uid(existingOrder.getOrder_uid())
+                    .buyer_id(existingOrder.getBuyer_id())
+                    .seller_id(existingOrder.getSeller_id())
+                    .price(orderRequest.getPrice())
+                    .item_name(orderRequest.getItem_name())
+                    .payment(existingOrder.getPayment())
+                    .buyer(existingOrder.getBuyer())
+                    .seller(existingOrder.getSeller())
+                    .build();
+
+            orderService.updateOrder(updatedOrder);
+
+            OrderResponseDTO response = OrderResponseDTO.builder()
+                    .order_uid(updatedOrder.getOrder_uid())
+                    .item_name(updatedOrder.getItem_name())
+                    .price(updatedOrder.getPrice())
+                    .buyer_name(updatedOrder.getBuyer().getNickname())
+                    .buyer_email(updatedOrder.getBuyer().getEmail())
+                    .buyer_tel(updatedOrder.getBuyer().getPhone())
+                    .buyer_postcode("123-456")
+                    .build();
+
+            return CustomResponse.ok("주문이 성공적으로 업데이트되었습니다.", response);
+        } catch (Exception e) {
+            log.error("주문 업데이트 실패", e);
+            return CustomResponse.error("주문 업데이트 실패: " + e.getMessage());
+        }
+    }
+
+    @DeleteMapping("/order/{order_uid}")
+    public CustomResponse<String> deleteOrder(@PathVariable("order_uid") String orderUid) {
+        try {
+            orderService.deleteOrder(orderUid);
+            return CustomResponse.ok("주문이 성공적으로 삭제되었습니다.");
+        } catch (Exception e) {
+            log.error("주문 삭제 실패", e);
+            return CustomResponse.error("주문 삭제 실패: " + e.getMessage());
         }
     }
 }

@@ -1,6 +1,7 @@
 package com.gndv.member.domain.dto;
 
 import lombok.Data;
+import lombok.Getter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
@@ -11,6 +12,7 @@ import java.util.List;
 @Data
 public class MemberContext implements UserDetails, Serializable {
 
+    @Getter
     private MemberDTO memberDTO;
     private final List<GrantedAuthority> roles;
 
@@ -53,6 +55,5 @@ public class MemberContext implements UserDetails, Serializable {
     public boolean isEnabled() {
         return true;
     }
-
 
 }

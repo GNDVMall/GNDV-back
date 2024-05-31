@@ -1,12 +1,10 @@
 package com.gndv.payment.service;
 
-import com.gndv.member.domain.entity.Member;
 import com.gndv.payment.domain.entity.Orders;
 
 public interface OrderService {
-    Orders autoOrder(Member member);
-
-    Orders createOrder(Long buyerId, Long sellerId, Long price, String itemName);
-
+    Orders createOrder(Long buyerId, Long productId);
     Orders findOrderAndPaymentAndMember(String orderUid);
+    void updateOrder(Orders order);
+    void deleteOrder(String orderUid);
 }
