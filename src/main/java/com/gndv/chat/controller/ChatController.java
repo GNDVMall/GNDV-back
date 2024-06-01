@@ -41,6 +41,7 @@ public class ChatController {
     }
 
     @GetMapping("/{chatrooom_id}")
+    @PreAuthorize("isAuthenticated()")
     public CustomResponse<ChatRoomDetailResponse> getChatRoom(@PathVariable Long chatrooom_id){
         log.info("Get a ChatRoom");
 
