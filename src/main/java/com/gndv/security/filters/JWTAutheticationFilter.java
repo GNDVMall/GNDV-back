@@ -12,8 +12,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
-import org.springframework.security.core.authority.mapping.GrantedAuthoritiesMapper;
-import org.springframework.security.core.authority.mapping.NullAuthoritiesMapper;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.OncePerRequestFilter;
 
@@ -25,8 +23,6 @@ public class JWTAutheticationFilter extends OncePerRequestFilter {
     private final JwtUtil jwtUtil;
     private final MemberMapper memberMapper;
     private final ModelMapper modelMapper;
-
-    private GrantedAuthoritiesMapper authoritiesMapper = new NullAuthoritiesMapper();
 
     private final String NO_CHECK_URL = "/api/v2/login";
 
@@ -72,7 +68,15 @@ public class JWTAutheticationFilter extends OncePerRequestFilter {
 
     private void checkRefreshTokenAndReIssueAccessToken(HttpServletResponse response, String refreshToken) {
         memberMapper.findByRefreshToken(refreshToken)
-                .ifPresent(member -> jwtUtil.sendAccessToken(response, jwtUtil.createAccessToken(member.getEmail()))
-        );
+                .ifPresent(member -> {
+                    String newAccessToken = jwtUtil.createAccessToken(member.getEmail());
+                    jwtUtil.sendAccessToken(response, newAccessToken);
+
+                    if (jwtUtil.isTokenCloseToExpiry(refreshToken)) {
+                        String newRefreshToken = jwtUtil.createRefreshToken();
+                        jwtUtil.updateRefreshToken(member.getEmail(), newRefreshToken);
+                        jwtUtil.sendRefreshToken(response, newRefreshToken);
+                    }
+                });
     }
 }

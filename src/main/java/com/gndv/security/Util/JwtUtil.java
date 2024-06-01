@@ -91,6 +91,15 @@ public class JwtUtil {
         tokenMap.put(ACCESS_TOKEN_SUBJECT, accessToken);
     }
 
+    public void sendRefreshToken(HttpServletResponse response, String refreshToken) {
+        response.setStatus(HttpServletResponse.SC_OK);
+
+        setRefreshTokenHeader(response, refreshToken);
+
+        Map<String, String> tokenMap = new HashMap<>();
+        tokenMap.put(REFRESH_TOKEN_SUBJECT, refreshToken);
+    }
+
     public Optional<String> extractAccessToken(HttpServletRequest request) {
         return Optional.ofNullable(request.getHeader(accessHeader))
                 .filter(accessToken -> accessToken.startsWith(BEARER))
@@ -128,6 +137,16 @@ public class JwtUtil {
             JWT.require(Algorithm.HMAC512(secret)).build()
                     .verify(token);
             return true;
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            return false;
+        }
+    }
+
+    public boolean isTokenCloseToExpiry(String token) {
+        try {
+            Date expiresAt = JWT.require(Algorithm.HMAC512(secret)).build().verify(token).getExpiresAt();
+            return expiresAt != null && expiresAt.before(new Date(System.currentTimeMillis() + refreshTokenValidityInSeconds / 2 * 1000));
         } catch (Exception e) {
             log.error(e.getMessage());
             return false;

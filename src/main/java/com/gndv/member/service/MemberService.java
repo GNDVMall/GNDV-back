@@ -5,6 +5,8 @@ import com.gndv.member.domain.dto.JoinRequest;
 import com.gndv.member.domain.entity.Member;
 import com.gndv.member.mapper.MemberMapper;
 import lombok.RequiredArgsConstructor;
+import org.apache.ibatis.annotations.Param;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -35,7 +37,8 @@ public class MemberService {
     }
 
     @Transactional
-    public void editMember(Long member_id, EditRequest request) {
+    @PreAuthorize("#email == authentication.name")
+    public void editMember(Long member_id, @Param("email") String email, EditRequest request) {
         String encodedPassword = null;
         if (request.getPassword() != null) {
             encodedPassword = passwordEncoder.encode(request.getPassword());
@@ -45,7 +48,8 @@ public class MemberService {
     }
 
     @Transactional
-    public void removeMember(Long member_id) {
+    @PreAuthorize("#email == authentication.name")
+    public void removeMember(Long member_id, @Param("email") String email) {
         memberMapper.delete(member_id);
     }
 }

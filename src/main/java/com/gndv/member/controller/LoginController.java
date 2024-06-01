@@ -2,6 +2,7 @@ package com.gndv.member.controller;
 
 import com.gndv.common.CustomResponse;
 import com.gndv.member.domain.dto.LoginRequest;
+import com.gndv.security.Util.JwtUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -18,6 +19,8 @@ import org.springframework.web.bind.annotation.*;
 @Slf4j
 public class LoginController {
 
+    private final JwtUtil jwtUtil;
+
     @PostMapping("/v1/login")
     @ResponseBody
     public CustomResponse<LoginRequest> sessionLogin(@RequestBody LoginRequest request) {
@@ -25,7 +28,6 @@ public class LoginController {
     }
 
     @GetMapping("/v1/logout")
-    @PreAuthorize("isAuthenticated()")
     public CustomResponse<Object> sessionLogout(HttpServletRequest request, HttpServletResponse response) {
         Authentication authentication = SecurityContextHolder.getContextHolderStrategy().getContext().getAuthentication();
         log.info("authentication: {}", authentication);
@@ -43,14 +45,21 @@ public class LoginController {
     }
 
     @GetMapping("/v2/logout")
-    @PreAuthorize("isAuthenticated()")
     public CustomResponse<Object> tokenLogout(HttpServletRequest request, HttpServletResponse response) {
-        Authentication authentication = SecurityContextHolder.getContextHolderStrategy().getContext().getAuthentication();
 
+        Authentication authentication = SecurityContextHolder.getContextHolderStrategy().getContext().getAuthentication();
+        log.info("authentication: {}", authentication);
         if (authentication != null) {
             new SecurityContextLogoutHandler().logout(request, response, authentication);
+            String refreshToken = jwtUtil.extractRefreshToken(request).orElse(null);
+            if (refreshToken != null) {
+                String email = jwtUtil.extractEmail(refreshToken).orElse(null);
+                if (email != null) {
+                    jwtUtil.destroyRefreshToken(email);
+                }
+            }
         }
 
-        return CustomResponse.ok("logout", request);
+        return CustomResponse.ok("logout", authentication);
     }
 }
