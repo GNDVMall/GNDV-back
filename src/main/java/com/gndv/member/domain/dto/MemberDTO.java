@@ -36,4 +36,15 @@ public class MemberDTO {
     private boolean is_account_non_locked;
     private boolean is_credentials_non_expired;
     private boolean is_enabled;
+
+    // Jwt
+    private String refreshToken;
+
+    public void updateRefreshToken(String refreshToken) {
+        this.refreshToken = refreshToken;
+    }
+
+    public void destroyRefreshToken() {
+        this.refreshToken = null;
+    }
 }

@@ -1,6 +1,5 @@
 package com.gndv.member.domain.dto;
 
-import lombok.Builder;
 import lombok.Data;
 
 @Data
