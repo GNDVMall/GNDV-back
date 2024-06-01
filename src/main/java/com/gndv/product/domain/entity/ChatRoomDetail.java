@@ -17,5 +17,5 @@ public class ChatRoomDetail {
     private Long rating;
     private String email;
     private ChatUserType chat_user_type;
-    private String[] images;
+    private String images;
 }

@@ -48,6 +48,7 @@ public class ChatController {
         ChatRoomDetail chatroom = chatService.getChatRoom(chatrooom_id, auth.getName());
 
         ChatRoomDetailResponse chatRoomDetailResponse = modelMapper.map(chatroom, ChatRoomDetailResponse.class);
+        chatRoomDetailResponse.setImages(chatroom.getImages());
 
         return CustomResponse.ok("Get ChatRoom", chatRoomDetailResponse);
     }
