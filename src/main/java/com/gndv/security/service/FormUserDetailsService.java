@@ -29,6 +29,7 @@ public class FormUserDetailsService implements UserDetailsService {
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
 
         Optional<Member> memberOptional = memberMapper.findByEmail(email);
+
         if (memberOptional.isEmpty()) {
             throw new UsernameNotFoundException("No user found with username: " + email);
         }

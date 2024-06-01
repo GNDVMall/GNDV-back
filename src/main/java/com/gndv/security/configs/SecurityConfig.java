@@ -34,7 +34,6 @@ public class SecurityConfig {
     private final RestAuthenticationFailureHandler restFailureHandler;
     private final JwtAuthenticationSuccessHandler jwtSuccessHandler;
     private final JwtAuthenticationFailureHandler jwtFailureHandler;
-
     private final CorsConfigurationSource corsConfigurationSource;
 
     @Bean

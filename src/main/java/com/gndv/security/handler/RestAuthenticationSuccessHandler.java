@@ -35,9 +35,11 @@ public class RestAuthenticationSuccessHandler implements AuthenticationSuccessHa
 
     protected final void clearAuthenticationAttributes(HttpServletRequest request) {
         HttpSession session = request.getSession(false);
+
         if (session == null) {
             return;
         }
+
         session.removeAttribute(WebAttributes.AUTHENTICATION_EXCEPTION);
     }
 }

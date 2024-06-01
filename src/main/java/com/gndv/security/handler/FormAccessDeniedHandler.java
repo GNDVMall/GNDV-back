@@ -20,6 +20,7 @@ public class FormAccessDeniedHandler implements AccessDeniedHandler {
 
     @Override
     public void handle(HttpServletRequest request, HttpServletResponse response, AccessDeniedException accessDeniedException) throws IOException {
+
         String deniedUrl = errorPage + "?exception=" + accessDeniedException.getMessage();
         redirectStrategy.sendRedirect(request, response, deniedUrl);
     }

@@ -18,6 +18,7 @@ public class FormAuthenticationFailureHandler extends SimpleUrlAuthenticationFai
 
     @Override
     public void onAuthenticationFailure(final HttpServletRequest request, final HttpServletResponse response, final AuthenticationException exception) throws IOException, ServletException {
+
         String errorMessage = "Invalid Username or Password";
 
         if (exception instanceof BadCredentialsException) {

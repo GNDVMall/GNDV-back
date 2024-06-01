@@ -113,6 +113,7 @@ public class JwtUtil {
     }
 
     public Optional<String> extractEmail(String accessToken) {
+
         try {
             return Optional.ofNullable(
                     JWT.require(Algorithm.HMAC512(secret)).build()
@@ -133,6 +134,7 @@ public class JwtUtil {
     }
 
     public boolean isTokenValid(String token) {
+
         try {
             JWT.require(Algorithm.HMAC512(secret)).build()
                     .verify(token);
@@ -144,6 +146,7 @@ public class JwtUtil {
     }
 
     public boolean isTokenCloseToExpiry(String token) {
+
         try {
             Date expiresAt = JWT.require(Algorithm.HMAC512(secret)).build().verify(token).getExpiresAt();
             return expiresAt != null && expiresAt.before(new Date(System.currentTimeMillis() + refreshTokenValidityInSeconds / 2 * 1000));

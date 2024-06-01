@@ -22,6 +22,7 @@ public class MemberService {
 
     @Transactional
     public void createMember(JoinRequest request) {
+
         String encodedPassword = passwordEncoder.encode(request.getPassword());
 
         Member member = Member.builder()
@@ -39,7 +40,9 @@ public class MemberService {
     @Transactional
     @PreAuthorize("#email == authentication.name")
     public void editMember(Long member_id, @Param("email") String email, EditRequest request) {
+
         String encodedPassword = null;
+
         if (request.getPassword() != null) {
             encodedPassword = passwordEncoder.encode(request.getPassword());
         }

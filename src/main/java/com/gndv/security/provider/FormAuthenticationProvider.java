@@ -22,6 +22,7 @@ public class FormAuthenticationProvider implements AuthenticationProvider {
 
     @Override
     public Authentication authenticate(Authentication authentication) throws AuthenticationException {
+
         String email = authentication.getName();
         String password = (String) authentication.getCredentials();
 
@@ -32,6 +33,7 @@ public class FormAuthenticationProvider implements AuthenticationProvider {
         }
 
         String secretKey = ((FormWebAuthenticationDetails) authentication.getDetails()).getSecretKey();
+
         if (secretKey == null || !secretKey.equals("secret")) {
             throw new SecretException("Invalid Secret");
         }

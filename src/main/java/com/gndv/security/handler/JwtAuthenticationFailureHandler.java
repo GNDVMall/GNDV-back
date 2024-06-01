@@ -27,6 +27,7 @@ public class JwtAuthenticationFailureHandler implements AuthenticationFailureHan
             mapper.writeValue(response.getWriter(), "Invalid username or password");
 
         }
+
         mapper.writeValue(response.getWriter(), "Authentication failed");
     }
 }
