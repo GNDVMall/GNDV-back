@@ -22,7 +22,6 @@ import org.springframework.web.cors.CorsConfigurationSource;
 
 @Configuration
 @EnableWebSecurity
-@EnableMethodSecurity
 @RequiredArgsConstructor
 public class SecurityConfig {
 
@@ -52,9 +51,9 @@ public class SecurityConfig {
                         .permitAll())
                 .authenticationProvider(authenticationProvider)
                 .exceptionHandling(exception -> exception
-                        .accessDeniedHandler(new FormAccessDeniedHandler("/denied")))
+                        .accessDeniedHandler(new FormAccessDeniedHandler("/denied"))
+                )
         ;
-
         return http.build();
     }
 

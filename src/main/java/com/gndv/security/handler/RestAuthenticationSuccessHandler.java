@@ -17,7 +17,6 @@ import org.springframework.stereotype.Component;
 import java.io.IOException;
 
 @Component("restSuccessHandler")
-@RequiredArgsConstructor
 public class RestAuthenticationSuccessHandler implements AuthenticationSuccessHandler {
 
     @Override
@@ -33,7 +32,6 @@ public class RestAuthenticationSuccessHandler implements AuthenticationSuccessHa
 
         clearAuthenticationAttributes(request);
     }
-
 
     protected final void clearAuthenticationAttributes(HttpServletRequest request) {
         HttpSession session = request.getSession(false);

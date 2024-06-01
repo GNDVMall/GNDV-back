@@ -13,17 +13,18 @@ import org.springframework.security.web.authentication.logout.SecurityContextLog
 import org.springframework.web.bind.annotation.*;
 
 @RestController
+@RequestMapping("/api")
 @RequiredArgsConstructor
 @Slf4j
 public class LoginController {
 
-    @PostMapping("/api/v1/login")
+    @PostMapping("/v1/login")
     @ResponseBody
     public CustomResponse<LoginRequest> sessionLogin(@RequestBody LoginRequest request) {
         return CustomResponse.ok("LoginRequest", request);
     }
 
-    @GetMapping("/api/v1/logout")
+    @GetMapping("/v1/logout")
     @PreAuthorize("isAuthenticated()")
     public CustomResponse<Object> sessionLogout(HttpServletRequest request, HttpServletResponse response) {
         Authentication authentication = SecurityContextHolder.getContextHolderStrategy().getContext().getAuthentication();
@@ -35,21 +36,21 @@ public class LoginController {
         return CustomResponse.ok("logout", null);
     }
 
-    @PostMapping("/api/v2/login")
+    @PostMapping("/v2/login")
     @ResponseBody
     public CustomResponse<LoginRequest> tokenLogin(@RequestBody LoginRequest request) {
         return CustomResponse.ok("LoginRequest", request);
     }
 
-    @GetMapping("/api/v2/logout")
+    @GetMapping("/v2/logout")
     @PreAuthorize("isAuthenticated()")
     public CustomResponse<Object> tokenLogout(HttpServletRequest request, HttpServletResponse response) {
         Authentication authentication = SecurityContextHolder.getContextHolderStrategy().getContext().getAuthentication();
-        log.info("authentication: {}", authentication);
+
         if (authentication != null) {
             new SecurityContextLogoutHandler().logout(request, response, authentication);
         }
 
-        return CustomResponse.ok("logout", null);
+        return CustomResponse.ok("logout", request);
     }
 }
