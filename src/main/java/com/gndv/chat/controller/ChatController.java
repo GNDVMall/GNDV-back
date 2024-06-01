@@ -1,12 +1,17 @@
 package com.gndv.chat.controller;
 
 import com.gndv.chat.domain.dto.request.ChatRoomCreateRequest;
+import com.gndv.chat.domain.dto.response.ChatRoomDetailResponse;
 import com.gndv.chat.domain.dto.response.ChatRoomListResponse;
 import com.gndv.chat.domain.dto.response.ChatRoomResponse;
 import com.gndv.chat.service.ChatService;
 import com.gndv.common.CustomResponse;
+import com.gndv.member.domain.dto.MemberDTO;
+import com.gndv.product.domain.entity.ChatRoomDetail;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.modelmapper.ModelMapper;
+import org.springframework.boot.Banner;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -20,6 +25,7 @@ import java.util.List;
 @RequestMapping("/api/chat")
 public class ChatController {
     private final ChatService chatService;
+    private final ModelMapper modelMapper;
 
     @GetMapping("")
     @PreAuthorize("isAuthenticated()")
@@ -32,6 +38,18 @@ public class ChatController {
                 ChatRoomListResponse.builder()
                         .total(chatrooms.size())
                         .chatRoomResponses(chatrooms).build());
+    }
+
+    @GetMapping("/{chatrooom_id}")
+    public CustomResponse<ChatRoomDetailResponse> getChatRoom(@PathVariable Long chatrooom_id){
+        log.info("Get a ChatRoom");
+
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        ChatRoomDetail chatroom = chatService.getChatRoom(chatrooom_id, auth.getName());
+
+        ChatRoomDetailResponse chatRoomDetailResponse = modelMapper.map(chatroom, ChatRoomDetailResponse.class);
+
+        return CustomResponse.ok("Get ChatRoom", chatRoomDetailResponse);
     }
 
     @PostMapping("")

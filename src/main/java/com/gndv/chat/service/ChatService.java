@@ -1,8 +1,10 @@
 package com.gndv.chat.service;
 
 import com.gndv.chat.domain.dto.request.ChatRoomCreateRequest;
+import com.gndv.chat.domain.dto.response.ChatRoomDetailResponse;
 import com.gndv.chat.domain.dto.response.ChatRoomResponse;
 import com.gndv.chat.mapper.ChatMapper;
+import com.gndv.product.domain.entity.ChatRoomDetail;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -27,5 +29,10 @@ public class ChatService {
     public List<ChatRoomResponse> getChatRooms(String name) {
         List<ChatRoomResponse> list = chatMapper.findAllbyName(name);
         return list;
+    }
+
+    public ChatRoomDetail getChatRoom(Long chatroom_id, String name) {
+        ChatRoomDetail chatRoomDetailResponse = chatMapper.findByIdWithName(chatroom_id, name);
+        return chatRoomDetailResponse;
     }
 }
