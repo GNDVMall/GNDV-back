@@ -2,7 +2,6 @@ package com.gndv.member.mapper;
 
 import com.gndv.member.domain.entity.Member;
 import org.apache.ibatis.annotations.*;
-import org.springframework.security.core.parameters.P;
 
 import java.util.List;
 import java.util.Optional;
