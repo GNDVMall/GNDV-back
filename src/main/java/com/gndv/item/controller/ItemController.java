@@ -5,15 +5,12 @@ import com.gndv.item.domain.dto.response.ItemDetailResponse;
 import com.gndv.item.service.ItemService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
-@RequestMapping("/item")
+@RequestMapping("/api/v2/items")
 @RequiredArgsConstructor
 @Slf4j
 public class ItemController {
