@@ -5,9 +5,8 @@ import lombok.Data;
 
 @Data
 public class ChatRoomCreateRequest {
-    private String email; // 검증용
-    private Long member_id;
-    private Long seller_id;
+    private String email;
+    private String seller;
     private Long product_id;
     private Long item_id;
     private Long chatRoomId;

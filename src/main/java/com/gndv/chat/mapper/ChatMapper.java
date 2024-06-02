@@ -2,7 +2,7 @@ package com.gndv.chat.mapper;
 
 import com.gndv.chat.domain.dto.request.ChatRoomCreateRequest;
 import com.gndv.chat.domain.dto.response.ChatRoomResponse;
-import com.gndv.product.domain.entity.ChatRoomDetail;
+import com.gndv.chat.domain.entity.ChatRoomDetail;
 import org.apache.ibatis.annotations.*;
 import org.apache.ibatis.mapping.StatementType;
 
@@ -10,7 +10,7 @@ import java.util.List;
 
 @Mapper
 public interface ChatMapper {
-    @Select("{ CALL CreateChatRoomAndUsers(#{product_id, mode=IN, jdbcType=BIGINT}, #{item_id, mode=IN,jdbcType=BIGINT }, #{seller_id, mode=IN,jdbcType=BIGINT}, #{member_id, mode=IN,jdbcType=BIGINT }, #{chatRoomId, mode=OUT,jdbcType=BIGINT }) }")
+    @Select("{ CALL CreateChatRoomAndUsers(#{product_id, mode=IN, jdbcType=BIGINT}, #{item_id, mode=IN,jdbcType=BIGINT }, #{seller, mode=IN,jdbcType=VARCHAR}, #{email, mode=IN,jdbcType=VARCHAR }, #{chatRoomId, mode=OUT,jdbcType=BIGINT }) }")
     @Options(statementType = StatementType.CALLABLE)
     void createChatRoom(ChatRoomCreateRequest chatRoomCreateRequest);
 

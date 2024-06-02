@@ -1,4 +1,4 @@
-package com.gndv.product.domain.entity;
+package com.gndv.chat.domain.entity;
 
 import com.gndv.constant.ChatUserType;
 import lombok.Getter;

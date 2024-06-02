@@ -2,7 +2,6 @@ package com.gndv.chat.domain.dto.response;
 
 import com.gndv.constant.ChatUserType;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
