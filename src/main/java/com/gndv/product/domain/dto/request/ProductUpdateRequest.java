@@ -8,7 +8,7 @@ import lombok.Setter;
 @Getter
 @Setter
 public class ProductUpdateRequest {
-    private Long member_id; // 판매자 id
+    private String email;
     private Long product_id;
     private String title;
     private Long price;
