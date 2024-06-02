@@ -6,7 +6,9 @@ import com.gndv.product.domain.dto.response.ProductDetailResponse;
 import com.gndv.product.domain.dto.response.ProductResponse;
 import com.gndv.product.mapper.ProductMapper;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -30,17 +32,24 @@ public class ProductService {
         return findList;
     }
 
+
+    @Transactional
+    @PreAuthorize("isAuthenticated()")
     public void insertProduct(ProductInsertRequest request) {
         productMapper.insert(request);
     }
 
+    @Transactional
+    @PreAuthorize("#request.email == authentication.name")
     public int updateProduct(ProductUpdateRequest request) {
         int updated = productMapper.update(request);
         return updated;
     }
 
-    public int deleteProduct(Long product_id, Long member_id) {
-        int update = productMapper.delete(product_id, member_id);
+    @Transactional
+    @PreAuthorize("isAuthenticated()")
+    public int deleteProduct(Long product_id, String email) {
+        int update = productMapper.delete(product_id, email);
         return update;
     }
 }
