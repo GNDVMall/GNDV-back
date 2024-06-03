@@ -11,9 +11,9 @@ import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerCo
 @EnableWebSocketMessageBroker
 @Slf4j
 public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
+
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
-        log.info("경로=====");
         registry.addEndpoint("/gndv-websocket")
                 .setAllowedOrigins("http://localhost:5173");
     }
