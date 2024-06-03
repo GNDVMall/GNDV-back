@@ -21,6 +21,7 @@ public class FormAuthenticationSuccessHandler extends SimpleUrlAuthenticationSuc
 
     @Override
     public void onAuthenticationSuccess(final HttpServletRequest request, final HttpServletResponse response, final Authentication authentication) throws IOException {
+
         setDefaultTargetUrl("/");
         SavedRequest savedRequest = requestCache.getRequest(request, response);
 

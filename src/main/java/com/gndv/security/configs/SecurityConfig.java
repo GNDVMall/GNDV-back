@@ -3,6 +3,7 @@ package com.gndv.security.configs;
 
 import com.gndv.security.dsl.RestApiDsl;
 import com.gndv.security.entrypoint.RestAuthenticationEntryPoint;
+import com.gndv.security.filters.JWTAuthenticationFilter;
 import com.gndv.security.handler.*;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
@@ -20,6 +21,7 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.WebAuthenticationDetails;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfigurationSource;
 
 @Configuration
@@ -37,6 +39,7 @@ public class SecurityConfig {
     private final RestAuthenticationFailureHandler restFailureHandler;
     private final JwtAuthenticationSuccessHandler jwtSuccessHandler;
     private final JwtAuthenticationFailureHandler jwtFailureHandler;
+    private final JWTAuthenticationFilter jwtAuthenticationFilter;
 
     private final CorsConfigurationSource corsConfigurationSource;
 
@@ -89,7 +92,7 @@ public class SecurityConfig {
 
     @Bean
     @Order(1)
-    public SecurityFilterChain jwtSecurityFilterChain(HttpSecurity http) throws Exception {
+    public SecurityFilterChain jwtTokenSecurityFilterChain(HttpSecurity http) throws Exception {
 
         AuthenticationManagerBuilder authenticationManagerBuilder = http.getSharedObject(AuthenticationManagerBuilder.class);
         authenticationManagerBuilder.authenticationProvider(restAuthenticationProvider);
@@ -100,7 +103,7 @@ public class SecurityConfig {
                 .securityMatcher("/api/v2/**")
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/v2/members/new", "/api/v2/login", "/api/v2/items","/api/v2/items/*"
-                        ,"/api/v2/products/*").permitAll()
+                                ,"/api/v2/products/*").permitAll()
                         .requestMatchers(HttpMethod.GET,"/api/v2/products").permitAll()
                         .anyRequest().authenticated())
                 .csrf(AbstractHttpConfigurer::disable)
@@ -108,6 +111,7 @@ public class SecurityConfig {
                 .exceptionHandling(exception -> exception
                         .authenticationEntryPoint(new RestAuthenticationEntryPoint())
                         .accessDeniedHandler(new JwtAccessDeniedHandler()))
+                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
                 .with(new RestApiDsl<>(), restDsl -> restDsl
                         .restSuccessHandler(jwtSuccessHandler)
                         .restFailureHandler(jwtFailureHandler)

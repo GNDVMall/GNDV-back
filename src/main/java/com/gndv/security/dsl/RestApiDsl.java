@@ -39,13 +39,17 @@ public class RestApiDsl<H extends HttpSecurityBuilder<H>> extends
         getAuthenticationFilter().setSecurityContextRepository(getAuthenticationFilter().getSecurityContextRepository((HttpSecurity) http));
 
         SessionAuthenticationStrategy sessionAuthenticationStrategy = http.getSharedObject(SessionAuthenticationStrategy.class);
+
         if (sessionAuthenticationStrategy != null) {
             getAuthenticationFilter().setSessionAuthenticationStrategy(sessionAuthenticationStrategy);
         }
+
         RememberMeServices rememberMeServices = http.getSharedObject(RememberMeServices.class);
+
         if (rememberMeServices != null) {
             getAuthenticationFilter().setRememberMeServices(rememberMeServices);
         }
+
         http.setSharedObject(RestAuthenticationFilter.class, getAuthenticationFilter());
         http.addFilterBefore(getAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
     }
