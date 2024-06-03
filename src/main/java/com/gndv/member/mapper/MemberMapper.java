@@ -2,7 +2,6 @@ package com.gndv.member.mapper;
 
 import com.gndv.member.domain.entity.Member;
 import org.apache.ibatis.annotations.*;
-import org.springframework.security.core.parameters.P;
 
 import java.util.List;
 import java.util.Optional;
@@ -44,8 +43,11 @@ public interface MemberMapper {
                 @Param("password") String password,
                 @Param("nickname") String nickname,
                 @Param("phone") String phone,
-                @P("introduction") String introduction);
+                @Param("introduction") String introduction);
 
     @Delete("DELETE FROM Member WHERE member_id = #{member_id}")
     void delete(Long member_id);
+
+    @Select("SELECT * FROM Member WHERE refreshToke = #{refreshToke}")
+    Optional<Member> findByRefreshToken(String refreshToke);
 }

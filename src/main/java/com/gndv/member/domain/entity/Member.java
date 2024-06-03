@@ -5,13 +5,12 @@ import com.gndv.constant.Status;
 import lombok.*;
 
 import java.io.Serializable;
-import java.time.LocalDateTime;
 import java.util.Date;
 
 @Getter
 @Builder
 @AllArgsConstructor
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Member implements Serializable {
 
     // Member
@@ -35,4 +34,15 @@ public class Member implements Serializable {
     private boolean is_account_non_locked;
     private boolean is_credentials_non_expired;
     private boolean is_enabled;
+
+    // Jwt
+    private String refreshToken;
+
+    public void updateRefreshToken(String refreshToken) {
+        this.refreshToken = refreshToken;
+    }
+
+    public void destroyRefreshToken() {
+        this.refreshToken = null;
+    }
 }

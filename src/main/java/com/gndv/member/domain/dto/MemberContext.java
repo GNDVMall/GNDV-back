@@ -55,5 +55,8 @@ public class MemberContext implements UserDetails, Serializable {
     public boolean isEnabled() {
         return true;
     }
+<<<<<<< HEAD
 
+=======
+>>>>>>> b6223f4bbf0ca31ad2cac532c7f050b6900eb93f
 }
