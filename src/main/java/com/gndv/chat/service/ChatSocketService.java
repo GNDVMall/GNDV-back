@@ -11,8 +11,6 @@ public class ChatSocketService {
     private final ChatSocketMapper chatSocketMapper;
 
     public int insertMessage(ChatMessageRequest chatMessageRequest) {
-        System.out.println("============서비스===========");
-        System.out.println(chatMessageRequest);
         int updated = chatSocketMapper.insertMessage(chatMessageRequest);
         return updated;
     }

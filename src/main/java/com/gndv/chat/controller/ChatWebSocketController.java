@@ -26,7 +26,7 @@ public class ChatWebSocketController {
         // chat/send/채팅방으로 온 메시지를 구독한 곳으로 보내준다.
         simpMessagingTemplate.convertAndSend("/topic/" + chatroom_id, chatMessageRequest);
 
-//        메시지를 데이터 베이스에 저장한다. -> 추후 개선 필요
+        //        메시지를 데이터 베이스에 저장한다. -> 추후 개선 필요
         chatMessageRequest.setChatroom_id(chatroom_id);
         int updated = chatSocketService.insertMessage(chatMessageRequest);
         if(updated != 1){
