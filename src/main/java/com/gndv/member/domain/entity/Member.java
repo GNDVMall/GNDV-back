@@ -38,10 +38,6 @@ public class Member implements Serializable {
     // Jwt
     private String refreshToken;
 
-    // oauth2
-    private String provider;
-    private String provider_id;
-
     public void updateRefreshToken(String refreshToken) {
         this.refreshToken = refreshToken;
     }
