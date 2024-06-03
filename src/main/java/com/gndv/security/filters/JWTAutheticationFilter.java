@@ -28,7 +28,6 @@ public class JWTAutheticationFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-
         if (request.getRequestURI().equals(NO_CHECK_URL)) {
             filterChain.doFilter(request, response);
             return;
@@ -48,7 +47,6 @@ public class JWTAutheticationFilter extends OncePerRequestFilter {
     }
 
     private void checkAccessTokenAndAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-
         jwtUtil.extractAccessToken(request).filter(jwtUtil::isTokenValid)
                 .ifPresent(accessToken -> jwtUtil.extractEmail(accessToken)
                         .ifPresent(email -> memberMapper.findByEmail(email)
@@ -61,7 +59,6 @@ public class JWTAutheticationFilter extends OncePerRequestFilter {
     }
 
     private void saveAuthentication(Member member) {
-
         MemberContext userDetails = new MemberContext(modelMapper.map(member, MemberDTO.class), null);
 
         RestAuthenticationToken authentication = new RestAuthenticationToken(userDetails, null);
@@ -70,7 +67,6 @@ public class JWTAutheticationFilter extends OncePerRequestFilter {
     }
 
     private void checkRefreshTokenAndReIssueAccessToken(HttpServletResponse response, String refreshToken) {
-
         memberMapper.findByRefreshToken(refreshToken)
                 .ifPresent(member -> {
                     String newAccessToken = jwtUtil.createAccessToken(member.getEmail());

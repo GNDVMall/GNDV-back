@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationDetailsSource;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
@@ -22,6 +23,7 @@ import org.springframework.web.cors.CorsConfigurationSource;
 
 @Configuration
 @EnableWebSecurity
+@EnableMethodSecurity
 @RequiredArgsConstructor
 public class SecurityConfig {
 
@@ -34,6 +36,7 @@ public class SecurityConfig {
     private final RestAuthenticationFailureHandler restFailureHandler;
     private final JwtAuthenticationSuccessHandler jwtSuccessHandler;
     private final JwtAuthenticationFailureHandler jwtFailureHandler;
+
     private final CorsConfigurationSource corsConfigurationSource;
 
     @Bean
@@ -95,7 +98,9 @@ public class SecurityConfig {
                 .cors(cors -> cors.configurationSource(corsConfigurationSource))
                 .securityMatcher("/api/v2/**")
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/v2/members/new", "/api/v2/login").permitAll()
+                        .requestMatchers("/api/v2/members/new", "/api/v2/login", "/api/v2/items","/api/v2/items/*"
+                        ,"/api/v2/products/*").permitAll()
+                        .requestMatchers(HttpMethod.GET,"/api/v2/products").permitAll()
                         .anyRequest().authenticated())
                 .csrf(AbstractHttpConfigurer::disable)
                 .authenticationManager(authenticationManager)
