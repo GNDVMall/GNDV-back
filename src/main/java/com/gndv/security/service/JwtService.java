@@ -38,7 +38,6 @@ public class JwtService {
     private static final String BEARER = "Bearer ";
 
     private final MemberMapper memberMapper;
-    private final ObjectMapper objectMapper;
 
     public String createAccessToken(String email) {
         return JWT.create()
