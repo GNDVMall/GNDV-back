@@ -9,7 +9,7 @@ import lombok.Setter;
 @Getter
 @Setter
 public class ProductInsertRequest {
-    private Long member_id; // 판매자 id
+    private String email;
     private Long item_id; // 생성하는 item id
     private String title;
     private Long price;

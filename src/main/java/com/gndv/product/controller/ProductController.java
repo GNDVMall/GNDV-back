@@ -9,7 +9,8 @@ import com.gndv.product.domain.dto.response.ProductResponse;
 import com.gndv.product.service.ProductService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -17,8 +18,7 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @Slf4j
-@EnableMethodSecurity
-@RequestMapping("/api/products")
+@RequestMapping("/api/v2/products")
 public class ProductController {
     private final ProductService productService;
 
@@ -40,6 +40,8 @@ public class ProductController {
     @PostMapping("")
     public CustomResponse insertProduct(@RequestBody ProductInsertRequest request) {
         log.info("Insert New Product {}", request);
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        request.setEmail(auth.getName());
         productService.insertProduct(request);
         return CustomResponse.ok("Insert new Product", null);
     }
@@ -48,15 +50,17 @@ public class ProductController {
     public CustomResponse<Integer> updateProduct(@RequestBody ProductUpdateRequest request, @PathVariable Long product_id) throws Exception {
         log.info("Update a Product {}", request);
         request.setProduct_id(product_id);
+
         int updated = productService.updateProduct(request);
         if(updated != 1) throw new Exception(); // 나중에 전역 예외 처리 시, 변경할 부분
         return CustomResponse.ok("Update a Product", updated);
     }
 
     @DeleteMapping("/{product_id}")
-    public CustomResponse<Integer> deleteProduct(@PathVariable Long product_id, @RequestParam Long member_id) throws Exception {
+    public CustomResponse<Integer> deleteProduct(@PathVariable Long product_id) throws Exception {
         log.info("Delete a Product");
-        int updated = productService.deleteProduct(product_id, member_id);
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        int updated = productService.deleteProduct(product_id, auth.getName());
         if(updated != 1) throw new Exception(); // 나중에 전역 예외 처리 시, 변경할 부분
         return CustomResponse.ok("Delete a Product", updated);
     }
