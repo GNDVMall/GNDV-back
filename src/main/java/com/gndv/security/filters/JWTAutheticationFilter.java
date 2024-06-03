@@ -4,7 +4,7 @@ import com.gndv.member.domain.dto.MemberContext;
 import com.gndv.member.domain.dto.MemberDTO;
 import com.gndv.member.domain.entity.Member;
 import com.gndv.member.mapper.MemberMapper;
-import com.gndv.security.Util.JwtUtil;
+import com.gndv.security.service.JwtService;
 import com.gndv.security.token.RestAuthenticationToken;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -20,7 +20,7 @@ import java.io.IOException;
 @RequiredArgsConstructor
 public class JWTAutheticationFilter extends OncePerRequestFilter {
 
-    private final JwtUtil jwtUtil;
+    private final JwtService jwtService;
     private final MemberMapper memberMapper;
     private final ModelMapper modelMapper;
 
@@ -33,9 +33,9 @@ public class JWTAutheticationFilter extends OncePerRequestFilter {
             return;
         }
 
-        String refreshToken = jwtUtil
+        String refreshToken = jwtService
                 .extractRefreshToken(request)
-                .filter(jwtUtil::isTokenValid)
+                .filter(jwtService::isTokenValid)
                 .orElse(null);
 
         if (refreshToken != null) {
@@ -47,8 +47,8 @@ public class JWTAutheticationFilter extends OncePerRequestFilter {
     }
 
     private void checkAccessTokenAndAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-        jwtUtil.extractAccessToken(request).filter(jwtUtil::isTokenValid)
-                .ifPresent(accessToken -> jwtUtil.extractEmail(accessToken)
+        jwtService.extractAccessToken(request).filter(jwtService::isTokenValid)
+                .ifPresent(accessToken -> jwtService.extractEmail(accessToken)
                         .ifPresent(email -> memberMapper.findByEmail(email)
                                 .ifPresent(member -> saveAuthentication(member)
                         )
@@ -69,13 +69,13 @@ public class JWTAutheticationFilter extends OncePerRequestFilter {
     private void checkRefreshTokenAndReIssueAccessToken(HttpServletResponse response, String refreshToken) {
         memberMapper.findByRefreshToken(refreshToken)
                 .ifPresent(member -> {
-                    String newAccessToken = jwtUtil.createAccessToken(member.getEmail());
-                    jwtUtil.sendAccessToken(response, newAccessToken);
+                    String newAccessToken = jwtService.createAccessToken(member.getEmail());
+                    jwtService.sendAccessToken(response, newAccessToken);
 
-                    if (jwtUtil.isTokenCloseToExpiry(refreshToken)) {
-                        String newRefreshToken = jwtUtil.createRefreshToken();
-                        jwtUtil.updateRefreshToken(member.getEmail(), newRefreshToken);
-                        jwtUtil.sendRefreshToken(response, newRefreshToken);
+                    if (jwtService.isTokenCloseToExpiry(refreshToken)) {
+                        String newRefreshToken = jwtService.createRefreshToken();
+                        jwtService.updateRefreshToken(member.getEmail(), newRefreshToken);
+                        jwtService.sendRefreshToken(response, newRefreshToken);
                     }
                 });
     }
