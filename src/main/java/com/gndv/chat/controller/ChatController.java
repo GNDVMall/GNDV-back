@@ -4,6 +4,7 @@ import com.gndv.chat.domain.dto.request.ChatRoomCreateRequest;
 import com.gndv.chat.domain.dto.response.ChatRoomDetailResponse;
 import com.gndv.chat.domain.dto.response.ChatRoomListResponse;
 import com.gndv.chat.domain.dto.response.ChatRoomResponse;
+import com.gndv.chat.domain.entity.ChatMessage;
 import com.gndv.chat.domain.entity.ChatRoomDetail;
 import com.gndv.chat.service.ChatService;
 import com.gndv.common.CustomResponse;
@@ -70,5 +71,12 @@ public class ChatController {
             throw new Exception("채팅방 떠나기 실패");
         }
         return CustomResponse.ok("Leave ChatRoom ok");
+    }
+
+    @GetMapping("/{chatrooom_id}/messages")
+    public CustomResponse<Object> getChatRoomMessage(@PathVariable Long chatrooom_id, @RequestParam String email){
+        log.info("Get all ChatMessage");
+        List<ChatMessage> messages = chatService.getChatRoomMessages(chatrooom_id, email);
+        return CustomResponse.ok("Get Messages", messages);
     }
 }
