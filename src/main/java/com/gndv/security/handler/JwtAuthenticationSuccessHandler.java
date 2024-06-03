@@ -3,7 +3,7 @@ package com.gndv.security.handler;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gndv.member.domain.dto.MemberContext;
 import com.gndv.member.mapper.MemberMapper;
-import com.gndv.security.Util.JwtUtil;
+import com.gndv.security.service.JwtService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
@@ -21,7 +21,7 @@ import java.io.IOException;
 @RequiredArgsConstructor
 public class JwtAuthenticationSuccessHandler implements AuthenticationSuccessHandler {
 
-    private final JwtUtil jwtUtil;
+    private final JwtService jwtService;
     private final MemberMapper memberMapper;
 
     @Override
@@ -32,10 +32,10 @@ public class JwtAuthenticationSuccessHandler implements AuthenticationSuccessHan
         MemberContext memberContext = (MemberContext) authentication.getPrincipal();
         String email = memberContext.getMemberDTO().getEmail();
 
-        String accessToken = jwtUtil.createAccessToken(email);
-        String refreshToken = jwtUtil.createRefreshToken();
+        String accessToken = jwtService.createAccessToken(email);
+        String refreshToken = jwtService.createRefreshToken();
 
-        jwtUtil.sendAccessAndRefreshToken(response, accessToken, refreshToken);
+        jwtService.sendAccessAndRefreshToken(response, accessToken, refreshToken);
         memberMapper.findByEmail(email).ifPresent(
                 member -> member.updateRefreshToken(refreshToken)
         );

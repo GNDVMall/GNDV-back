@@ -1,4 +1,4 @@
-package com.gndv.security.Util;
+package com.gndv.security.service;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
@@ -24,7 +24,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 @Setter(value = AccessLevel.PRIVATE)
 @Slf4j
-public class JwtUtil {
+public class JwtService {
 
     @Value("${jwt.secret}") private String secret;
     @Value("${jwt.access.expiration}") private long accessTokenValidityInSeconds;
@@ -38,7 +38,6 @@ public class JwtUtil {
     private static final String BEARER = "Bearer ";
 
     private final MemberMapper memberMapper;
-    private final ObjectMapper objectMapper;
 
     public String createAccessToken(String email) {
         return JWT.create()
