@@ -25,48 +25,43 @@ public class PaymentServiceImpl implements PaymentService {
 
     @Override
     public LocalPayment createPayment(LocalPayRequest request) {
-        Orders order = orderMapper.findOrderAndPaymentAndMember(request.getOrder_uid())
-                .orElseThrow(() -> new IllegalArgumentException("Order not found for order_uid: " + request.getOrder_uid()));
+        String impUid = request.getImp_uid();
 
-        LocalPayment payment = LocalPayment.builder()
-                .price(request.getPayment_price())
-                .status(PaymentStatus.READY) // 초기 상태를 READY로 설정
-                .payment_uid(request.getPayment_uid())
-                .build();
-        paymentMapper.insert(payment);
-
-        // 주문에 결제 정보 업데이트
-        Orders updatedOrder = Orders.builder()
-                .order_id(order.getOrder_id())
-                .order_uid(order.getOrder_uid())
-                .buyer_id(order.getBuyer_id())
-                .seller_id(order.getSeller_id())
-                .price(order.getPrice())
-                .item_name(order.getItem_name())
-                .payment(payment) // 결제 정보 설정
-                .buyer(order.getBuyer())
-                .seller(order.getSeller())
-                .build();
-        orderMapper.update(updatedOrder);
-
-        // Iamport API를 통해 결제 상태를 가져옵니다.
         try {
-            IamportResponse<Payment> iamportResponse = iamportClient.paymentByImpUid(request.getPayment_uid());
+            IamportResponse<Payment> iamportResponse = iamportClient.paymentByImpUid(impUid);
             Payment iamportPayment = iamportResponse.getResponse();
 
             if (iamportPayment != null) {
-                LocalPayment updatedPayment = payment.toBuilder()
+                LocalPayment payment = LocalPayment.builder()
+                        .price((long) iamportPayment.getAmount().intValue())
                         .status(PaymentStatus.valueOf(iamportPayment.getStatus().toUpperCase()))
+                        .payment_uid(impUid)
                         .build();
-                paymentMapper.update(updatedPayment);
+                paymentMapper.insert(payment);
+
+                Orders order = orderMapper.findOrderAndPaymentAndMember(request.getOrder_uid())
+                        .orElseThrow(() -> new IllegalArgumentException("Order not found for order_uid: " + request.getOrder_uid()));
+
+                Orders updatedOrder = Orders.builder()
+                        .order_id(order.getOrder_id())
+                        .order_uid(order.getOrder_uid())
+                        .buyer_id(order.getBuyer_id())
+                        .seller_id(order.getSeller_id())
+                        .price(order.getPrice())
+                        .item_name(order.getItem_name())
+                        .payment(payment)
+                        .buyer(order.getBuyer())
+                        .seller(order.getSeller())
+                        .build();
+                orderMapper.update(updatedOrder);
+
+                return payment;
             } else {
                 throw new IllegalArgumentException("Failed to fetch payment status from Iamport");
             }
         } catch (IamportResponseException | IOException e) {
             throw new IllegalArgumentException("Failed to fetch payment status from Iamport", e);
         }
-
-        return payment;
     }
 
     @Override

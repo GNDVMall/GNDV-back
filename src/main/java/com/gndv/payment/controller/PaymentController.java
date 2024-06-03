@@ -6,19 +6,27 @@ import com.gndv.payment.domain.dto.LocalPayRequest;
 import com.gndv.payment.domain.entity.LocalPayment;
 import com.gndv.payment.service.PaymentService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api/payment")
+@RequestMapping("/api/v2/payment")
 @RequiredArgsConstructor
+@Slf4j
 public class PaymentController {
 
     private final PaymentService paymentService;
 
     @PostMapping
     public CustomResponse<LocalPayment> createPayment(@RequestBody LocalPayRequest request) {
-        LocalPayment payment = paymentService.createPayment(request);
-        return CustomResponse.ok("결제가 성공적으로 생성되었습니다.", payment);
+        try {
+            LocalPayment payment = paymentService.createPayment(request);
+            return CustomResponse.ok("결제가 성공적으로 생성되었습니다.", payment);
+        } catch (Exception e) {
+            log.error("결제 생성 실패", e);
+            return CustomResponse.error("결제 생성 실패: " + e.getMessage());
+        }
     }
 
     @GetMapping("/{payment_id}")
