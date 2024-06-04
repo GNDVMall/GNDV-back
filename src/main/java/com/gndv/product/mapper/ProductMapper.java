@@ -25,4 +25,6 @@ public interface ProductMapper {
 
     @Delete("DELETE FROM Product WHERE product_id = #{product_id} AND member_id = (SELECT member_id FROM Member WHERE email = #{email})")
     int delete(Long product_id, String email);
+
 }
+
