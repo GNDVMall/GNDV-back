@@ -6,6 +6,7 @@ import com.gndv.payment.domain.entity.LocalPayment;
 import com.gndv.payment.domain.entity.Orders;
 import com.gndv.payment.mapper.OrderMapper;
 import com.gndv.payment.mapper.PaymentMapper;
+import com.gndv.payment.service.PaymentService;
 import com.siot.IamportRestClient.IamportClient;
 import com.siot.IamportRestClient.exception.IamportResponseException;
 import com.siot.IamportRestClient.response.IamportResponse;
@@ -77,5 +78,14 @@ public class PaymentServiceImpl implements PaymentService {
     @Override
     public void deletePayment(Long paymentId) {
         paymentMapper.delete(paymentId);
+    }
+
+    @Override
+    public IamportResponse<Payment> paymentByCallback(LocalPayRequest request) {
+        try {
+            return iamportClient.paymentByImpUid(request.getImp_uid());
+        } catch (IamportResponseException | IOException e) {
+            throw new IllegalArgumentException("Failed to validate payment status from Iamport", e);
+        }
     }
 }

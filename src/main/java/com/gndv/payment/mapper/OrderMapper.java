@@ -1,6 +1,8 @@
 package com.gndv.payment.mapper;
 
 import com.gndv.payment.domain.entity.Orders;
+import com.gndv.payment.domain.entity.LocalPayment;
+import com.gndv.payment.domain.entity.OrderList;
 import com.gndv.product.domain.dto.request.ProductInsertWithMemberRequest;
 import org.apache.ibatis.annotations.*;
 
@@ -11,7 +13,15 @@ import java.util.Optional;
 public interface OrderMapper {
 
     @Insert("INSERT INTO Orders (order_uid, buyer_id, seller_id, item_name, price, payment_id) VALUES (#{order_uid}, #{buyer_id}, #{seller_id}, #{item_name}, #{price}, #{payment_id})")
+    @Options(useGeneratedKeys = true, keyProperty = "order_id", keyColumn = "order_id")
     void save(Orders order);
+
+    @Insert("INSERT INTO Gangnum_Payment (price, status, payment_uid, member_id) VALUES (#{price}, #{status}, #{payment_uid}, #{member_id})")
+    @Options(useGeneratedKeys = true, keyProperty = "payment_id", keyColumn = "payment_id")
+    void savePayment(LocalPayment payment);
+
+    @Insert("INSERT INTO Order_List (order_id, payment_id, seller_id, buyer_id) VALUES (#{order_id}, #{payment_id}, #{seller_id}, #{buyer_id})")
+    void saveOrderList(OrderList orderList);
 
     @Select("SELECT o.order_id, o.order_uid, o.buyer_id, o.seller_id, o.item_name, o.price, o.payment_id, " +
             "b.member_id AS buyer_id, b.nickname AS buyer_name, b.email AS buyer_email, b.phone AS buyer_phone, " +
@@ -48,6 +58,7 @@ public interface OrderMapper {
 
     @Delete("DELETE FROM Orders WHERE order_id = #{order_id}")
     void delete(Long orderId);
+
     @Select("SELECT p.product_id, p.item_id, p.title, p.content, p.price, p.member_id, " +
             "p.product_trade_opt1, p.product_trade_opt2, p.product_status " +
             "FROM Product p " +
@@ -56,7 +67,4 @@ public interface OrderMapper {
 
     @Select("SELECT * FROM Orders WHERE buyer_id = #{buyerId}")
     List<Orders> findOrdersByBuyerId(Long buyerId);
-
-//    @Select("SELECT * FROM Review WHERE order_id = #{orderId}")
-//    Review findReviewByOrderId(Long orderId);
 }
