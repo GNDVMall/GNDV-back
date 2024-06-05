@@ -49,7 +49,7 @@ public class OrderController {
     public CustomResponse<OrderResponseDTO> createOrder(@RequestBody OrderCreateRequestDTO orderRequest) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         Object principal = authentication.getPrincipal();
-        log.info("Principal class: {}", principal.getClass().getName()); // 추가된 로그
+        log.info("Principal class: {}", principal.getClass().getName());
 
         if (principal instanceof MemberContext) {
             Long buyerId = ((MemberContext) principal).getMemberDTO().getMember_id();
@@ -82,8 +82,8 @@ public class OrderController {
             log.error("Authentication failed: Principal is not MemberContext. Actual principal class: {}", principal.getClass().getName());
             return CustomResponse.failure("Not an authenticated user");
         }
-
     }
+
 
     @GetMapping("/order/payment")
     public CustomResponse<OrderResponseDTO> payment(@RequestParam("order_uid") String orderUid) {

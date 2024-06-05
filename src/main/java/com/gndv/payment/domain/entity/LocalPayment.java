@@ -15,4 +15,5 @@ public class LocalPayment {
     private Long price;
     private PaymentStatus status;
     private String payment_uid;
+    private Long member_id; // 추가된 필드
 }

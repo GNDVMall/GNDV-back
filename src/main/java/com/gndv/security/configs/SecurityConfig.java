@@ -1,6 +1,5 @@
 package com.gndv.security.configs;
 
-
 import com.gndv.security.dsl.RestApiDsl;
 import com.gndv.security.entrypoint.RestAuthenticationEntryPoint;
 import com.gndv.security.filters.JWTAuthenticationFilter;
@@ -103,7 +102,8 @@ public class SecurityConfig {
                 .securityMatcher("/api/v2/**")
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/v2/members/new", "/api/v2/login", "/api/v2/items","/api/v2/items/*"
-                                ,"/api/v2/products/*","/api/v2/order/*","/api/v2/order/payment/*","/api/v2/order","/api/v2/order/payment").permitAll()
+                                ,"/api/v2/products/*","/api/v2/order/*","/api/v2/order/payment/*","/api/v2/order","/api/v2/order/payment",
+                                "/api/v2/payment/","/api/v2/payment/*").permitAll()
                         .requestMatchers(HttpMethod.GET,"/api/v2/products").permitAll()
                         .anyRequest().authenticated())
                 .csrf(AbstractHttpConfigurer::disable)

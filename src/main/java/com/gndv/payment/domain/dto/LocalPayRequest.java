@@ -18,10 +18,11 @@ public class LocalPayRequest {
     private String email;
     private String address;
     private String payment_uid;
-    private String status; // 추가된 필드
+    private String status;
+    private Long member_id; // assuming you have a member_id field
 
     @Builder
-    public LocalPayRequest(String order_uid, Long item_id, String item_name, String username, Long payment_price, String email, String address, String payment_uid, String status, String imp_uid) {
+    public LocalPayRequest(String order_uid, Long item_id, String item_name, String username, Long payment_price, String email, String address, String payment_uid, String status, String imp_uid, Long member_id) {
         this.order_uid = order_uid;
         this.item_id = item_id;
         this.item_name = item_name;
@@ -30,7 +31,8 @@ public class LocalPayRequest {
         this.email = email;
         this.address = address;
         this.payment_uid = payment_uid;
-        this.status = status; // 추가된 필드
+        this.status = status;
         this.imp_uid = imp_uid;
+        this.member_id = member_id;
     }
 }
