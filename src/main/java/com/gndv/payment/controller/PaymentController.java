@@ -38,33 +38,7 @@ public class PaymentController {
         return CustomResponse.ok("결제 정보를 성공적으로 조회했습니다.", payment);
     }
 
-    @PutMapping("/{payment_id}")
-    public CustomResponse<LocalPayment> updatePayment(@PathVariable Long payment_id, @RequestBody LocalPayRequest request) {
-        try {
-            LocalPayment updatedPayment = LocalPayment.builder()
-                    .payment_id(payment_id)
-                    .price(request.getPayment_price())
-                    .status(PaymentStatus.valueOf(request.getStatus().toUpperCase())) // 상태 업데이트
-                    .payment_uid(request.getPayment_uid())
-                    .build();
-            paymentService.updatePayment(updatedPayment);
-            return CustomResponse.ok("결제 정보가 성공적으로 업데이트되었습니다.", updatedPayment);
-        } catch (Exception e) {
-            log.error("결제 정보 업데이트 실패", e);
-            return CustomResponse.error("결제 정보 업데이트 실패: " + e.getMessage());
-        }
-    }
 
-    @DeleteMapping("/{payment_id}")
-    public CustomResponse<Void> deletePayment(@PathVariable Long payment_id) {
-        try {
-            paymentService.deletePayment(payment_id);
-            return CustomResponse.ok("결제 정보가 성공적으로 삭제되었습니다.");
-        } catch (Exception e) {
-            log.error("결제 정보 삭제 실패", e);
-            return CustomResponse.error("결제 정보 삭제 실패: " + e.getMessage());
-        }
-    }
 
     @PostMapping("/validate")
     public ResponseEntity<CustomResponse<IamportResponse<Payment>>> validationPayment(@RequestBody LocalPayRequest request) {

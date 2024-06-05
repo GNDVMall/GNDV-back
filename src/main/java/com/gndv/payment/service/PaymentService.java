@@ -9,7 +9,6 @@ public interface PaymentService {
     LocalPayment createPayment(LocalPayRequest request);
     LocalPayment findPaymentById(Long payment_id);
     LocalPayment findPaymentByUid(String payment_uid);
-    void updatePayment(LocalPayment payment);
-    void deletePayment(Long payment_id);
+
     IamportResponse<Payment> paymentByCallback(LocalPayRequest request);
 }

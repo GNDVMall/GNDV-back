@@ -50,17 +50,8 @@ public class PaymentServiceImpl implements PaymentService {
                 .orElseThrow(() -> new IllegalArgumentException("Payment not found for UID: " + payment_uid));
     }
 
-    @Override
-    @Transactional
-    public void updatePayment(LocalPayment payment) {
-        paymentMapper.update(payment);
-    }
 
-    @Override
-    @Transactional
-    public void deletePayment(Long payment_id) {
-        paymentMapper.delete(payment_id);
-    }
+
 
     @Override
     public IamportResponse<Payment> paymentByCallback(LocalPayRequest request) {
