@@ -1,11 +1,10 @@
 package com.gndv.product.service;
 
-import com.gndv.common.domain.request.PagingRequest;
 import com.gndv.product.domain.dto.request.ProductInsertRequest;
 import com.gndv.product.domain.dto.request.ProductListPagingRequest;
 import com.gndv.product.domain.dto.request.ProductUpdateRequest;
 import com.gndv.product.domain.dto.response.ProductDetailResponse;
-import com.gndv.product.domain.dto.response.ProductResponse;
+import com.gndv.product.domain.entity.ProductDetail;
 import com.gndv.product.mapper.ProductMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -29,8 +28,8 @@ public class ProductService {
         throw new Exception();
     }
 
-    public List<ProductResponse> getProducts(ProductListPagingRequest pagingRequest) {
-        List<ProductResponse> findList = productMapper.findAllById(pagingRequest);
+    public List<ProductDetail> getProducts(ProductListPagingRequest pagingRequest) {
+        List<ProductDetail> findList = productMapper.findAllById(pagingRequest);
         return findList;
     }
 
