@@ -7,7 +7,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Getter
-@Builder(toBuilder = true)
+@Builder(toBuilder = true) // toBuilder를 true로 설정
 @NoArgsConstructor
 @AllArgsConstructor
 public class LocalPayment {
