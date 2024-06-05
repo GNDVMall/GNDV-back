@@ -1,6 +1,8 @@
 package com.gndv.product.mapper;
 
+import com.gndv.common.domain.request.PagingRequest;
 import com.gndv.product.domain.dto.request.ProductInsertRequest;
+import com.gndv.product.domain.dto.request.ProductListPagingRequest;
 import com.gndv.product.domain.dto.request.ProductUpdateRequest;
 import com.gndv.product.domain.dto.response.ProductDetailResponse;
 import com.gndv.product.domain.dto.response.ProductResponse;
@@ -14,8 +16,11 @@ public interface ProductMapper {
     @Select("SELECT p.*, m.nickname , m.introduction, m.rating, m.profile_url, GROUP_CONCAT(i.real_filename) AS images FROM  Product p JOIN Image i ON p.product_id = i.use_id JOIN Member_With_Profile m ON p.member_id = m.member_id WHERE i.image_type = 'product' AND p.product_id = #{product_id} GROUP BY p.product_id")
     Optional<ProductDetailResponse> findById(Long product_id);
 
-    @Select("SELECT p.* , GROUP_CONCAT(i.real_filename) AS images FROM  Product p LEFT JOIN Image i ON p.product_id = i.use_id GROUP BY p.product_id")
-    List<ProductResponse> findAll();
+//    @Select("SELECT p.* , GROUP_CONCAT(i.real_filename) AS images FROM  Product p LEFT JOIN Image i ON p.product_id = i.use_id GROUP BY p.product_id HAVING p.item_id = #{item_id}")
+//    List<ProductResponse> findAllById(Long item_id, PagingRequest pagingRequest);
+
+    @Select("SELECT p.* , GROUP_CONCAT(i.real_filename) AS images FROM  Product p LEFT JOIN Image i ON p.product_id = i.use_id GROUP BY p.product_id HAVING p.item_id = #{item_id} order by p.created_at desc LIMIT #{skip}, #{size}")
+    List<ProductResponse> findAllById(ProductListPagingRequest pagingRequest);
 
     @Insert("INSERT INTO Product (item_id, title, price, content, product_status, product_trade_opt1, product_trade_opt2, member_id) VALUES (#{item_id},#{title},#{price}, #{content}, #{product_status}, #{product_trade_opt1}, #{product_trade_opt2},(SELECT member_id FROM Member WHERE email = #{email}))")
     void insert(ProductInsertRequest request);

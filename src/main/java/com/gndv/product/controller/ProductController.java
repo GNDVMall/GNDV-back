@@ -1,7 +1,9 @@
 package com.gndv.product.controller;
 
 import com.gndv.common.CustomResponse;
+import com.gndv.common.domain.request.PagingRequest;
 import com.gndv.product.domain.dto.request.ProductInsertRequest;
+import com.gndv.product.domain.dto.request.ProductListPagingRequest;
 import com.gndv.product.domain.dto.request.ProductUpdateRequest;
 import com.gndv.product.domain.dto.response.ProductDetailResponse;
 import com.gndv.product.domain.dto.response.ProductListResponse;
@@ -9,6 +11,7 @@ import com.gndv.product.domain.dto.response.ProductResponse;
 import com.gndv.product.service.ProductService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.ibatis.annotations.Param;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
@@ -30,9 +33,9 @@ public class ProductController {
     }
 
     @GetMapping("")
-    public CustomResponse<ProductListResponse> getProducts() {
+    public CustomResponse<ProductListResponse> getProducts(ProductListPagingRequest pagingRequest) {
         log.info("Get Products");
-        List<ProductResponse> products = productService.getProducts();
+        List<ProductResponse> products = productService.getProducts(pagingRequest);
 
         return CustomResponse.ok("Get Products", ProductListResponse.builder().products(products).total(products.size()).build());
     }
