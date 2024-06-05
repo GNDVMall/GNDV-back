@@ -7,8 +7,9 @@ import com.siot.IamportRestClient.response.Payment;
 
 public interface PaymentService {
     LocalPayment createPayment(LocalPayRequest request);
-    LocalPayment findPaymentById(Long paymentId);
-    void updatePayment(LocalPayment localPayment);
-    void deletePayment(Long paymentId);
+    LocalPayment findPaymentById(Long payment_id);
+    LocalPayment findPaymentByUid(String payment_uid);
+    void updatePayment(LocalPayment payment);
+    void deletePayment(Long payment_id);
     IamportResponse<Payment> paymentByCallback(LocalPayRequest request);
 }

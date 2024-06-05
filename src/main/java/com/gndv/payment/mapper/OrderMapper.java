@@ -67,4 +67,7 @@ public interface OrderMapper {
 
     @Select("SELECT * FROM Orders WHERE buyer_id = #{buyerId}")
     List<Orders> findOrdersByBuyerId(Long buyerId);
+
+    @Select("SELECT * FROM Order_List WHERE order_list_id = #{order_list_id}")
+    OrderList findOrderListById(@Param("order_list_id") Long order_list_id);
 }

@@ -68,12 +68,17 @@ public class PaymentController {
 
     @PostMapping("/validate")
     public ResponseEntity<CustomResponse<IamportResponse<Payment>>> validationPayment(@RequestBody LocalPayRequest request) {
+
         try {
+            if (request.getImp_uid() == null) {
+                throw new IllegalArgumentException("imp_uid must not be null");
+            }
             IamportResponse<Payment> iamportResponse = paymentService.paymentByCallback(request);
             log.info("결제 응답={}", iamportResponse.getResponse().toString());
             return ResponseEntity.ok(CustomResponse.ok("결제 검증 성공", iamportResponse));
         } catch (Exception e) {
             log.error("결제 검증 실패", e);
+            System.out.println(request);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(CustomResponse.error("결제 검증 실패: " + e.getMessage()));
         }

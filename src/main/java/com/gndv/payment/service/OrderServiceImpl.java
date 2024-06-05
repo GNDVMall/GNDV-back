@@ -4,8 +4,8 @@ import com.gndv.member.domain.entity.Member;
 import com.gndv.member.mapper.MemberMapper;
 import com.gndv.payment.constain.PaymentStatus;
 import com.gndv.payment.domain.entity.LocalPayment;
-import com.gndv.payment.domain.entity.Orders;
 import com.gndv.payment.domain.entity.OrderList;
+import com.gndv.payment.domain.entity.Orders;
 import com.gndv.payment.mapper.OrderMapper;
 import com.gndv.product.domain.dto.request.ProductInsertWithMemberRequest;
 import lombok.RequiredArgsConstructor;
@@ -37,7 +37,7 @@ public class OrderServiceImpl implements OrderService {
         // Gangnum_Payment 생성
         LocalPayment payment = LocalPayment.builder()
                 .price(Long.valueOf(product.getPrice()))
-                .status(PaymentStatus.READY)
+                .status(PaymentStatus.READY)  // 수정된 부분
                 .payment_uid(UUID.randomUUID().toString())
                 .member_id(buyerId)
                 .build();
@@ -50,7 +50,7 @@ public class OrderServiceImpl implements OrderService {
                 .price(Long.valueOf(product.getPrice()))
                 .item_name(product.getTitle())
                 .order_uid(UUID.randomUUID().toString())
-                .payment_id(payment.getPayment_id())
+                .payment_id(payment.getPayment_id())  // payment_id 설정
                 .buyer(buyer)
                 .seller(seller)
                 .build();
