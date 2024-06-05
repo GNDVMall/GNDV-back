@@ -18,4 +18,5 @@ public class Product {
     private Boolean product_trade_opt2;
     private ProductStatus product_status;
     private LocalDateTime created_at;
+    private Long view_count;
 }
