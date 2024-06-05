@@ -47,8 +47,8 @@ public class ProductController {
     @PostMapping("")
     public CustomResponse insertProduct(@RequestBody ProductInsertRequest request) {
         log.info("Insert New Product {}", request);
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        request.setEmail(auth.getName());
+//        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+//        request.setEmail(auth.getName());
         productService.insertProduct(request);
         return CustomResponse.ok("Insert new Product", null);
     }

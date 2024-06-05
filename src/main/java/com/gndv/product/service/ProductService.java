@@ -35,7 +35,7 @@ public class ProductService {
 
 
     @Transactional
-    @PreAuthorize("isAuthenticated()")
+    @PreAuthorize("#request.email == authentication.name")
     public void insertProduct(ProductInsertRequest request) {
         productMapper.insert(request);
     }
@@ -48,7 +48,7 @@ public class ProductService {
     }
 
     @Transactional
-    @PreAuthorize("isAuthenticated()")
+//    @PreAuthorize("isAuthenticated()")
     public int deleteProduct(Long product_id, String email) {
         int update = productMapper.delete(product_id, email);
         return update;
