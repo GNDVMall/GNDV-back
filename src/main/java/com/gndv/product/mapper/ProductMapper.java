@@ -12,8 +12,9 @@ import java.util.Optional;
 
 @Mapper
 public interface ProductMapper {
-    @Select("SELECT p.*, m.nickname, m.introduction, m.rating, m.profile_url, GROUP_CONCAT(i.real_filename) AS images \n" +
-            "FROM Product p LEFT JOIN Image i ON p.product_id = i.use_id LEFT JOIN Member_With_Profile m ON p.member_id = m.member_id \n" +
+    @Select("SELECT p.*, m.nickname, m.introduction, m.rating, m.profile_url, i.theme_name \n" +
+            "FROM Product_With_Image p LEFT JOIN Member_With_Profile m ON p.member_id = m.member_id\n" +
+            "JOIN Item_With_Theme i ON i.item_id = p.item_id \n" +
             "WHERE p.product_id = #{product_id} GROUP BY p.product_id")
     Optional<ProductDetailResponse> findById(Long product_id);
 
