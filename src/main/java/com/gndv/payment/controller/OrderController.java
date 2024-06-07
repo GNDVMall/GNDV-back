@@ -177,4 +177,24 @@ public class OrderController {
 
         return CustomResponse.ok("구매 내역을 성공적으로 조회했습니다.", response);
     }
+    @GetMapping("/salesList")
+    public CustomResponse<List<OrderResponseDTO>> getSalesList() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        Long sellerId = ((MemberContext) authentication.getPrincipal()).getMemberDTO().getMember_id();
+
+        List<Orders> orders = orderService.findOrdersBySellerId(sellerId);
+        List<OrderResponseDTO> response = orders.stream()
+                .map(order -> OrderResponseDTO.builder()
+                        .order_uid(order.getOrder_uid())
+                        .item_name(order.getItem_name())
+                        .price(order.getPrice())
+                        .buyer_name(order.getBuyer().getNickname())
+                        .buyer_email(order.getBuyer().getEmail())
+                        .buyer_tel(order.getBuyer().getPhone())
+                        .buyer_postcode("123-456") // 임의의 우편번호 값
+                        .build())
+                .collect(Collectors.toList());
+
+        return CustomResponse.ok("판매 내역을 성공적으로 조회했습니다.", response);
+    }
 }

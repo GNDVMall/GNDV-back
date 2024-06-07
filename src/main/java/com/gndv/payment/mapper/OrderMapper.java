@@ -64,4 +64,18 @@ public interface OrderMapper {
 
     @Select("SELECT * FROM Product WHERE product_id = #{productId}")
     ProductInsertWithMemberRequest findProductInsertRequestById(Long productId);
+    @Select("SELECT * FROM Orders WHERE seller_id = #{sellerId}")
+    @Results({
+            @Result(column = "order_id", property = "order_id"),
+            @Result(column = "order_uid", property = "order_uid"),
+            @Result(column = "buyer_id", property = "buyer_id"),
+            @Result(column = "seller_id", property = "seller_id"),
+            @Result(column = "price", property = "price"),
+            @Result(column = "item_name", property = "item_name"),
+            @Result(column = "payment_id", property = "payment_id"),
+            @Result(column = "buyer_id", property = "buyer", one = @One(select = "com.gndv.member.mapper.MemberMapper.findById")),
+            @Result(column = "seller_id", property = "seller", one = @One(select = "com.gndv.member.mapper.MemberMapper.findById")),
+            @Result(column = "payment_id", property = "payment", one = @One(select = "com.gndv.payment.mapper.OrderMapper.findPaymentById"))
+    })
+    List<Orders> findOrdersBySellerId(Long sellerId);
 }

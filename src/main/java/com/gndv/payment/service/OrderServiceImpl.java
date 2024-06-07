@@ -95,4 +95,8 @@ public class OrderServiceImpl implements OrderService {
         Orders order = findOrderAndPaymentAndMember(orderUid);
         orderMapper.delete(order.getOrder_id());
     }
+    @Override
+    public List<Orders> findOrdersBySellerId(Long sellerId) {
+        return orderMapper.findOrdersBySellerId(sellerId);
+    }
 }
