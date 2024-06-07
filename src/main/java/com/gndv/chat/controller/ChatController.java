@@ -1,9 +1,11 @@
 package com.gndv.chat.controller;
 
+import com.gndv.chat.domain.dto.request.ChatRoomCheckRequest;
 import com.gndv.chat.domain.dto.request.ChatRoomCreateRequest;
 import com.gndv.chat.domain.dto.response.ChatRoomDetailResponse;
 import com.gndv.chat.domain.dto.response.ChatRoomListResponse;
 import com.gndv.chat.domain.dto.response.ChatRoomResponse;
+import com.gndv.chat.domain.entity.ChatRoom;
 import com.gndv.chat.domain.entity.ChatRoomDetail;
 import com.gndv.chat.service.ChatService;
 import com.gndv.common.CustomResponse;
@@ -23,6 +25,20 @@ import java.util.List;
 public class ChatController {
     private final ChatService chatService;
     private final ModelMapper modelMapper;
+    
+    @GetMapping("/check")
+    public CustomResponse<Object> checkIsRoom(Long product_id){
+        log.info("이미 생성된 채팅방이 있는지 확인");
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+
+        ChatRoomCheckRequest cr = ChatRoomCheckRequest.builder()
+                .buyer_email(auth.getName()).product_id(product_id).build();
+        log.info("cr?", cr.getBuyer_email(), cr.getProduct_id());
+
+        ChatRoom chatroom = chatService.checkIsRoom(cr);
+        if(chatroom == null) return CustomResponse.ok("채팅방이 존재하지 않습니다.", null);
+        return CustomResponse.ok("채팅방이 이미 존재합니다.", chatroom.getChatroom_id());
+    }
 
     @GetMapping("")
     public CustomResponse<ChatRoomListResponse> getChatRooms(){

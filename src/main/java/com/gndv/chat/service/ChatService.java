@@ -1,7 +1,9 @@
 package com.gndv.chat.service;
 
+import com.gndv.chat.domain.dto.request.ChatRoomCheckRequest;
 import com.gndv.chat.domain.dto.request.ChatRoomCreateRequest;
 import com.gndv.chat.domain.dto.response.ChatRoomResponse;
+import com.gndv.chat.domain.entity.ChatRoom;
 import com.gndv.chat.domain.entity.ChatRoomDetail;
 import com.gndv.chat.mapper.ChatMapper;
 import lombok.RequiredArgsConstructor;
@@ -39,5 +41,10 @@ public class ChatService {
     public ChatRoomDetail getChatRoom(Long chatroom_id, String name) {
         ChatRoomDetail chatRoomDetailResponse = chatMapper.findByIdWithName(chatroom_id, name);
         return chatRoomDetailResponse;
+    }
+
+    public ChatRoom checkIsRoom(ChatRoomCheckRequest request) {
+        ChatRoom chatroom_id = chatMapper.getChatRoomId(request);
+        return chatroom_id;
     }
 }
