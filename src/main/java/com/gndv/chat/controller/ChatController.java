@@ -33,7 +33,6 @@ public class ChatController {
 
         ChatRoomCheckRequest cr = ChatRoomCheckRequest.builder()
                 .buyer_email(auth.getName()).product_id(product_id).build();
-        log.info("cr?", cr.getBuyer_email(), cr.getProduct_id());
 
         ChatRoom chatroom = chatService.checkIsRoom(cr);
         if(chatroom == null) return CustomResponse.ok("채팅방이 존재하지 않습니다.", null);
@@ -66,8 +65,11 @@ public class ChatController {
     }
 
     @PostMapping("")
-    public CustomResponse<ChatRoomCreateRequest> createRoom(@RequestBody ChatRoomCreateRequest chatRoomCreateRequest) {
+    public CustomResponse<ChatRoomCreateRequest> createRoom(@RequestBody ChatRoomCreateRequest chatRoomCreateRequest) throws Exception {
         log.info("Create ChatRoom {} ", chatRoomCreateRequest);
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        chatRoomCreateRequest.setEmail(auth.getName());
+
         // 채팅방을 만들 때, 채팅방 + 채팅방 유저도 만들어야 한다.
         chatService.createChatRoom(chatRoomCreateRequest);
         // 채팅방 번호를 바로 돌려줘야, 생성 후 바로 이동 가능
