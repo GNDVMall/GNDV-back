@@ -2,8 +2,6 @@ package com.gndv.payment.controller;
 
 import com.gndv.common.CustomResponse;
 import com.gndv.member.domain.dto.MemberContext;
-import com.gndv.member.domain.dto.MemberDTO;
-import com.gndv.member.mapper.MemberMapper;
 import com.gndv.payment.domain.dto.OrderCreateRequestDTO;
 import com.gndv.payment.domain.dto.OrderResponseDTO;
 import com.gndv.payment.domain.entity.Orders;
@@ -27,7 +25,6 @@ import java.util.stream.Collectors;
 public class OrderController {
 
     private final OrderService orderService;
-    private final MemberMapper memberMapper;
     private final ModelMapper modelMapper; // 추가
 
     @GetMapping("/order")
@@ -74,6 +71,9 @@ public class OrderController {
                     log.error("Order creation failed: Order is null");
                     return CustomResponse.failure("Order creation failed");
                 }
+            } catch (IllegalArgumentException e) {
+                log.error("Order creation failed", e);
+                return CustomResponse.error("Order creation failed: " + e.getMessage());
             } catch (Exception e) {
                 log.error("Order creation failed", e);
                 return CustomResponse.error("Order creation failed: " + e.getMessage());
@@ -83,7 +83,6 @@ public class OrderController {
             return CustomResponse.failure("Not an authenticated user");
         }
     }
-
 
     @GetMapping("/order/payment")
     public CustomResponse<OrderResponseDTO> payment(@RequestParam("order_uid") String orderUid) {
