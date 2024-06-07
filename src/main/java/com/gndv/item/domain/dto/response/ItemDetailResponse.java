@@ -6,4 +6,5 @@ import lombok.Getter;
 @Getter
 public class ItemDetailResponse extends Item {
     private String real_filename;
+    private String theme_name;
 }

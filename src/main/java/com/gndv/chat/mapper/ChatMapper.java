@@ -1,7 +1,9 @@
 package com.gndv.chat.mapper;
 
+import com.gndv.chat.domain.dto.request.ChatRoomCheckRequest;
 import com.gndv.chat.domain.dto.request.ChatRoomCreateRequest;
 import com.gndv.chat.domain.dto.response.ChatRoomResponse;
+import com.gndv.chat.domain.entity.ChatRoom;
 import com.gndv.chat.domain.entity.ChatRoomDetail;
 import org.apache.ibatis.annotations.*;
 import org.apache.ibatis.mapping.StatementType;
@@ -38,4 +40,9 @@ public interface ChatMapper {
             "JOIN Product_With_Image p ON cr.product_id = p.product_id \n" +
             "WHERE cr.chatroom_id = #{chatroom_id} AND m.email != #{name}")
     ChatRoomDetail findByIdWithName(Long chatroom_id, String name);
+
+    @Select("SELECT cr.* from Chat_Room cr  \n" +
+            "JOIN Chat_User cu ON cr.chatroom_id = cu.chatroom_id \n" +
+            "WHERE product_id = #{product_id} AND cu.chat_user_type = 'BUYER' AND (SELECT m.email FROM `Member` m WHERE cu.member_id = m.member_id) = #{buyer_email}")
+    ChatRoom getChatRoomId(ChatRoomCheckRequest request);
 }
