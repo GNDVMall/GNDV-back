@@ -2,9 +2,12 @@ package com.gndv.chat.controller;
 
 import com.gndv.chat.domain.dto.request.ChatRoomCheckRequest;
 import com.gndv.chat.domain.dto.request.ChatRoomCreateRequest;
+import com.gndv.chat.domain.dto.request.ChatRoomMessageRequest;
 import com.gndv.chat.domain.dto.response.ChatRoomDetailResponse;
 import com.gndv.chat.domain.dto.response.ChatRoomListResponse;
+import com.gndv.chat.domain.dto.response.ChatRoomMessageResponse;
 import com.gndv.chat.domain.dto.response.ChatRoomResponse;
+import com.gndv.chat.domain.entity.ChatMessage;
 import com.gndv.chat.domain.entity.ChatRoom;
 import com.gndv.chat.domain.entity.ChatRoomDetail;
 import com.gndv.chat.service.ChatService;
@@ -59,7 +62,6 @@ public class ChatController {
         ChatRoomDetail chatroom = chatService.getChatRoom(chatrooom_id, auth.getName());
 
         ChatRoomDetailResponse chatRoomDetailResponse = modelMapper.map(chatroom, ChatRoomDetailResponse.class);
-        chatRoomDetailResponse.setImages(chatroom.getImages());
 
         return CustomResponse.ok("Get ChatRoom", chatRoomDetailResponse);
     }
@@ -88,5 +90,22 @@ public class ChatController {
             throw new Exception("채팅방 떠나기 실패");
         }
         return CustomResponse.ok("Leave ChatRoom ok");
+    }
+
+    @GetMapping("/{chatroom_id}/messages")
+    public CustomResponse getChatMessages(@PathVariable Long chatroom_id){
+        log.info("채팅방 메시지들 가져오기 - {}" , chatroom_id);
+
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        ChatRoomMessageRequest request = ChatRoomMessageRequest.builder()
+                .chatroom_id(chatroom_id)
+                .email(auth.getName())
+                .build();
+
+        List<ChatMessage> list = chatService.getChatMessages(request);
+
+        ChatRoomMessageResponse cmr = ChatRoomMessageResponse.builder()
+                .list(list).build();
+        return CustomResponse.ok("채팅방 메시지들 반환", cmr);
     }
 }

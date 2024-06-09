@@ -2,7 +2,9 @@ package com.gndv.chat.service;
 
 import com.gndv.chat.domain.dto.request.ChatRoomCheckRequest;
 import com.gndv.chat.domain.dto.request.ChatRoomCreateRequest;
+import com.gndv.chat.domain.dto.request.ChatRoomMessageRequest;
 import com.gndv.chat.domain.dto.response.ChatRoomResponse;
+import com.gndv.chat.domain.entity.ChatMessage;
 import com.gndv.chat.domain.entity.ChatRoom;
 import com.gndv.chat.domain.entity.ChatRoomDetail;
 import com.gndv.chat.mapper.ChatMapper;
@@ -10,7 +12,6 @@ import com.gndv.product.domain.dto.response.ProductDetailResponse;
 import com.gndv.product.mapper.ProductMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -63,5 +64,10 @@ public class ChatService {
     public ChatRoom checkIsRoom(ChatRoomCheckRequest request) {
         ChatRoom chatroom_id = chatMapper.getChatRoomId(request);
         return chatroom_id;
+    }
+
+    public List<ChatMessage> getChatMessages(ChatRoomMessageRequest request) {
+        List<ChatMessage> list = chatMapper.getChatMessages(request);
+        return list;
     }
 }

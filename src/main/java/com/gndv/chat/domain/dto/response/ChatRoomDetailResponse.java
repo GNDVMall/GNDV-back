@@ -1,6 +1,7 @@
 package com.gndv.chat.domain.dto.response;
 
 import com.gndv.constant.ChatUserType;
+import com.gndv.constant.ProductStatus;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -15,15 +16,16 @@ public class ChatRoomDetailResponse {
     private Long product_id;
     private Date created_at;
     private Date updated_at;
-    
+
     // 상대방 유저 정보
     private String nickname;
     private Long rating;
     private String email;
     private ChatUserType chat_user_type;
-    private String[] images;
 
-    public void setImages(String images) {
-        this.images = images != null ? images.split(",") : new String[0];
-    }
+    // 프로덕트 정보
+    private String profile_url;
+    private String price;
+    private String title;
+    private ProductStatus product_status;
 }
