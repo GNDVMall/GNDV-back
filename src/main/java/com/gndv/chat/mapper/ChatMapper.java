@@ -29,7 +29,7 @@ public interface ChatMapper {
             "FROM Chat_Room cr\n" +
             "JOIN Chat_User cu ON cr.chatroom_id = cu.chatroom_id\n" +
             "JOIN `Member` m ON cu.member_id = m.member_id\n" +
-            "JOIN Recent_Messages rm ON cr.chatroom_id = rm.chatroom_id AND rm.rn = 1\n" +
+            "LEFT JOIN Recent_Messages rm ON cr.chatroom_id = rm.chatroom_id AND rm.rn = 1\n" +
             "WHERE m.email = #{name}")
     List<ChatRoomResponse> findAllbyName(String name);
 
