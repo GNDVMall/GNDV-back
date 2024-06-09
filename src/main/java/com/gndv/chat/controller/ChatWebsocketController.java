@@ -1,8 +1,7 @@
 package com.gndv.chat.controller;
 
-import com.gndv.chat.domain.dto.request.MessageRequest;
-import com.gndv.chat.domain.dto.response.MessageResponse;
-import com.gndv.chat.service.ChatService;
+import com.gndv.chat.domain.dto.request.ChatMessageRequest;
+import com.gndv.chat.service.ChatSocketService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
@@ -16,21 +15,27 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequiredArgsConstructor
 @Slf4j
-public class ChatWebsocketController {
+public class ChatWebSocketController {
+    private final ChatSocketService chatSocketService;
     private final SimpMessagingTemplate simpMessagingTemplate;
-    private final ChatService chatService;
 
-    @MessageMapping("/chat/send/{room_id}")
-    public void sendMsg(@DestinationVariable("room_id") String roomId, @Payload MessageRequest message){
-        log.info("소켓 메세지 전달");
+    @MessageMapping("/v2/chat/send/{chatroom_id}")
+    // 개발 테스트를 위해 인가 처리는 일단 제외
+//    @PreAuthorize("#chatMessageRequest.email == authentication.name")
+    public void sendMessage(@DestinationVariable("chatroom_id") Long chatroom_id, @Payload ChatMessageRequest chatMessageRequest) throws Exception {
+        log.info("Send a Message! , {}", chatMessageRequest);
+
+        // chat/send/채팅방으로 온 메시지를 구독한 곳으로 보내준다.
+        simpMessagingTemplate.convertAndSend("/topic/" + chatroom_id, chatMessageRequest);
+
+        // 메시지를 데이터 베이스에 저장한다. -> 추후 개선 필요
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        chatMessageRequest.setChatroom_id(chatroom_id);
+        chatMessageRequest.setEmail(auth.getName());
 
-        // 데이터베이스에 저장
-
-        MessageResponse data = MessageResponse.builder()
-                .content(message.getContent())
-                .email(auth.getName())
-                .build();
-        simpMessagingTemplate.convertAndSend("/topic/" + roomId ,data);
+        int updated = chatSocketService.insertMessage(chatMessageRequest);
+        if(updated != 1){
+            throw new Exception("채팅 메시지 추가 에러");
+        }
     }
 }

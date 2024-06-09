@@ -44,8 +44,7 @@ public interface ChatMapper {
             "WHERE cr.chatroom_id = #{chatroom_id} AND m.email != #{name}")
     ChatRoomDetail findByIdWithName(Long chatroom_id, String name);
 
-    @Select("{ CALL GetMessagesAndUpdateReadStatus(#{chatroom_id, mode=IN, jdbcType=BIGINT},#{email, mode=IN,jdbcType=VARCHAR }) }")
-    List<ChatMessage> findAllMessagesByIdAndUpdateIsRead(Long chatroom_id, String email);
+
 
     @Select("SELECT cr.* from Chat_Room cr  \n" +
             "JOIN Chat_User cu ON cr.chatroom_id = cu.chatroom_id \n" +
@@ -64,4 +63,7 @@ public interface ChatMapper {
             "WHERE chatroom_id = #{chatroom_id}\n" +
             "ORDER BY sent_at ASC;")
     List<ChatMessage> getChatMessages(ChatRoomMessageRequest request);
+
+    @Select("{ CALL UpdateAndSelectChatMessages(#{chatroom_id, mode=IN, jdbcType=BIGINT},#{email, mode=IN,jdbcType=VARCHAR }) }")
+    List<ChatMessage> findAllMessagesByIdAndUpdateIsRead(ChatRoomMessageRequest request);
 }

@@ -67,7 +67,7 @@ public class ChatService {
     }
 
     public List<ChatMessage> getChatMessages(ChatRoomMessageRequest request) {
-        List<ChatMessage> list = chatMapper.getChatMessages(request);
+        List<ChatMessage> list = chatMapper.findAllMessagesByIdAndUpdateIsRead(request);
         return list;
     }
 }
