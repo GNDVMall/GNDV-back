@@ -5,7 +5,8 @@ import lombok.Data;
 
 @Data
 @Builder
-public class MessageResponse {
+public class ChatMessageResponse {
     private String content;
     private String email;
+    private Long message_id;
 }

@@ -25,9 +25,6 @@ public class ChatWebSocketController {
     public void sendMessage(@DestinationVariable("chatroom_id") Long chatroom_id, @Payload ChatMessageRequest chatMessageRequest, SimpMessageHeaderAccessor simpMessageHeaderAccessor) throws Exception {
         log.info("Send a Message! , {}", chatMessageRequest);
 
-        // chat/send/채팅방으로 온 메시지를 구독한 곳으로 보내준다.
-        simpMessagingTemplate.convertAndSend("/topic/" + chatroom_id, chatMessageRequest);
-
         // 메시지를 데이터 베이스에 저장한다. -> 추후 개선 필요
         Member member = (Member) simpMessageHeaderAccessor.getSessionAttributes().get("member");
 
@@ -35,6 +32,10 @@ public class ChatWebSocketController {
         chatMessageRequest.setEmail(member.getEmail());
 
         int updated = chatSocketService.insertMessage(chatMessageRequest);
+        log.info("메시지 => {}", chatMessageRequest.getMessage_id());
+
+        // chat/send/채팅방으로 온 메시지를 구독한 곳으로 보내준다.
+        simpMessagingTemplate.convertAndSend("/topic/" + chatroom_id, chatMessageRequest);
         if(updated != 1){
             throw new Exception("채팅 메시지 추가 에러");
         }
