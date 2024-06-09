@@ -48,7 +48,7 @@ public class ChatController {
         return CustomResponse.ok("Get ChatRoom list",
                 ChatRoomListResponse.builder()
                         .total(chatrooms.size())
-                        .chatRoomResponses(chatrooms).build());
+                        .list(chatrooms).build());
     }
 
     @GetMapping("/{chatrooom_id}")
