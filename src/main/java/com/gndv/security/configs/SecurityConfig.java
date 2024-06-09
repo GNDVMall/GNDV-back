@@ -104,7 +104,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/v2/members/new", "/api/v2/login", "/api/v2/items","/api/v2/items/*"
                                 ,"/api/v2/products/*","/api/v2/order/*","/api/v2/order/payment/*","/api/v2/order","/api/v2/order/payment",
-                                "/api/v2/payment/","/api/v2/payment/*" ,"/api/v2/chat/**", "/api/v2/chat").permitAll()
+                                "/api/v2/payment/","/api/v2/payment/*" ,"/api/v2/chat/**", "/api/v2/chat", "/api/v2/gndv-websocket/**", "/api/v2/gndv-websocket").permitAll()
                         .requestMatchers(HttpMethod.GET,"/api/v2/products").permitAll()
                         .anyRequest().authenticated())
                 .csrf(AbstractHttpConfigurer::disable)
