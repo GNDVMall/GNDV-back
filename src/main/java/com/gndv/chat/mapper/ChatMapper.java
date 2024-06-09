@@ -6,6 +6,7 @@ import com.gndv.chat.domain.dto.request.ChatRoomMessageRequest;
 import com.gndv.chat.domain.dto.response.ChatRoomResponse;
 import com.gndv.chat.domain.entity.ChatMessage;
 import com.gndv.chat.domain.entity.ChatRoom;
+import com.gndv.chat.domain.entity.ChatMessage;
 import com.gndv.chat.domain.entity.ChatRoomDetail;
 import org.apache.ibatis.annotations.*;
 import org.apache.ibatis.mapping.StatementType;
@@ -42,6 +43,9 @@ public interface ChatMapper {
             "JOIN Product_With_Image p ON cr.product_id = p.product_id \n" +
             "WHERE cr.chatroom_id = #{chatroom_id} AND m.email != #{name}")
     ChatRoomDetail findByIdWithName(Long chatroom_id, String name);
+
+    @Select("{ CALL GetMessagesAndUpdateReadStatus(#{chatroom_id, mode=IN, jdbcType=BIGINT},#{email, mode=IN,jdbcType=VARCHAR }) }")
+    List<ChatMessage> findAllMessagesByIdAndUpdateIsRead(Long chatroom_id, String email);
 
     @Select("SELECT cr.* from Chat_Room cr  \n" +
             "JOIN Chat_User cu ON cr.chatroom_id = cu.chatroom_id \n" +
