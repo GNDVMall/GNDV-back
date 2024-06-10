@@ -1,6 +1,7 @@
 package com.gndv.chat.domain.dto.response;
 
 import com.gndv.constant.ChatUserType;
+import com.gndv.constant.ProductSalesStatus;
 import com.gndv.constant.ProductStatus;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -28,4 +29,10 @@ public class ChatRoomDetailResponse {
     private String price;
     private String title;
     private ProductStatus product_status;
+    private ProductSalesStatus product_sales_status;
+    private String[] images;
+
+    public void setImages(String images) {
+        this.images = images != null ? images.split(",") : new String[0];
+    }
 }

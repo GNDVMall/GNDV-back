@@ -16,6 +16,7 @@ import org.springframework.security.web.authentication.AuthenticationSuccessHand
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
+import java.util.Collections;
 
 @Component("jwtSuccessHandler")
 @RequiredArgsConstructor
@@ -42,7 +43,9 @@ public class JwtAuthenticationSuccessHandler implements AuthenticationSuccessHan
 
         response.setStatus(HttpStatus.OK.value());
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
-        response.getWriter().write("success");
+//        response.getWriter().write("success");
+        String jsonResponse = mapper.writeValueAsString(Collections.singletonMap("email", email));
+        response.getWriter().write(jsonResponse);
 
         clearAuthenticationAttributes(request);
     }

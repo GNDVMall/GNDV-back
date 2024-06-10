@@ -20,4 +20,5 @@ public class ChatRoomResponse {
     private ChatUserType chat_user_type;
     private String chat_content;
     private String nickname;
+    private Long unread_count;
 }

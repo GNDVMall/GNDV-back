@@ -1,6 +1,7 @@
 package com.gndv.chat.domain.entity;
 
 import com.gndv.constant.ChatUserType;
+import com.gndv.constant.ProductSalesStatus;
 import com.gndv.constant.ProductStatus;
 import lombok.Getter;
 
@@ -24,4 +25,6 @@ public class ChatRoomDetail {
     private String price;
     private String title;
     private ProductStatus product_status;
+    private ProductSalesStatus product_sales_status;
+    private String images;
 }

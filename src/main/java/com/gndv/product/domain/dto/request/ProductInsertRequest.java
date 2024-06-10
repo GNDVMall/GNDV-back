@@ -1,6 +1,7 @@
 package com.gndv.product.domain.dto.request;
 
 import com.gndv.constant.Boolean;
+import com.gndv.constant.ProductSalesStatus;
 import com.gndv.constant.ProductStatus;
 import lombok.Builder;
 import lombok.Getter;
