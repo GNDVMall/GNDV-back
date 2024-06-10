@@ -1,6 +1,6 @@
 package com.gndv.constant;
 
 public enum ProductSalesStatus {
-    SALES,
+    SALE,
     SOLDOUT
 }
