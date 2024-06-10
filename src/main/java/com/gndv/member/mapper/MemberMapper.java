@@ -19,7 +19,7 @@ public interface MemberMapper {
     List<Member> findAll();
 
     @Insert("INSERT INTO Member (email, password) VALUES (#{email}, #{password})")
-    void insert(Member member);
+    Member insert(Member member);
 
     @Update({
             "<script>",

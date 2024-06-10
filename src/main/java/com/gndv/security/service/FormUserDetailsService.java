@@ -26,7 +26,7 @@ import java.util.stream.Collectors;
 
 @Service("userDetailsService")
 @RequiredArgsConstructor
-public class FormUserDetailsService extends DefaultOAuth2UserService implements UserDetailsService {
+public class FormUserDetailsService implements UserDetailsService {
 
     private final MemberMapper memberMapper;
 
@@ -48,20 +48,5 @@ public class FormUserDetailsService extends DefaultOAuth2UserService implements 
         MemberDTO memberDTO = mapper.map(member, MemberDTO.class);
 
         return new MemberContext(memberDTO, authorities);
-    }
-
-    @Override
-    public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
-
-        OAuth2User oAuth2User = super.loadUser(userRequest);
-
-        List<GrantedAuthority> authorities = AuthorityUtils.createAuthorityList("ROLE_ADMIN");
-
-        String userNameAttributeName = userRequest.getClientRegistration()
-                .getProviderDetails()
-                .getUserInfoEndpoint()
-                .getUserNameAttributeName();
-
-        return new DefaultOAuth2User(authorities, oAuth2User.getAttributes(), userNameAttributeName);
     }
 }
