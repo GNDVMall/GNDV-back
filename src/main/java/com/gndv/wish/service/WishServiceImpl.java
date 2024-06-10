@@ -51,6 +51,7 @@ public class WishServiceImpl implements WishService {
     public void removeWish(WishDTO wishDTO) {
         wishMapper.deleteByMemberIdAndItemId(wishDTO.getMemberId(), wishDTO.getItemId());
     }
+
     @Override
     public List<WishDTO> findWishListsByMemberId(Long memberId) {
         List<Wish> wishes = wishMapper.findByMemberId(memberId);
@@ -58,4 +59,5 @@ public class WishServiceImpl implements WishService {
                 .map(wish -> new WishDTO(wish.getWishId(), wish.getMemberId(), wish.getItemId(), wish.getCreatedAt()))
                 .collect(Collectors.toList());
     }
+
 }
