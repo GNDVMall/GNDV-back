@@ -15,6 +15,7 @@ import com.gndv.common.CustomResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
@@ -60,7 +61,6 @@ public class ChatController {
 
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         ChatRoomDetail chatroom = chatService.getChatRoom(chatrooom_id, auth.getName());
-
         ChatRoomDetailResponse chatRoomDetailResponse = modelMapper.map(chatroom, ChatRoomDetailResponse.class);
 
         return CustomResponse.ok("Get ChatRoom", chatRoomDetailResponse);
@@ -107,5 +107,14 @@ public class ChatController {
         ChatRoomMessageResponse cmr = ChatRoomMessageResponse.builder()
                 .list(list).build();
         return CustomResponse.ok("채팅방 메시지들 반환", cmr);
+    }
+
+    @PutMapping("/messages/{message_id}")
+    public CustomResponse readChatMessage(@PathVariable Long message_id) throws Exception {
+        log.info("채팅 읽음 처리 : {}", message_id);
+        int updated = chatService.readChatMessage(message_id);
+
+        if(updated != 1) throw new Exception("채팅 메시지 읽음 처리 실패");
+        return CustomResponse.ok("채팅 메시지 읽음 처리");
     }
 }
