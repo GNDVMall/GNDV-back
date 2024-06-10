@@ -1,7 +1,7 @@
 package com.gndv.security.configs;
 
 import com.gndv.member.mapper.MemberMapper;
-import com.gndv.security.filters.JWTAuthenticationFilter;
+import com.gndv.security.filters.JwtAuthenticationFilter;
 import com.gndv.security.service.JwtService;
 import org.modelmapper.ModelMapper;
 import org.springframework.context.annotation.Bean;
@@ -18,7 +18,7 @@ public class AuthConfig {
     }
 
     @Bean
-    public JWTAuthenticationFilter jwtAuthenticationFilter(JwtService jwtService, MemberMapper memberMapper, ModelMapper modelMapper) {
-        return new JWTAuthenticationFilter(jwtService, memberMapper, modelMapper);
+    public JwtAuthenticationFilter jwtAuthenticationFilter(JwtService jwtService, MemberMapper memberMapper, ModelMapper modelMapper) {
+        return new JwtAuthenticationFilter(jwtService, memberMapper, modelMapper);
     }
 }

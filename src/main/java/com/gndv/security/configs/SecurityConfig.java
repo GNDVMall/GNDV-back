@@ -2,7 +2,7 @@ package com.gndv.security.configs;
 
 import com.gndv.security.dsl.RestApiDsl;
 import com.gndv.security.entrypoint.RestAuthenticationEntryPoint;
-import com.gndv.security.filters.JWTAuthenticationFilter;
+import com.gndv.security.filters.JwtAuthenticationFilter;
 import com.gndv.security.handler.*;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
@@ -38,7 +38,7 @@ public class SecurityConfig {
     private final RestAuthenticationFailureHandler restFailureHandler;
     private final JwtAuthenticationSuccessHandler jwtSuccessHandler;
     private final JwtAuthenticationFailureHandler jwtFailureHandler;
-    private final JWTAuthenticationFilter jwtAuthenticationFilter;
+    private final JwtAuthenticationFilter jwtAuthenticationFilter;
 
     private final CorsConfigurationSource corsConfigurationSource;
 
