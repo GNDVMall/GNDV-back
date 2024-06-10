@@ -3,6 +3,7 @@ package com.gndv.payment.service;
 import com.gndv.member.domain.entity.Member;
 import com.gndv.member.mapper.MemberMapper;
 import com.gndv.payment.constain.PaymentStatus;
+import com.gndv.payment.domain.dto.OrderCreateRequestDTO;
 import com.gndv.payment.domain.entity.LocalPayment;
 import com.gndv.payment.domain.entity.OrderList;
 import com.gndv.payment.domain.entity.Orders;
@@ -24,7 +25,9 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     @Transactional
-    public Orders createOrder(Long buyerId, Long productId) {
+    public Orders createOrder(Long buyerId, OrderCreateRequestDTO request) {
+        Long productId = request.getProduct_id(); // Request에서 product_id를 가져옴
+
         Member buyer = memberMapper.findById(buyerId)
                 .orElseThrow(() -> new IllegalArgumentException("Buyer not found"));
 
@@ -40,7 +43,7 @@ public class OrderServiceImpl implements OrderService {
 
         // LocalPayment 생성
         LocalPayment payment = LocalPayment.builder()
-                .price(Long.valueOf(product.getPrice()))
+                .price(request.getPrice())
                 .status(PaymentStatus.READY)
                 .payment_uid(UUID.randomUUID().toString())
                 .member_id(buyerId)
@@ -51,12 +54,13 @@ public class OrderServiceImpl implements OrderService {
         Orders order = Orders.builder()
                 .buyer_id(buyerId)
                 .seller_id(sellerId)
-                .price(Long.valueOf(product.getPrice()))
-                .item_name(product.getTitle())
+                .price(request.getPrice())
+                .item_name(request.getItem_name())
                 .order_uid(UUID.randomUUID().toString())
                 .payment_id(payment.getPayment_id())
-                .buyer(buyer)
-                .seller(seller)
+                .product_id(productId)
+                .buyer(buyer)  // 추가된 필드 설정
+                .seller(seller)  // 추가된 필드 설정
                 .build();
         orderMapper.save(order);
 
@@ -68,6 +72,9 @@ public class OrderServiceImpl implements OrderService {
                 .buyer_id(buyerId)
                 .build();
         orderMapper.saveOrderList(orderList);
+
+        // Product 상태 업데이트 (트리거 대신 직접 업데이트)
+        orderMapper.updateProductStatusToSoldOut(productId);
 
         return order;
     }
@@ -95,8 +102,14 @@ public class OrderServiceImpl implements OrderService {
         Orders order = findOrderAndPaymentAndMember(orderUid);
         orderMapper.delete(order.getOrder_id());
     }
+
     @Override
     public List<Orders> findOrdersBySellerId(Long sellerId) {
         return orderMapper.findOrdersBySellerId(sellerId);
+    }
+
+    @Override
+    public void updateProductStatusToSoldOut(Long productId) {
+        orderMapper.updateProductStatusToSoldOut(productId);
     }
 }
