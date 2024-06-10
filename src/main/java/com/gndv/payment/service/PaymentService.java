@@ -11,4 +11,5 @@ public interface PaymentService {
     LocalPayment findPaymentByUid(String payment_uid);
 
     IamportResponse<Payment> paymentByCallback(LocalPayRequest request);
+    void updateProductStatusToSoldOutIfPaid(String orderUid);
 }

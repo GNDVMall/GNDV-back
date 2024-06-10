@@ -1,11 +1,13 @@
 package com.gndv.payment.service;
 
+import com.gndv.payment.domain.dto.OrderCreateRequestDTO;
 import com.gndv.payment.domain.entity.Orders;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
 public interface OrderService {
-    Orders createOrder(Long buyerId, Long productId);
+    Orders createOrder(Long buyerId, OrderCreateRequestDTO request);
 
     Orders findOrderAndPaymentAndMember(String orderUid);
 
@@ -16,4 +18,5 @@ public interface OrderService {
     void deleteOrder(String orderUid);
 
     List<Orders> findOrdersBySellerId(Long sellerId);
+    void updateProductStatusToSoldOut(Long productId);
 }

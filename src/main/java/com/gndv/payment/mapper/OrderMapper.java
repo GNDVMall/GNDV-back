@@ -16,7 +16,7 @@ public interface OrderMapper {
     @Options(useGeneratedKeys = true, keyProperty = "payment_id")
     void savePayment(LocalPayment payment);
 
-    @Insert("INSERT INTO Orders (buyer_id, seller_id, price, item_name, order_uid, payment_id) VALUES (#{buyer_id}, #{seller_id}, #{price}, #{item_name}, #{order_uid}, #{payment_id})")
+    @Insert("INSERT INTO Orders (buyer_id, seller_id, price, item_name, order_uid, payment_id, product_id) VALUES (#{buyer_id}, #{seller_id}, #{price}, #{item_name}, #{order_uid}, #{payment_id}, #{product_id})")
     @Options(useGeneratedKeys = true, keyProperty = "order_id")
     void save(Orders order);
 
@@ -41,41 +41,21 @@ public interface OrderMapper {
     @Select("SELECT * FROM Gangnum_Payment WHERE payment_id = #{paymentId}")
     LocalPayment findPaymentById(Long paymentId);
 
-    @Update("UPDATE Orders SET buyer_id = #{buyer_id}, seller_id = #{seller_id}, price = #{price}, item_name = #{item_name}, payment_id = #{payment_id} WHERE order_id = #{order_id}")
+    @Update("UPDATE Orders SET buyer_id = #{buyer_id}, seller_id = #{seller_id}, price = #{price}, item_name = #{item_name}, payment_id = #{payment_id}, product_id = #{product_id} WHERE order_id = #{order_id}")
     void update(Orders order);
 
-    @Delete("DELETE FROM Orders WHERE order_id = #{orderId}")
+    @Delete("DELETE FROM Orders WHERE order_id = #{order_id}")
     void delete(Long orderId);
 
     @Select("SELECT * FROM Orders WHERE buyer_id = #{buyerId}")
-    @Results({
-            @Result(column = "order_id", property = "order_id"),
-            @Result(column = "order_uid", property = "order_uid"),
-            @Result(column = "buyer_id", property = "buyer_id"),
-            @Result(column = "seller_id", property = "seller_id"),
-            @Result(column = "price", property = "price"),
-            @Result(column = "item_name", property = "item_name"),
-            @Result(column = "payment_id", property = "payment_id"),
-            @Result(column = "buyer_id", property = "buyer", one = @One(select = "com.gndv.member.mapper.MemberMapper.findById")),
-            @Result(column = "seller_id", property = "seller", one = @One(select = "com.gndv.member.mapper.MemberMapper.findById")),
-            @Result(column = "payment_id", property = "payment", one = @One(select = "com.gndv.payment.mapper.OrderMapper.findPaymentById"))
-    })
     List<Orders> findOrdersByBuyerId(Long buyerId);
 
     @Select("SELECT * FROM Product WHERE product_id = #{productId}")
     ProductInsertWithMemberRequest findProductInsertRequestById(Long productId);
+
     @Select("SELECT * FROM Orders WHERE seller_id = #{sellerId}")
-    @Results({
-            @Result(column = "order_id", property = "order_id"),
-            @Result(column = "order_uid", property = "order_uid"),
-            @Result(column = "buyer_id", property = "buyer_id"),
-            @Result(column = "seller_id", property = "seller_id"),
-            @Result(column = "price", property = "price"),
-            @Result(column = "item_name", property = "item_name"),
-            @Result(column = "payment_id", property = "payment_id"),
-            @Result(column = "buyer_id", property = "buyer", one = @One(select = "com.gndv.member.mapper.MemberMapper.findById")),
-            @Result(column = "seller_id", property = "seller", one = @One(select = "com.gndv.member.mapper.MemberMapper.findById")),
-            @Result(column = "payment_id", property = "payment", one = @One(select = "com.gndv.payment.mapper.OrderMapper.findPaymentById"))
-    })
     List<Orders> findOrdersBySellerId(Long sellerId);
+
+    @Update("UPDATE Product SET product_sales_status = 'SOLDOUT' WHERE product_id = #{productId}")
+    void updateProductStatusToSoldOut(Long productId);
 }
