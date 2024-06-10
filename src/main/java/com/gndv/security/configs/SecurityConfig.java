@@ -100,19 +100,23 @@ public class SecurityConfig {
 
         http
                 .cors(cors -> cors.configurationSource(corsConfigurationSource))
-                .csrf(AbstractHttpConfigurer::disable)
                 .securityMatcher("/api/v2/**")
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/v2/members/new", "/api/v2/login", "/api/v2/items","/api/v2/items/*"
                                 ,"/api/v2/products/*","/api/v2/order/*","/api/v2/order/payment/*","/api/v2/order","/api/v2/order/payment",
-                                "/api/v2/payment/","/api/v2/payment/*" ,"/api/v2/chat/**", "/api/v2/chat", "/api/v2/gndv-websocket/**", "/api/v2/gndv-websocket").permitAll()
+
+                                "/api/v2/payment/","/api/v2/payment/*","/api/v2/wish","/api/v2/wish/*","/api/v2/purchaseList","/api/v2/purchaseList/*","/api/v2/salesList","/api/v2/salesList/*","/api/v2/chat/**", "/api/v2/chat").permitAll()
+
+
+
                         .requestMatchers(HttpMethod.GET,"/api/v2/products").permitAll()
                         .anyRequest().authenticated())
-                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
+                .csrf(AbstractHttpConfigurer::disable)
                 .authenticationManager(authenticationManager)
                 .exceptionHandling(exception -> exception
                         .authenticationEntryPoint(new RestAuthenticationEntryPoint())
                         .accessDeniedHandler(new JwtAccessDeniedHandler()))
+                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
                 .with(new RestApiDsl<>(), restDsl -> restDsl
                         .restSuccessHandler(jwtSuccessHandler)
                         .restFailureHandler(jwtFailureHandler)

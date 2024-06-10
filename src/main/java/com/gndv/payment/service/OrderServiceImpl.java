@@ -19,8 +19,8 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class OrderServiceImpl implements OrderService {
 
-    private final OrderMapper ordersMapper;
     private final MemberMapper memberMapper;
+    private final OrderMapper orderMapper;
 
     @Override
     @Transactional
@@ -28,20 +28,24 @@ public class OrderServiceImpl implements OrderService {
         Member buyer = memberMapper.findById(buyerId)
                 .orElseThrow(() -> new IllegalArgumentException("Buyer not found"));
 
-        ProductInsertWithMemberRequest product = findProductInsertRequestById(productId);
+        ProductInsertWithMemberRequest product = orderMapper.findProductInsertRequestById(productId);
+        if (product == null) {
+            throw new IllegalArgumentException("Product not found for productId: " + productId);
+        }
+
         Long sellerId = product.getMember_id();
 
         Member seller = memberMapper.findById(sellerId)
                 .orElseThrow(() -> new IllegalArgumentException("Seller not found"));
 
-        // Gangnum_Payment 생성
+        // LocalPayment 생성
         LocalPayment payment = LocalPayment.builder()
                 .price(Long.valueOf(product.getPrice()))
-                .status(PaymentStatus.READY)  // 수정된 부분
+                .status(PaymentStatus.READY)
                 .payment_uid(UUID.randomUUID().toString())
                 .member_id(buyerId)
                 .build();
-        ordersMapper.savePayment(payment);
+        orderMapper.savePayment(payment);
 
         // Orders 생성
         Orders order = Orders.builder()
@@ -50,11 +54,11 @@ public class OrderServiceImpl implements OrderService {
                 .price(Long.valueOf(product.getPrice()))
                 .item_name(product.getTitle())
                 .order_uid(UUID.randomUUID().toString())
-                .payment_id(payment.getPayment_id())  // payment_id 설정
+                .payment_id(payment.getPayment_id())
                 .buyer(buyer)
                 .seller(seller)
                 .build();
-        ordersMapper.save(order);
+        orderMapper.save(order);
 
         // OrderList 생성
         OrderList orderList = OrderList.builder()
@@ -63,36 +67,36 @@ public class OrderServiceImpl implements OrderService {
                 .seller_id(sellerId)
                 .buyer_id(buyerId)
                 .build();
-        ordersMapper.saveOrderList(orderList);
+        orderMapper.saveOrderList(orderList);
 
         return order;
     }
 
     @Override
     public Orders findOrderAndPaymentAndMember(String orderUid) {
-        return ordersMapper.findOrderAndPaymentAndMember(orderUid)
-                .orElseThrow(() -> new IllegalArgumentException("Order not found for order_uid: " + orderUid));
-    }
-
-    @Override
-    public void updateOrder(Orders order) {
-        ordersMapper.update(order);
-    }
-
-    @Override
-    public void deleteOrder(String orderUid) {
-        Orders order = ordersMapper.findOrderAndPaymentAndMember(orderUid)
-                .orElseThrow(() -> new IllegalArgumentException("Order not found for order_uid: " + orderUid));
-        ordersMapper.delete(order.getOrder_id());
-    }
-
-    @Override
-    public ProductInsertWithMemberRequest findProductInsertRequestById(Long productId) {
-        return ordersMapper.findProductInsertRequestById(productId);
+        return orderMapper.findOrderAndPaymentAndMember(orderUid)
+                .orElseThrow(() -> new IllegalArgumentException("Order not found for orderUid: " + orderUid));
     }
 
     @Override
     public List<Orders> findOrdersByBuyerId(Long buyerId) {
-        return ordersMapper.findOrdersByBuyerId(buyerId);
+        return orderMapper.findOrdersByBuyerId(buyerId);
+    }
+
+    @Override
+    @Transactional
+    public void updateOrder(Orders order) {
+        orderMapper.update(order);
+    }
+
+    @Override
+    @Transactional
+    public void deleteOrder(String orderUid) {
+        Orders order = findOrderAndPaymentAndMember(orderUid);
+        orderMapper.delete(order.getOrder_id());
+    }
+    @Override
+    public List<Orders> findOrdersBySellerId(Long sellerId) {
+        return orderMapper.findOrdersBySellerId(sellerId);
     }
 }
