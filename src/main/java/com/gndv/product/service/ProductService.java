@@ -1,9 +1,10 @@
 package com.gndv.product.service;
 
 import com.gndv.product.domain.dto.request.ProductInsertRequest;
+import com.gndv.product.domain.dto.request.ProductListPagingRequest;
 import com.gndv.product.domain.dto.request.ProductUpdateRequest;
 import com.gndv.product.domain.dto.response.ProductDetailResponse;
-import com.gndv.product.domain.dto.response.ProductResponse;
+import com.gndv.product.domain.entity.ProductDetail;
 import com.gndv.product.mapper.ProductMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -27,14 +28,14 @@ public class ProductService {
         throw new Exception();
     }
 
-    public List<ProductResponse> getProducts() {
-        List<ProductResponse> findList = productMapper.findAll();
+    public List<ProductDetail> getProducts(ProductListPagingRequest pagingRequest) {
+        List<ProductDetail> findList = productMapper.findAllById(pagingRequest);
         return findList;
     }
 
 
     @Transactional
-    @PreAuthorize("isAuthenticated()")
+    @PreAuthorize("#request.email == authentication.name")
     public void insertProduct(ProductInsertRequest request) {
         productMapper.insert(request);
     }
@@ -47,7 +48,7 @@ public class ProductService {
     }
 
     @Transactional
-    @PreAuthorize("isAuthenticated()")
+//    @PreAuthorize("isAuthenticated()")
     public int deleteProduct(Long product_id, String email) {
         int update = productMapper.delete(product_id, email);
         return update;

@@ -1,11 +1,12 @@
 package com.gndv.product.controller;
 
 import com.gndv.common.CustomResponse;
+import com.gndv.common.domain.response.PageResponse;
 import com.gndv.product.domain.dto.request.ProductInsertRequest;
+import com.gndv.product.domain.dto.request.ProductListPagingRequest;
 import com.gndv.product.domain.dto.request.ProductUpdateRequest;
 import com.gndv.product.domain.dto.response.ProductDetailResponse;
-import com.gndv.product.domain.dto.response.ProductListResponse;
-import com.gndv.product.domain.dto.response.ProductResponse;
+import com.gndv.product.domain.entity.ProductDetail;
 import com.gndv.product.service.ProductService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -30,18 +31,24 @@ public class ProductController {
     }
 
     @GetMapping("")
-    public CustomResponse<ProductListResponse> getProducts() {
+    public CustomResponse<PageResponse<ProductDetail>> getProducts(ProductListPagingRequest pagingRequest) {
         log.info("Get Products");
-        List<ProductResponse> products = productService.getProducts();
-
-        return CustomResponse.ok("Get Products", ProductListResponse.builder().products(products).total(products.size()).build());
+        List<ProductDetail> products = productService.getProducts(pagingRequest);
+        // builder 사용하는 경우 제네릭은 아래처럼 적용해야함
+        PageResponse<ProductDetail> response = PageResponse.<ProductDetail>builder()
+                .size(pagingRequest.getSize())
+                .pageNo(pagingRequest.getPageNo())
+                .list(products)
+                .total(products.size() > 0 ? products.get(0).getTotal() : 0)
+                .build();
+        return CustomResponse.ok("Get Products", response);
     }
 
     @PostMapping("")
     public CustomResponse insertProduct(@RequestBody ProductInsertRequest request) {
         log.info("Insert New Product {}", request);
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        request.setEmail(auth.getName());
+//        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+//        request.setEmail(auth.getName());
         productService.insertProduct(request);
         return CustomResponse.ok("Insert new Product", null);
     }

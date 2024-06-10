@@ -8,6 +8,6 @@ import java.util.List;
 @Data
 @Builder
 public class ChatRoomListResponse {
-    private List<ChatRoomResponse> chatRoomResponses;
+    private List<ChatRoomResponse> list;
     private Integer total;
 }

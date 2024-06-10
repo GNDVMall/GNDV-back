@@ -102,7 +102,7 @@ public class SecurityConfig {
                 .securityMatcher("/api/v2/**")
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/v2/members/new", "/api/v2/login", "/api/v2/items","/api/v2/items/*"
-                                ,"/api/v2/products/*").permitAll()
+                        ,"/api/v2/products/*").permitAll()
                         .requestMatchers(HttpMethod.GET,"/api/v2/products").permitAll()
                         .anyRequest().authenticated())
                 .csrf(AbstractHttpConfigurer::disable)
