@@ -6,7 +6,6 @@ import com.gndv.payment.domain.entity.LocalPayment;
 import com.gndv.payment.domain.entity.Orders;
 import com.gndv.payment.mapper.OrderMapper;
 import com.gndv.payment.mapper.PaymentMapper;
-import com.gndv.payment.service.PaymentService;
 import com.siot.IamportRestClient.IamportClient;
 import com.siot.IamportRestClient.exception.IamportResponseException;
 import com.siot.IamportRestClient.response.IamportResponse;
@@ -21,17 +20,18 @@ import java.io.IOException;
 @RequiredArgsConstructor
 public class PaymentServiceImpl implements PaymentService {
 
-    private final PaymentMapper paymentMapper; // assuming you have a PaymentMapper to interact with the database
-    private final IamportClient iamportClient; // assuming you have an Iamport client for API calls
+    private final PaymentMapper paymentMapper;
+    private final OrderMapper orderMapper;
+    private final IamportClient iamportClient;
 
     @Override
     @Transactional
     public LocalPayment createPayment(LocalPayRequest request) {
         LocalPayment payment = LocalPayment.builder()
                 .price(request.getPayment_price())
-                .status(PaymentStatus.valueOf(request.getStatus().toUpperCase())) // 상태 설정
+                .status(PaymentStatus.valueOf(request.getStatus().toUpperCase()))
                 .payment_uid(request.getPayment_uid())
-                .member_id(request.getMember_id()) // assuming the request contains member_id
+                .member_id(request.getMember_id())
                 .build();
 
         paymentMapper.save(payment);
@@ -50,9 +50,6 @@ public class PaymentServiceImpl implements PaymentService {
                 .orElseThrow(() -> new IllegalArgumentException("Payment not found for UID: " + payment_uid));
     }
 
-
-
-
     @Override
     public IamportResponse<Payment> paymentByCallback(LocalPayRequest request) {
         try {
@@ -64,5 +61,17 @@ public class PaymentServiceImpl implements PaymentService {
             throw new RuntimeException("아임포트 결제 검증 실패: " + e.getMessage(), e);
         }
     }
-}
 
+    @Override
+    @Transactional
+    public void updateProductStatusToSoldOutIfPaid(String orderUid) {
+        Orders order = orderMapper.findOrderAndPaymentAndMember(orderUid)
+                .orElseThrow(() -> new IllegalArgumentException("Order not found for orderUid: " + orderUid));
+
+        LocalPayment payment = order.getPayment();
+
+        if (PaymentStatus.PAID.equals(payment.getStatus())) {
+            orderMapper.updateProductStatusToSoldOut(order.getProduct_id());
+        }
+    }
+}

@@ -18,6 +18,7 @@ public class Orders {
     private Long payment_id;
     private Long buyer_id;
     private Long seller_id;
+    private Long product_id;
     private Member buyer;
     private Member seller;
     private LocalPayment payment;
