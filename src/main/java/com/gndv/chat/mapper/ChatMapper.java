@@ -25,16 +25,20 @@ public interface ChatMapper {
     int deleteUserFromChatroom(Long chatroom_id, String name);
 
     @Select("WITH Recent_Messages AS (\n" +
-            "    SELECT chatroom_id, chat_content, ROW_NUMBER() OVER (PARTITION BY chatroom_id ORDER BY sent_at DESC) as rn\n" +
-            "    FROM Chat_Message\n" +
-            ")\n" +
-            "SELECT cr.*, cu.*, m.nickname, rm.chat_content, m.profile_url\n" +
-            "FROM Chat_Room cr\n" +
-            "JOIN Chat_User cu ON cr.chatroom_id = cu.chatroom_id\n" +
+            "SELECT chatroom_id, chat_content, ROW_NUMBER() OVER (PARTITION BY chatroom_id ORDER BY sent_at DESC) as rn\n" +
+            "FROM Chat_Message),\n" +
+            "Unread_Message_Count AS ( SELECT c.chatroom_id, COUNT(*) AS unread_count\n" +
+            "FROM Chat_Message c JOIN `Member` m ON m.member_id = c.member_id\n" +
+            "WHERE is_read = 'N' AND m.email != #{email}\n" +
+            "GROUP BY chatroom_id )\n" +
+            "SELECT cr.*, cu.*, m.nickname, rm.chat_content, m.profile_url, uc.unread_count\n" +
+            "FROM Chat_Room cr JOIN Chat_User cu ON cr.chatroom_id = cu.chatroom_id\n" +
             "JOIN `Member_With_Profile` m ON cu.member_id = m.member_id\n" +
             "LEFT JOIN Recent_Messages rm ON cr.chatroom_id = rm.chatroom_id AND rm.rn = 1\n" +
-            "WHERE m.email = #{name}")
-    List<ChatRoomResponse> findAllbyName(String name);
+            "LEFT JOIN Unread_Message_Count uc ON uc.chatroom_id = cr.chatroom_id \n" +
+            "WHERE m.email = #{email}\n" +
+            "GROUP BY cr.chatroom_id")
+    List<ChatRoomResponse> findAllbyName(String email);
 
     @Select("SELECT cr.*, cu.*, m.nickname , m.rating , m.email, m.profile_url, p.product_sales_status, p.images, p.title, p.price, p.product_status\n" +
             "FROM Chat_Room cr \n" +
@@ -64,4 +68,9 @@ public interface ChatMapper {
 
     @Select("{ CALL UpdateAndSelectChatMessages(#{chatroom_id, mode=IN, jdbcType=BIGINT},#{email, mode=IN,jdbcType=VARCHAR }) }")
     List<ChatMessage> findAllMessagesByIdAndUpdateIsRead(ChatRoomMessageRequest request);
+
+    @Update("UPDATE Chat_Message\n" +
+            "    SET read_at = CURRENT_TIMESTAMP(), is_read = 'Y'\n" +
+            "    WHERE message_id = #{message_id}")
+    int updateMessageReadStatus(Long message_id);
 }

@@ -108,4 +108,13 @@ public class ChatController {
                 .list(list).build();
         return CustomResponse.ok("채팅방 메시지들 반환", cmr);
     }
+
+    @PutMapping("/messages/{message_id}")
+    public CustomResponse readChatMessage(@PathVariable Long message_id) throws Exception {
+        log.info("채팅 읽음 처리 : {}", message_id);
+        int updated = chatService.readChatMessage(message_id);
+
+        if(updated != 1) throw new Exception("채팅 메시지 읽음 처리 실패");
+        return CustomResponse.ok("채팅 메시지 읽음 처리");
+    }
 }

@@ -70,4 +70,9 @@ public class ChatService {
         List<ChatMessage> list = chatMapper.findAllMessagesByIdAndUpdateIsRead(request);
         return list;
     }
+
+    public int readChatMessage(Long message_id) {
+        int updated = chatMapper.updateMessageReadStatus(message_id);
+        return updated;
+    }
 }
