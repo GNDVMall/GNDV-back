@@ -21,4 +21,5 @@ public class Orders {
     private Member buyer;
     private Member seller;
     private LocalPayment payment;
+    private String item_image; // 필드 추가
 }
