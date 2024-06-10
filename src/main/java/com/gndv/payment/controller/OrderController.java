@@ -157,6 +157,7 @@ public class OrderController {
         }
     }
 
+
     @GetMapping("/purchaseList")
     public CustomResponse<List<OrderResponseDTO>> getPurchaseList() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -171,12 +172,13 @@ public class OrderController {
                         .buyer_name(order.getBuyer().getNickname())
                         .buyer_email(order.getBuyer().getEmail())
                         .buyer_tel(order.getBuyer().getPhone())
-                        .buyer_postcode("123-456") // 임의의 우편번호 값
+                        .buyer_postcode("123-456")
                         .build())
                 .collect(Collectors.toList());
 
         return CustomResponse.ok("구매 내역을 성공적으로 조회했습니다.", response);
     }
+
     @GetMapping("/salesList")
     public CustomResponse<List<OrderResponseDTO>> getSalesList() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -191,7 +193,7 @@ public class OrderController {
                         .buyer_name(order.getBuyer().getNickname())
                         .buyer_email(order.getBuyer().getEmail())
                         .buyer_tel(order.getBuyer().getPhone())
-                        .buyer_postcode("123-456") // 임의의 우편번호 값
+                        .buyer_postcode("123-456")
                         .build())
                 .collect(Collectors.toList());
 
