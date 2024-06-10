@@ -2,9 +2,12 @@ package com.gndv.chat.controller;
 
 import com.gndv.chat.domain.dto.request.ChatRoomCheckRequest;
 import com.gndv.chat.domain.dto.request.ChatRoomCreateRequest;
+import com.gndv.chat.domain.dto.request.ChatRoomMessageRequest;
 import com.gndv.chat.domain.dto.response.ChatRoomDetailResponse;
 import com.gndv.chat.domain.dto.response.ChatRoomListResponse;
+import com.gndv.chat.domain.dto.response.ChatRoomMessageResponse;
 import com.gndv.chat.domain.dto.response.ChatRoomResponse;
+import com.gndv.chat.domain.entity.ChatMessage;
 import com.gndv.chat.domain.entity.ChatRoom;
 import com.gndv.chat.domain.entity.ChatRoomDetail;
 import com.gndv.chat.service.ChatService;
@@ -33,7 +36,6 @@ public class ChatController {
 
         ChatRoomCheckRequest cr = ChatRoomCheckRequest.builder()
                 .buyer_email(auth.getName()).product_id(product_id).build();
-        log.info("cr?", cr.getBuyer_email(), cr.getProduct_id());
 
         ChatRoom chatroom = chatService.checkIsRoom(cr);
         if(chatroom == null) return CustomResponse.ok("채팅방이 존재하지 않습니다.", null);
@@ -49,7 +51,7 @@ public class ChatController {
         return CustomResponse.ok("Get ChatRoom list",
                 ChatRoomListResponse.builder()
                         .total(chatrooms.size())
-                        .chatRoomResponses(chatrooms).build());
+                        .list(chatrooms).build());
     }
 
     @GetMapping("/{chatrooom_id}")
@@ -60,14 +62,16 @@ public class ChatController {
         ChatRoomDetail chatroom = chatService.getChatRoom(chatrooom_id, auth.getName());
 
         ChatRoomDetailResponse chatRoomDetailResponse = modelMapper.map(chatroom, ChatRoomDetailResponse.class);
-        chatRoomDetailResponse.setImages(chatroom.getImages());
 
         return CustomResponse.ok("Get ChatRoom", chatRoomDetailResponse);
     }
 
     @PostMapping("")
-    public CustomResponse<ChatRoomCreateRequest> createRoom(@RequestBody ChatRoomCreateRequest chatRoomCreateRequest) {
+    public CustomResponse<ChatRoomCreateRequest> createRoom(@RequestBody ChatRoomCreateRequest chatRoomCreateRequest) throws Exception {
         log.info("Create ChatRoom {} ", chatRoomCreateRequest);
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        chatRoomCreateRequest.setEmail(auth.getName());
+
         // 채팅방을 만들 때, 채팅방 + 채팅방 유저도 만들어야 한다.
         chatService.createChatRoom(chatRoomCreateRequest);
         // 채팅방 번호를 바로 돌려줘야, 생성 후 바로 이동 가능
@@ -86,5 +90,22 @@ public class ChatController {
             throw new Exception("채팅방 떠나기 실패");
         }
         return CustomResponse.ok("Leave ChatRoom ok");
+    }
+
+    @GetMapping("/{chatroom_id}/messages")
+    public CustomResponse getChatMessages(@PathVariable Long chatroom_id){
+        log.info("채팅방 메시지들 가져오기 - {}" , chatroom_id);
+
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        ChatRoomMessageRequest request = ChatRoomMessageRequest.builder()
+                .chatroom_id(chatroom_id)
+                .email(auth.getName())
+                .build();
+
+        List<ChatMessage> list = chatService.getChatMessages(request);
+
+        ChatRoomMessageResponse cmr = ChatRoomMessageResponse.builder()
+                .list(list).build();
+        return CustomResponse.ok("채팅방 메시지들 반환", cmr);
     }
 }

@@ -10,4 +10,5 @@ public class ProductDetailResponse extends ProductResponse {
     private Long rating;
     private String profile_url;
     private String theme_name;
+    private String email;
 }
