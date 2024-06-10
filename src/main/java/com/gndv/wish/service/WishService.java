@@ -10,8 +10,7 @@ public interface WishService {
     boolean isWishListed(Long memberId, Long itemId);
     List<WishDTO> getWishlist(Long memberId);
     void removeWish(WishDTO wishDTO); // 새 메서드 추가
-<<<<<<< HEAD
+
     List<WishDTO> findWishListsByMemberId(Long memberId);
-=======
->>>>>>> 7fadc6b6a2c31916444bada2af65e4daaca43f33
+
 }
