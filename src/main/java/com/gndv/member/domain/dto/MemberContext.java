@@ -1,5 +1,6 @@
 package com.gndv.member.domain.dto;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -9,15 +10,11 @@ import java.util.Collection;
 import java.util.List;
 
 @Data
+@AllArgsConstructor
 public class MemberContext implements UserDetails, Serializable {
 
     private MemberDTO memberDTO;
     private final List<GrantedAuthority> roles;
-
-    public MemberContext(MemberDTO memberDTO, List<GrantedAuthority> roles) {
-        this.memberDTO = memberDTO;
-        this.roles = roles;
-    }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
