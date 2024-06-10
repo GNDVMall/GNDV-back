@@ -55,6 +55,8 @@ public class JWTAuthenticationFilter extends OncePerRequestFilter {
                 )
         );
 
+        System.out.println("=================토큰 됨?" + jwtService.extractAccessToken(request));
+
         filterChain.doFilter(request, response);
     }
 

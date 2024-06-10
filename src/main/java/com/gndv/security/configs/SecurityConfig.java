@@ -100,6 +100,7 @@ public class SecurityConfig {
 
         http
                 .cors(cors -> cors.configurationSource(corsConfigurationSource))
+                .csrf(AbstractHttpConfigurer::disable)
                 .securityMatcher("/api/v2/**")
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/v2/members/new", "/api/v2/login", "/api/v2/items","/api/v2/items/*"
@@ -107,12 +108,11 @@ public class SecurityConfig {
                                 "/api/v2/payment/","/api/v2/payment/*" ,"/api/v2/chat/**", "/api/v2/chat", "/api/v2/gndv-websocket/**", "/api/v2/gndv-websocket").permitAll()
                         .requestMatchers(HttpMethod.GET,"/api/v2/products").permitAll()
                         .anyRequest().authenticated())
-                .csrf(AbstractHttpConfigurer::disable)
+                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
                 .authenticationManager(authenticationManager)
                 .exceptionHandling(exception -> exception
                         .authenticationEntryPoint(new RestAuthenticationEntryPoint())
                         .accessDeniedHandler(new JwtAccessDeniedHandler()))
-                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
                 .with(new RestApiDsl<>(), restDsl -> restDsl
                         .restSuccessHandler(jwtSuccessHandler)
                         .restFailureHandler(jwtFailureHandler)
