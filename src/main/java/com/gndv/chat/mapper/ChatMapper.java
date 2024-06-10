@@ -36,15 +36,13 @@ public interface ChatMapper {
             "WHERE m.email = #{name}")
     List<ChatRoomResponse> findAllbyName(String name);
 
-    @Select("SELECT cr.*, cu.*, m.nickname , m.rating , m.email, m.profile_url, p.title, p.price, p.product_status\n" +
+    @Select("SELECT cr.*, cu.*, m.nickname , m.rating , m.email, m.profile_url, p.product_sales_status, p.images, p.title, p.price, p.product_status\n" +
             "FROM Chat_Room cr \n" +
             "JOIN Chat_User cu ON cr.chatroom_id = cu.chatroom_id \n" +
             "JOIN Member_With_Profile m ON cu.member_id = m.member_id\n" +
             "JOIN Product_With_Image p ON cr.product_id = p.product_id \n" +
             "WHERE cr.chatroom_id = #{chatroom_id} AND m.email != #{name}")
     ChatRoomDetail findByIdWithName(Long chatroom_id, String name);
-
-
 
     @Select("SELECT cr.* from Chat_Room cr  \n" +
             "JOIN Chat_User cu ON cr.chatroom_id = cu.chatroom_id \n" +
