@@ -19,10 +19,9 @@ public interface ChatMapper {
     @Options(statementType = StatementType.CALLABLE)
     void createChatRoom(ChatRoomCreateRequest chatRoomCreateRequest);
 
-    @Delete("DELETE cu FROM Chat_User cu\n" +
-            "JOIN `Member` m ON cu.member_id = m.member_id\n" +
-            "WHERE cu.chatroom_id = #{chatroom_id} AND m.email = #{name}")
-    int deleteUserFromChatroom(Long chatroom_id, String name);
+    @Update("UPDATE Chat_User cu SET cu.`leave` = 'Y' WHERE cu.chatroom_id = #{chatroom_id} " +
+            "AND (SELECT m.member_id FROM `Member` m WHERE m.email = #{email}) = cu.member_id ")
+    int deleteUserFromChatroom(Long chatroom_id, String email);
 
     @Select("WITH Recent_Messages AS (\n" +
             "SELECT chatroom_id, chat_content, ROW_NUMBER() OVER (PARTITION BY chatroom_id ORDER BY sent_at DESC) as rn\n" +
