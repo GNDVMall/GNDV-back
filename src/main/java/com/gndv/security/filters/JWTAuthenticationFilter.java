@@ -71,7 +71,7 @@ public class JWTAuthenticationFilter extends OncePerRequestFilter {
     private void checkRefreshTokenAndReIssueAccessToken(HttpServletResponse response, String refreshToken) {
         memberMapper.findByRefreshToken(refreshToken)
                 .ifPresent(member -> {
-                    String newAccessToken = jwtService.createAccessToken(member.getEmail());
+                    String newAccessToken = jwtService.createAccessToken(member.getEmail(), member.getMember_id());
                     jwtService.sendAccessToken(response, newAccessToken);
 
                     if (jwtService.isTokenCloseToExpiry(refreshToken)) {
