@@ -49,7 +49,7 @@ public interface ChatMapper {
 
     @Select("SELECT cr.* from Chat_Room cr  \n" +
             "JOIN Chat_User cu ON cr.chatroom_id = cu.chatroom_id \n" +
-            "WHERE product_id = #{product_id} AND cu.chat_user_type = 'BUYER' AND (SELECT m.email FROM `Member` m WHERE cu.member_id = m.member_id) = #{buyer_email}")
+            "WHERE product_id = #{product_id} AND cu.chat_user_type = 'BUYER' AND (SELECT m.email FROM `Member` m WHERE cu.member_id = m.member_id) = #{buyer_email} AND cu.`leave` = 'N'")
     ChatRoom getChatRoomId(ChatRoomCheckRequest request);
 
     @Select("{ CALL UpdateAndSelectChatMessages(#{chatroom_id, mode=IN, jdbcType=BIGINT},#{email, mode=IN,jdbcType=VARCHAR }) }")
