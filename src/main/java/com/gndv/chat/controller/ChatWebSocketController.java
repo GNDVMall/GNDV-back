@@ -2,6 +2,7 @@ package com.gndv.chat.controller;
 
 import com.gndv.chat.domain.dto.request.ChatMessageRequest;
 import com.gndv.chat.domain.dto.response.ChatAlarmResponse;
+import com.gndv.chat.domain.dto.response.ChatMessageResponse;
 import com.gndv.chat.service.ChatSocketService;
 import com.gndv.member.domain.entity.Member;
 import lombok.RequiredArgsConstructor;
@@ -33,8 +34,15 @@ public class ChatWebSocketController {
         int updated = chatSocketService.insertMessage(chatMessageRequest);
         log.info("메시지 => {}", chatMessageRequest.getMessage_id());
 
+        ChatMessageResponse response = ChatMessageResponse.builder()
+                .message_id(chatMessageRequest.getMessage_id())
+                .content(chatMessageRequest.getContent())
+                .email(chatMessageRequest.getEmail()) // 나
+                .message_user_type(chatMessageRequest.getMessage_user_type()) // USER or SYSTEM
+                .build();
+
         // chat/send/채팅방으로 온 메시지를 구독한 곳으로 보내준다.
-        simpMessagingTemplate.convertAndSend("/topic/" + chatroom_id, chatMessageRequest);
+        simpMessagingTemplate.convertAndSend("/topic/" + chatroom_id, response);
 
         // 해당 메시지를 받는 유저의 이메일로 구독된 곳으로 메시지를 보낸다.
         simpMessagingTemplate.convertAndSend("/topic/" + chatMessageRequest.getReceiver(), new ChatAlarmResponse("리렌더링 요청"));
