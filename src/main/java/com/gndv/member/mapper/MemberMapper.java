@@ -26,7 +26,7 @@ public interface MemberMapper {
 
     @Insert("INSERT INTO Member (email, password) VALUES (#{email}, #{password})")
     @Transactional
-    Member insert(Member member);
+    void insert(Member member);
 
     @Update({
             "<script>",
@@ -37,19 +37,19 @@ public interface MemberMapper {
             "<if test='nickname != null'>nickname = #{nickname},</if>" +
             "<if test='phone != null'>phone = #{phone},</if>" +
             "<if test='introduction != null'>introduction = #{introduction},</if>" +
-            "<if test='profile != null'>profile = #{profile},</if>" +
             "</set>" +
             "WHERE member_id = #{member_id}" +
-            "</script>"
-    })
+            "</script>"})
     @Transactional
     void update(@Param("member_id") Long member_id,
                 @Param("email") String email,
                 @Param("password") String password,
                 @Param("nickname") String nickname,
                 @Param("phone") String phone,
-                @Param("introduction") String introduction,
-                @Param("profile") String profile);
+                @Param("introduction") String introduction);
+
+    @Update("UPDATE Member SET profile_url = #{profile_url} WHERE member_id = #{member_id}")
+    void updateProfileImage(@Param("member_id") Long member_id, @Param("profile_url") String profile_url);
 
     @Delete("DELETE FROM Member WHERE member_id = #{member_id}")
     @Transactional

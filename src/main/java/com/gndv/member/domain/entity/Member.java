@@ -20,7 +20,7 @@ public class Member implements Serializable {
     private String nickname;
     private String phone;
     private String introduction;
-    private String profile;
+    private String profile_url;
     private Date created_at;
     private Long rating;
     private Long report_count;

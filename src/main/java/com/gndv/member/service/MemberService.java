@@ -11,6 +11,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.IOException;
 import java.util.Optional;
 
 @Service
@@ -23,12 +24,10 @@ public class MemberService {
     @Transactional
     public void createMember(JoinRequest request) {
         String encodedPassword = passwordEncoder.encode(request.getPassword());
-
         Member member = Member.builder()
                 .email(request.getEmail())
                 .password(encodedPassword)
                 .build();
-
        memberMapper.insert(member);
     }
 
@@ -39,14 +38,16 @@ public class MemberService {
     @Transactional
     @PreAuthorize("#email == authentication.name")
     public void editMember(Long member_id, @Param("email") String email, EditRequest request) {
-
         String encodedPassword = null;
-
         if (request.getPassword() != null) {
             encodedPassword = passwordEncoder.encode(request.getPassword());
         }
+        memberMapper.update(member_id, email, encodedPassword, request.getNickname(), request.getPhone(), request.getIntroduction());
+    }
 
-        memberMapper.update(member_id, email, encodedPassword, request.getNickname(), request.getPhone(), request.getIntroduction(), request.getProfile());
+    @Transactional
+    public void updateProfileImage(Long member_id, String profile_url) {
+        memberMapper.updateProfileImage(member_id, profile_url);
     }
 
     @Transactional
