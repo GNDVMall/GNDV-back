@@ -33,7 +33,7 @@ public class JwtAuthenticationSuccessHandler implements AuthenticationSuccessHan
         MemberContext memberContext = (MemberContext) authentication.getPrincipal();
         String email = memberContext.getMemberDTO().getEmail();
 
-        String accessToken = jwtService.createAccessToken(email);
+        String accessToken = jwtService.createAccessToken(email, memberContext.getMemberDTO().getMember_id());
         String refreshToken = jwtService.createRefreshToken();
 
         jwtService.sendAccessAndRefreshToken(response, accessToken, refreshToken);
