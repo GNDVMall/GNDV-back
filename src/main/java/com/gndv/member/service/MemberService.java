@@ -1,7 +1,7 @@
 package com.gndv.member.service;
 
-import com.gndv.member.domain.dto.EditRequest;
-import com.gndv.member.domain.dto.JoinRequest;
+import com.gndv.member.domain.dto.request.EditRequest;
+import com.gndv.member.domain.dto.request.JoinRequest;
 import com.gndv.member.domain.entity.Member;
 import com.gndv.member.mapper.MemberMapper;
 import lombok.RequiredArgsConstructor;

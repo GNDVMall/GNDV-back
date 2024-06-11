@@ -20,6 +20,7 @@ public class Member implements Serializable {
     private String nickname;
     private String phone;
     private String introduction;
+    private String profile;
     private Date created_at;
     private Long rating;
     private Long report_count;
@@ -36,11 +37,8 @@ public class Member implements Serializable {
     private boolean is_enabled;
 
     // Jwt
+    private String accessToken;
     private String refreshToken;
-
-    // oauth2
-    private String provider;
-    private String provider_id;
 
     public void updateRefreshToken(String refreshToken) {
         this.refreshToken = refreshToken;

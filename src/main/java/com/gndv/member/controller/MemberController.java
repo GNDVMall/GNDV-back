@@ -1,13 +1,12 @@
 package com.gndv.member.controller;
 
 import com.gndv.common.CustomResponse;
-import com.gndv.member.domain.dto.EditRequest;
-import com.gndv.member.domain.dto.JoinRequest;
+import com.gndv.member.domain.dto.request.EditRequest;
+import com.gndv.member.domain.dto.request.JoinRequest;
 import com.gndv.member.domain.entity.Member;
 import com.gndv.member.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Optional;

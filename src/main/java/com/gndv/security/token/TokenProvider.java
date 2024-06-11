@@ -1,8 +1,7 @@
-package com.gndv.security.service;
+package com.gndv.security.token;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gndv.member.mapper.MemberMapper;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -24,7 +23,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 @Setter(value = AccessLevel.PRIVATE)
 @Slf4j
-public class JwtService {
+public class TokenProvider {
 
     @Value("${jwt.secret}")
     private String secret;

@@ -4,7 +4,7 @@ import com.gndv.member.domain.dto.MemberContext;
 import com.gndv.member.domain.dto.MemberDTO;
 import com.gndv.member.domain.entity.Member;
 import com.gndv.member.mapper.MemberMapper;
-import com.gndv.security.service.JwtService;
+import com.gndv.security.token.TokenProvider;
 import com.gndv.security.token.RestAuthenticationToken;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -18,9 +18,9 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import java.io.IOException;
 
 @RequiredArgsConstructor
-public class JwtAuthenticationFilter extends OncePerRequestFilter {
+public class TokenAuthenticationFilter extends OncePerRequestFilter {
 
-    private final JwtService jwtService;
+    private final TokenProvider tokenProvider;
     private final MemberMapper memberMapper;
     private final ModelMapper modelMapper;
 
@@ -28,14 +28,15 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
+
         if (request.getRequestURI().equals(NO_CHECK_URL)) {
             filterChain.doFilter(request, response);
             return;
         }
 
-        String refreshToken = jwtService
+        String refreshToken = tokenProvider
                 .extractRefreshToken(request)
-                .filter(jwtService::isTokenValid)
+                .filter(tokenProvider::isTokenValid)
                 .orElse(null);
 
         if (refreshToken != null) {
@@ -47,8 +48,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     }
 
     private void checkAccessTokenAndAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-        jwtService.extractAccessToken(request).filter(jwtService::isTokenValid)
-                .ifPresent(accessToken -> jwtService.extractEmail(accessToken)
+        tokenProvider.extractAccessToken(request).filter(tokenProvider::isTokenValid)
+                .ifPresent(accessToken -> tokenProvider.extractEmail(accessToken)
                         .ifPresent(email -> memberMapper.findByEmail(email)
                                 .ifPresent(member -> saveAuthentication(member)
                         )
@@ -59,6 +60,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     }
 
     private void saveAuthentication(Member member) {
+
         MemberContext userDetails = new MemberContext(modelMapper.map(member, MemberDTO.class), null);
 
         RestAuthenticationToken authentication = new RestAuthenticationToken(userDetails, null);
@@ -69,13 +71,13 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private void checkRefreshTokenAndReIssueAccessToken(HttpServletResponse response, String refreshToken) {
         memberMapper.findByRefreshToken(refreshToken)
                 .ifPresent(member -> {
-                    String newAccessToken = jwtService.createAccessToken(member.getEmail());
-                    jwtService.sendAccessToken(response, newAccessToken);
+                    String newAccessToken = tokenProvider.createAccessToken(member.getEmail());
+                    tokenProvider.sendAccessToken(response, newAccessToken);
 
-                    if (jwtService.isTokenCloseToExpiry(refreshToken)) {
-                        String newRefreshToken = jwtService.createRefreshToken();
-                        jwtService.updateRefreshToken(member.getEmail(), newRefreshToken);
-                        jwtService.sendRefreshToken(response, newRefreshToken);
+                    if (tokenProvider.isTokenCloseToExpiry(refreshToken)) {
+                        String newRefreshToken = tokenProvider.createRefreshToken();
+                        tokenProvider.updateRefreshToken(member.getEmail(), newRefreshToken);
+                        tokenProvider.sendRefreshToken(response, newRefreshToken);
                     }
                 });
     }

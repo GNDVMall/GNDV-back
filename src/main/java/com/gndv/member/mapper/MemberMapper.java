@@ -2,6 +2,7 @@ package com.gndv.member.mapper;
 
 import com.gndv.member.domain.entity.Member;
 import org.apache.ibatis.annotations.*;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -16,6 +17,7 @@ public interface MemberMapper {
             @Result(property = "email", column = "email")
     })
     Optional<Member> findById(Long memberId);
+
     @Select("SELECT * FROM Member WHERE email = #{email}")
     Optional<Member> findByEmail(@Param("email") String email);
 
@@ -23,7 +25,12 @@ public interface MemberMapper {
     List<Member> findAll();
 
     @Insert("INSERT INTO Member (email, password) VALUES (#{email}, #{password})")
+    @Transactional
     Member insert(Member member);
+
+    @Insert("INSERT INTO Member (email, nickname, provider, provider_id) VALUES (#{email}, #{nickname}, #{provider}, #{provider_id})")
+    @Transactional
+    Member oauthInsert(Member member);
 
     @Update({
             "<script>",
@@ -38,6 +45,7 @@ public interface MemberMapper {
             "WHERE member_id = #{member_id}" +
             "</script>"
     })
+    @Transactional
     void update(@Param("member_id") Long member_id,
                 @Param("email") String email,
                 @Param("password") String password,
@@ -46,8 +54,12 @@ public interface MemberMapper {
                 @Param("introduction") String introduction);
 
     @Delete("DELETE FROM Member WHERE member_id = #{member_id}")
+    @Transactional
     void delete(Long member_id);
 
     @Select("SELECT * FROM Member WHERE refreshToke = #{refreshToke}")
     Optional<Member> findByRefreshToken(String refreshToke);
+
+    @Update("UPDATE Member SET accessToken = #{accessToken}, refreshToken = #{refreshToken} WHERE member_id = #{member_id}")
+    void updateTokens(Long member_id, String accessToken, String refreshToken);
 }
