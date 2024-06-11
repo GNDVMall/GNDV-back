@@ -48,7 +48,7 @@ public class ProductController {
     public CustomResponse insertProduct(@RequestBody ProductInsertRequest request) {
         log.info("Insert New Product {}", request);
         productService.insertProduct(request);
-        return CustomResponse.ok("Insert new Product", null);
+        return CustomResponse.ok("Insert new Product", request.getProduct_id());
     }
 
     @PutMapping("/{product_id}")

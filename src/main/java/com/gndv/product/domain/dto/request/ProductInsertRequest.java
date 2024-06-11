@@ -18,4 +18,5 @@ public class ProductInsertRequest {
     private ProductStatus product_status;
     private Boolean product_trade_opt1;
     private Boolean product_trade_opt2;
+    private Long product_id;
 }

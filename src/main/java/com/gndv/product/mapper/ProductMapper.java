@@ -23,6 +23,7 @@ public interface ProductMapper {
     List<ProductDetail> findAllById(ProductListPagingRequest pagingRequest);
 
     @Insert("INSERT INTO Product (item_id, title, price, content, product_status, product_trade_opt1, product_trade_opt2, member_id) VALUES (#{item_id},#{title},#{price}, #{content}, #{product_status}, #{product_trade_opt1}, #{product_trade_opt2},(SELECT member_id FROM Member WHERE email = #{email}))")
+    @Options(useGeneratedKeys = true, keyProperty = "product_id", keyColumn = "product_id")
     void insert(ProductInsertRequest request);
 
 //    @Update("UPDATE Product SET title = #{title}, content = #{content}, price = #{price}, product_status = #{product_status}, product_trade_opt1 = #{product_trade_opt1}, product_trade_opt2 = #{product_trade_opt2} WHERE product_id = #{product_id} AND member_id = (SELECT member_id FROM Member WHERE email = #{email})")
