@@ -35,7 +35,7 @@ public interface ChatMapper {
             "JOIN `Member_With_Profile` m ON cu.member_id = m.member_id\n" +
             "LEFT JOIN Recent_Messages rm ON cr.chatroom_id = rm.chatroom_id AND rm.rn = 1\n" +
             "LEFT JOIN Unread_Message_Count uc ON uc.chatroom_id = cr.chatroom_id \n" +
-            "WHERE m.email = #{email}\n" +
+            "WHERE m.email = #{email} AND cu.`leave` != 'Y'\n" +
             "GROUP BY cr.chatroom_id")
     List<ChatRoomResponse> findAllbyName(String email);
 
@@ -51,19 +51,6 @@ public interface ChatMapper {
             "JOIN Chat_User cu ON cr.chatroom_id = cu.chatroom_id \n" +
             "WHERE product_id = #{product_id} AND cu.chat_user_type = 'BUYER' AND (SELECT m.email FROM `Member` m WHERE cu.member_id = m.member_id) = #{buyer_email}")
     ChatRoom getChatRoomId(ChatRoomCheckRequest request);
-
-    @Select("SELECT cm.*, \n" +
-            "       mwp.nickname, \n" +
-            "       mwp.profile_url,\n" +
-            "       CASE \n" +
-            "           WHEN mwp.email = #{email} THEN 'SENT'\n" +
-            "           ELSE 'RECEIVE'\n" +
-            "       END AS message_type\n" +
-            "FROM Chat_Message cm\n" +
-            "JOIN Member_With_Profile mwp ON cm.member_id = mwp.member_id\n" +
-            "WHERE chatroom_id = #{chatroom_id}\n" +
-            "ORDER BY sent_at ASC;")
-    List<ChatMessage> getChatMessages(ChatRoomMessageRequest request);
 
     @Select("{ CALL UpdateAndSelectChatMessages(#{chatroom_id, mode=IN, jdbcType=BIGINT},#{email, mode=IN,jdbcType=VARCHAR }) }")
     List<ChatMessage> findAllMessagesByIdAndUpdateIsRead(ChatRoomMessageRequest request);
