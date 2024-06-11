@@ -39,12 +39,14 @@ public class MemberService {
     @Transactional
     @PreAuthorize("#email == authentication.name")
     public void editMember(Long member_id, @Param("email") String email, EditRequest request) {
+
         String encodedPassword = null;
+
         if (request.getPassword() != null) {
             encodedPassword = passwordEncoder.encode(request.getPassword());
         }
 
-        memberMapper.update(member_id, request.getEmail(), encodedPassword, request.getNickname(), request.getPhone(), request.getIntroduction());
+        memberMapper.update(member_id, email, encodedPassword, request.getNickname(), request.getPhone(), request.getIntroduction(), request.getProfile());
     }
 
     @Transactional

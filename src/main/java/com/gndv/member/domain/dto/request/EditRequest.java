@@ -10,4 +10,5 @@ public class EditRequest {
     private String nickname;
     private String phone;
     private String introduction;
+    private String profile;
 }

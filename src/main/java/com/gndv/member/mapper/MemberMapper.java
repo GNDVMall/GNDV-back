@@ -28,10 +28,6 @@ public interface MemberMapper {
     @Transactional
     Member insert(Member member);
 
-    @Insert("INSERT INTO Member (email, nickname, provider, provider_id) VALUES (#{email}, #{nickname}, #{provider}, #{provider_id})")
-    @Transactional
-    Member oauthInsert(Member member);
-
     @Update({
             "<script>",
             "UPDATE Member",
@@ -41,6 +37,7 @@ public interface MemberMapper {
             "<if test='nickname != null'>nickname = #{nickname},</if>" +
             "<if test='phone != null'>phone = #{phone},</if>" +
             "<if test='introduction != null'>introduction = #{introduction},</if>" +
+            "<if test='profile != null'>profile = #{profile},</if>" +
             "</set>" +
             "WHERE member_id = #{member_id}" +
             "</script>"
@@ -51,7 +48,8 @@ public interface MemberMapper {
                 @Param("password") String password,
                 @Param("nickname") String nickname,
                 @Param("phone") String phone,
-                @Param("introduction") String introduction);
+                @Param("introduction") String introduction,
+                @Param("profile") String profile);
 
     @Delete("DELETE FROM Member WHERE member_id = #{member_id}")
     @Transactional
