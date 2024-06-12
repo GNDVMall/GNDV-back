@@ -69,7 +69,7 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
     private void checkRefreshTokenAndReIssueAccessToken(HttpServletResponse response, String refreshToken) {
         memberMapper.findByRefreshToken(refreshToken)
                 .ifPresent(member -> {
-                    String newAccessToken = tokenProvider.createAccessToken(member.getEmail());
+                    String newAccessToken = tokenProvider.createAccessToken(member.getEmail(), member.getMember_id());
                     tokenProvider.sendAccessToken(response, newAccessToken);
 
                     if (tokenProvider.isTokenCloseToExpiry(refreshToken)) {

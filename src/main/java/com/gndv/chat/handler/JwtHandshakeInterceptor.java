@@ -4,9 +4,8 @@ import com.gndv.member.domain.dto.MemberContext;
 import com.gndv.member.domain.dto.MemberDTO;
 import com.gndv.member.domain.entity.Member;
 import com.gndv.member.mapper.MemberMapper;
-import com.gndv.security.service.JwtService;
 import com.gndv.security.token.RestAuthenticationToken;
-import jakarta.servlet.http.HttpServletRequest;
+import com.gndv.security.token.TokenProvider;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
@@ -25,7 +24,7 @@ import java.util.Map;
 @RequiredArgsConstructor
 @Slf4j
 public class JwtHandshakeInterceptor implements HandshakeInterceptor {
-    private final JwtService jwtService;
+    private final TokenProvider tokenProvider;
     private final MemberMapper memberMapper;
     private final ModelMapper modelMapper;
 
@@ -33,8 +32,8 @@ public class JwtHandshakeInterceptor implements HandshakeInterceptor {
     @Override
     public boolean beforeHandshake(ServerHttpRequest request, ServerHttpResponse response, WebSocketHandler wsHandler, Map<String, Object> attributes) throws Exception {
         String jwtToken = getTokenFromRequest(request);
-        if (jwtToken != null && jwtService.isTokenValid(jwtToken)) {
-            jwtService.extractEmail(jwtToken)
+        if (jwtToken != null && tokenProvider.isTokenValid(jwtToken)) {
+            tokenProvider.extractEmail(jwtToken)
                     .ifPresent(email -> memberMapper.findByEmail(email)
                             .ifPresent(member -> {
                                         saveAuthentication(member);
