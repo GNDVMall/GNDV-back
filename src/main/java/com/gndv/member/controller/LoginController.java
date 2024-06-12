@@ -28,11 +28,8 @@ public class LoginController {
 
     @GetMapping("/v1/logout")
     public CustomResponse<Object> sessionLogout(HttpServletRequest request, HttpServletResponse response) {
-
         Authentication authentication = SecurityContextHolder.getContextHolderStrategy().getContext().getAuthentication();
-
         log.info("authentication: {}", authentication);
-
         if (authentication != null) {
             new SecurityContextLogoutHandler().logout(request, response, authentication);
         }

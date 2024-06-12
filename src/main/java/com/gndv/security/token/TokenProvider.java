@@ -39,15 +39,17 @@ public class TokenProvider {
     private static final String ACCESS_TOKEN_SUBJECT = "AccessToken";
     private static final String REFRESH_TOKEN_SUBJECT = "RefreshToken";
     private static final String USERNAME_CLAIM = "email";
+    private static final String MEMBER_ID_CLAIM = "member_id";
     private static final String BEARER = "Bearer ";
 
     private final MemberMapper memberMapper;
 
-    public String createAccessToken(String email) {
+    public String createAccessToken(String email, Long memberId) {
         return JWT.create()
                 .withSubject(ACCESS_TOKEN_SUBJECT)
                 .withExpiresAt(new Date(System.currentTimeMillis() + accessTokenValidityInSeconds * 1000))
                 .withClaim(USERNAME_CLAIM, email)
+                .withClaim(MEMBER_ID_CLAIM, memberId)
                 .sign(Algorithm.HMAC512(secret));
     }
 
@@ -121,6 +123,18 @@ public class TokenProvider {
                     JWT.require(Algorithm.HMAC512(secret)).build()
                             .verify(accessToken).getClaim(USERNAME_CLAIM)
                             .asString());
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            return Optional.empty();
+        }
+    }
+
+    public Optional<Long> extractMemberId(String accessToken) {
+        try {
+            return Optional.ofNullable(
+                    JWT.require(Algorithm.HMAC512(secret)).build()
+                            .verify(accessToken).getClaim(MEMBER_ID_CLAIM)
+                            .asLong());
         } catch (Exception e) {
             log.error(e.getMessage());
             return Optional.empty();

@@ -28,7 +28,6 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-
         if (request.getRequestURI().equals(NO_CHECK_URL)) {
             filterChain.doFilter(request, response);
             return;
@@ -60,7 +59,6 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
     }
 
     private void saveAuthentication(Member member) {
-
         MemberContext userDetails = new MemberContext(modelMapper.map(member, MemberDTO.class), null);
 
         RestAuthenticationToken authentication = new RestAuthenticationToken(userDetails, null);

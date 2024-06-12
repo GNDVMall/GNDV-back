@@ -95,7 +95,11 @@ public class WishController {
             logger.info("User email: {}", userEmail);
 
             Long memberId = wishService.getMemberIdByEmail(userEmail);
+
             List<WishDTO> wishlist = wishService.getWishlist(memberId);
+
+//            List<WishDTO> wishlist = wishService.findWishListsByMemberId(memberId);
+
 
             // 각 WishDTO의 itemId를 사용하여 아이템 정보를 가져옴
             return wishlist.stream()
