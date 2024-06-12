@@ -5,11 +5,12 @@ import com.gndv.payment.domain.entity.Orders;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface OrderService {
     Orders createOrder(Long buyerId, OrderCreateRequestDTO request);
 
-    Orders findOrderAndPaymentAndMember(String orderUid);
+    Optional<Orders> findOrderAndPaymentAndMember(String orderUid);
 
     List<Orders> findOrdersByBuyerId(Long buyerId);
 

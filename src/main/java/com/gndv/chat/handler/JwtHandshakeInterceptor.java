@@ -4,9 +4,7 @@ import com.gndv.member.domain.dto.MemberContext;
 import com.gndv.member.domain.dto.MemberDTO;
 import com.gndv.member.domain.entity.Member;
 import com.gndv.member.mapper.MemberMapper;
-import com.gndv.security.service.JwtService;
 import com.gndv.security.token.RestAuthenticationToken;
-import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
@@ -14,8 +12,6 @@ import org.springframework.http.server.ServerHttpRequest;
 import org.springframework.http.server.ServerHttpResponse;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
-import org.springframework.web.socket.WebSocketHandler;
-import org.springframework.web.socket.server.HandshakeInterceptor;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.util.Map;

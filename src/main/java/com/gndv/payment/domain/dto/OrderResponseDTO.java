@@ -13,7 +13,8 @@ public class OrderResponseDTO {
     private String buyer_email;
     private String buyer_tel;
     private String buyer_postcode;
-    private String paymentStatus;
+    private String payment_status;
     private Long paymentPrice;
+    private Long review_id;
     private String item_image; // 이미지 URL을 위한 필드 추가
 }

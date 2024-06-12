@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -79,11 +80,12 @@ public class OrderServiceImpl implements OrderService {
         return order;
     }
 
+
     @Override
-    public Orders findOrderAndPaymentAndMember(String orderUid) {
-        return orderMapper.findOrderAndPaymentAndMember(orderUid)
-                .orElseThrow(() -> new IllegalArgumentException("Order not found for orderUid: " + orderUid));
+    public Optional<Orders> findOrderAndPaymentAndMember(String orderUid) {
+        return orderMapper.findOrderAndPaymentAndMember(orderUid);
     }
+
 
     @Override
     public List<Orders> findOrdersByBuyerId(Long buyerId) {
@@ -99,7 +101,8 @@ public class OrderServiceImpl implements OrderService {
     @Override
     @Transactional
     public void deleteOrder(String orderUid) {
-        Orders order = findOrderAndPaymentAndMember(orderUid);
+        Orders order = findOrderAndPaymentAndMember(orderUid)
+                .orElseThrow(() -> new IllegalArgumentException("Order not found with UID: " + orderUid));
         orderMapper.delete(order.getOrder_id());
     }
 
@@ -107,7 +110,6 @@ public class OrderServiceImpl implements OrderService {
     public List<Orders> findOrdersBySellerId(Long sellerId) {
         return orderMapper.findOrdersBySellerId(sellerId);
     }
-
     @Override
     public void updateProductStatusToSoldOut(Long productId) {
         orderMapper.updateProductStatusToSoldOut(productId);
