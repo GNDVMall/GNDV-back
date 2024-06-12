@@ -28,8 +28,9 @@ public class TokenAuthenticationSuccessHandler implements AuthenticationSuccessH
 
         MemberContext memberContext = (MemberContext) authentication.getPrincipal();
         String email = memberContext.getMemberDTO().getEmail();
+        Long id = memberContext.getMemberDTO().getMember_id();
 
-        String accessToken = tokenProvider.createAccessToken(email);
+        String accessToken = tokenProvider.createAccessToken(email, id);
         String refreshToken = tokenProvider.createRefreshToken();
 
         tokenProvider.sendAccessAndRefreshToken(response, accessToken, refreshToken);
