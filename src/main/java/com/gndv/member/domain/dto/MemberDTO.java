@@ -22,6 +22,7 @@ public class MemberDTO {
     private String nickname;
     private String phone;
     private String introduction;
+    private String profile;
     private Date created_at;
     private Long rating;
     private Long report_count;
@@ -38,6 +39,7 @@ public class MemberDTO {
     private boolean is_enabled;
 
     // Jwt
+    private String accessToken;
     private String refreshToken;
 
     public void updateRefreshToken(String refreshToken) {

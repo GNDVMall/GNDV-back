@@ -1,9 +1,8 @@
 package com.gndv.security.handler;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gndv.member.domain.dto.MemberContext;
 import com.gndv.member.mapper.MemberMapper;
-import com.gndv.security.service.JwtService;
+import com.gndv.security.token.TokenProvider;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
@@ -16,36 +15,31 @@ import org.springframework.security.web.authentication.AuthenticationSuccessHand
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
-import java.util.Collections;
 
 @Component("jwtSuccessHandler")
 @RequiredArgsConstructor
-public class JwtAuthenticationSuccessHandler implements AuthenticationSuccessHandler {
+public class TokenAuthenticationSuccessHandler implements AuthenticationSuccessHandler {
 
-    private final JwtService jwtService;
+    private final TokenProvider tokenProvider;
     private final MemberMapper memberMapper;
 
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException {
 
-        ObjectMapper mapper = new ObjectMapper();
-
         MemberContext memberContext = (MemberContext) authentication.getPrincipal();
         String email = memberContext.getMemberDTO().getEmail();
 
-        String accessToken = jwtService.createAccessToken(email, memberContext.getMemberDTO().getMember_id());
-        String refreshToken = jwtService.createRefreshToken();
+        String accessToken = tokenProvider.createAccessToken(email);
+        String refreshToken = tokenProvider.createRefreshToken();
 
-        jwtService.sendAccessAndRefreshToken(response, accessToken, refreshToken);
+        tokenProvider.sendAccessAndRefreshToken(response, accessToken, refreshToken);
         memberMapper.findByEmail(email).ifPresent(
                 member -> member.updateRefreshToken(refreshToken)
         );
 
         response.setStatus(HttpStatus.OK.value());
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
-//        response.getWriter().write("success");
-        String jsonResponse = mapper.writeValueAsString(Collections.singletonMap("email", email));
-        response.getWriter().write(jsonResponse);
+        response.getWriter().write("success");
 
         clearAuthenticationAttributes(request);
     }

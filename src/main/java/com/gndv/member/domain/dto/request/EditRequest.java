@@ -1,4 +1,4 @@
-package com.gndv.member.domain.dto;
+package com.gndv.member.domain.dto.request;
 
 import lombok.Data;
 
@@ -10,4 +10,5 @@ public class EditRequest {
     private String nickname;
     private String phone;
     private String introduction;
+    private String profile_url;
 }
