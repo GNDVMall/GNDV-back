@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.*;
 @Slf4j
 public class LoginController {
 
-    private final TokenProvider jwtService;
+    private final TokenProvider tokenProvider;
 
     @PostMapping("/v1/login")
     @ResponseBody
@@ -55,11 +55,11 @@ public class LoginController {
 
         if (authentication != null) {
             new SecurityContextLogoutHandler().logout(request, response, authentication);
-            String refreshToken = jwtService.extractRefreshToken(request).orElse(null);
+            String refreshToken = tokenProvider.extractRefreshToken(request).orElse(null);
             if (refreshToken != null) {
-                String email = jwtService.extractEmail(refreshToken).orElse(null);
+                String email = tokenProvider.extractEmail(refreshToken).orElse(null);
                 if (email != null) {
-                    jwtService.destroyRefreshToken(email);
+                    tokenProvider.destroyRefreshToken(email);
                 }
             }
         }
