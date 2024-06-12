@@ -15,11 +15,13 @@ import lombok.NoArgsConstructor;
 public class PagingRequest {
     @Min(value = 1)
     @Positive
+    @Builder.Default
     private int pageNo = 1;
 
     @Min(value = 10)
     @Max(value = 100)
     @Positive
+    @Builder.Default
     private int size = 10;
 
     private String searchKey;
