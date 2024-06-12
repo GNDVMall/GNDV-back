@@ -11,5 +11,5 @@ import java.util.List;
 public interface CodeMapper {
 
     @Select("SELECT * FROM Code WHERE code_type = #{codeType}")
-    List<Code> findByCodeType(@Param("codeType") String codeType);
+    List<Code> findCodesByType(String codeType);
 }

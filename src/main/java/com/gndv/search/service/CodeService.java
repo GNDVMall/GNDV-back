@@ -16,6 +16,6 @@ public class CodeService {
     private final CodeMapper codeMapper;
 
     public List<Code> getCodesByType(String codeType) {
-        return codeMapper.findByCodeType(codeType);
+        return codeMapper.findCodesByType(codeType);
     }
 }

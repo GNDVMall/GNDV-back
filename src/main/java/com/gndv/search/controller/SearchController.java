@@ -18,18 +18,6 @@ public class SearchController {
 
     private final SearchService searchService;
 
-    @GetMapping("/items")
-    public ResponseEntity<List<Item>> searchItems(
-            @RequestParam String keyword,
-            @RequestParam(required = false) Double minPrice,
-            @RequestParam(required = false) Double maxPrice,
-            @RequestParam(required = false) Integer ageRange,
-            @RequestParam(required = false) Integer pieces) {
-
-        List<Item> results = searchService.searchItems(keyword, minPrice, maxPrice, ageRange, pieces);
-        return ResponseEntity.ok(results);
-    }
-
     @GetMapping("/recent")
     public ResponseEntity<List<String>> getRecentSearches() {
         List<String> recentSearches = searchService.getRecentSearches();
@@ -40,5 +28,12 @@ public class SearchController {
     public ResponseEntity<List<String>> getPopularSearches() {
         List<String> popularSearches = searchService.getPopularSearches();
         return ResponseEntity.ok(popularSearches);
+    }
+
+    @GetMapping
+    public ResponseEntity<List<Item>> searchItems(@RequestParam String keyword) {
+        searchService.saveSearchKeyword(keyword);
+        List<Item> items = searchService.searchItems(keyword);
+        return ResponseEntity.ok(items);
     }
 }
