@@ -1,7 +1,7 @@
 package com.gndv.member.service;
 
-import com.gndv.member.domain.dto.EditRequest;
-import com.gndv.member.domain.dto.JoinRequest;
+import com.gndv.member.domain.dto.request.EditRequest;
+import com.gndv.member.domain.dto.request.JoinRequest;
 import com.gndv.member.domain.entity.Member;
 import com.gndv.member.mapper.MemberMapper;
 import lombok.RequiredArgsConstructor;
@@ -11,6 +11,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.IOException;
 import java.util.Optional;
 
 @Service
@@ -23,12 +24,10 @@ public class MemberService {
     @Transactional
     public void createMember(JoinRequest request) {
         String encodedPassword = passwordEncoder.encode(request.getPassword());
-
         Member member = Member.builder()
                 .email(request.getEmail())
                 .password(encodedPassword)
                 .build();
-
        memberMapper.insert(member);
     }
 
@@ -43,8 +42,12 @@ public class MemberService {
         if (request.getPassword() != null) {
             encodedPassword = passwordEncoder.encode(request.getPassword());
         }
+        memberMapper.update(member_id, email, encodedPassword, request.getNickname(), request.getPhone(), request.getIntroduction());
+    }
 
-        memberMapper.update(member_id, request.getEmail(), encodedPassword, request.getNickname(), request.getPhone(), request.getIntroduction());
+    @Transactional
+    public void updateProfileImage(Long member_id, String profile_url) {
+        memberMapper.updateProfileImage(member_id, profile_url);
     }
 
     @Transactional

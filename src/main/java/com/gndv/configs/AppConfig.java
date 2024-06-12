@@ -1,4 +1,4 @@
-package com.gndv.config;
+package com.gndv.configs;
 
 import com.siot.IamportRestClient.IamportClient;
 import org.modelmapper.ModelMapper;

@@ -12,7 +12,7 @@ import java.util.List;
 public class MemberContext implements UserDetails, Serializable {
 
     private MemberDTO memberDTO;
-    private final List<GrantedAuthority> roles;
+    private List<GrantedAuthority> roles;
 
     public MemberContext(MemberDTO memberDTO, List<GrantedAuthority> roles) {
         this.memberDTO = memberDTO;
