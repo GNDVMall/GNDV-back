@@ -10,7 +10,7 @@ import org.springframework.security.web.access.AccessDeniedHandler;
 
 import java.io.IOException;
 
-public class JwtAccessDeniedHandler implements AccessDeniedHandler {
+public class TokenAccessDeniedHandler implements AccessDeniedHandler {
 
     private final ObjectMapper mapper = new ObjectMapper();
 

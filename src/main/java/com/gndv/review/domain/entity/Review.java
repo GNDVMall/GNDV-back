@@ -1,19 +1,18 @@
 package com.gndv.review.domain.entity;
 
-import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Getter
+@Setter
 @Builder
-@NoArgsConstructor
-@AllArgsConstructor
 public class Review {
     private Long review_id;
     private String review_content;
     private Long review_rating;
-    private Long review_report_count;
     private String review_type;
-    private Long member_id;
+    private String email;
+    private Long product_id;
+    private Long review_report_count; // 추가된 필드
 }
