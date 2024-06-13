@@ -27,8 +27,12 @@ public class ReviewServiceImpl implements ReviewService {
     @Override
     @Transactional
     public ReviewDetailResponse createReview(ReviewInsertRequest request) {
-        if (request.getEmail() == null) {
-            throw new IllegalArgumentException("Email cannot be null");
+        if (request.getEmail() == null || request.getEmail().isEmpty()) {
+            throw new IllegalArgumentException("Email cannot be null or empty");
+        }
+
+        if (reviewExists(request.getProduct_id(), request.getEmail())) {
+            throw new ReviewAlreadyExistsException("You have already reviewed this product.");
         }
 
         Member member = memberMapper.findByEmail(request.getEmail())
