@@ -1,5 +1,6 @@
 package com.gndv.member.mapper;
 
+import com.gndv.constant.Status;
 import com.gndv.member.domain.entity.Member;
 import org.apache.ibatis.annotations.*;
 import org.springframework.transaction.annotation.Transactional;
@@ -11,11 +12,6 @@ import java.util.Optional;
 public interface MemberMapper {
 
     @Select("SELECT * FROM Member WHERE member_id = #{memberId}")
-    @Results({
-            @Result(property = "member_id", column = "member_id"),
-            @Result(property = "name", column = "name"),
-            @Result(property = "email", column = "email")
-    })
     Optional<Member> findById(Long memberId);
 
     @Select("SELECT * FROM Member WHERE email = #{email}")
@@ -24,7 +20,7 @@ public interface MemberMapper {
     @Select("SELECT * FROM member")
     List<Member> findAll();
 
-    @Insert("INSERT INTO Member (email, password) VALUES (#{email}, #{password})")
+    @Insert("INSERT INTO Member (email, password, member_status, email_verification_token, is_email_verified) VALUES (#{email}, #{password}, #{member_status}, #{email_verification_token}, #{is_email_verified})")
     @Transactional
     void insert(Member member);
 
@@ -32,14 +28,14 @@ public interface MemberMapper {
             "<script>",
             "UPDATE Member",
             "<set>" +
-            "<if test='email != null'>email = #{email},</if>" +
-            "<if test='password != null'>password = #{password},</if>" +
-            "<if test='nickname != null'>nickname = #{nickname},</if>" +
-            "<if test='phone != null'>phone = #{phone},</if>" +
-            "<if test='introduction != null'>introduction = #{introduction},</if>" +
-            "</set>" +
-            "WHERE member_id = #{member_id}" +
-            "</script>"})
+                    "<if test='email != null'>email = #{email},</if>" +
+                    "<if test='password != null'>password = #{password},</if>" +
+                    "<if test='nickname != null'>nickname = #{nickname},</if>" +
+                    "<if test='phone != null'>phone = #{phone},</if>" +
+                    "<if test='introduction != null'>introduction = #{introduction},</if>" +
+                    "</set>" +
+                    "WHERE member_id = #{member_id}" +
+                    "</script>"})
     @Transactional
     void update(@Param("member_id") Long member_id,
                 @Param("email") String email,
@@ -60,4 +56,10 @@ public interface MemberMapper {
 
     @Update("UPDATE Member SET accessToken = #{accessToken}, refreshToken = #{refreshToken} WHERE member_id = #{member_id}")
     void updateTokens(Long member_id, String accessToken, String refreshToken);
+
+    @Update("UPDATE Member SET member_status = #{member_status} WHERE member_id = #{member_id}")
+    void updateMemberStatus(@Param("member_id") Long member_id, @Param("member_status") Status member_status);
+
+    @Update("UPDATE Member SET is_email_verified = #{isEmailVerified} WHERE email = #{email}")
+    void updateEmailVerifiedStatus(@Param("email") String email, @Param("isEmailVerified") boolean isEmailVerified);
 }

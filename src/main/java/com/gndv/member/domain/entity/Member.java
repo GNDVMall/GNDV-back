@@ -24,11 +24,15 @@ public class Member implements Serializable {
     private Date created_at;
     private Long rating;
     private Long report_count;
-    private Status member_status;
     private Date last_login;
+
+    // Email Verification
+    private String email_verification_token;
+    private boolean is_email_verified;
 
     // Enum
     private Role role;
+    private Status member_status;
 
     // UserDetails
     private boolean is_account_non_expired;
@@ -46,5 +50,10 @@ public class Member implements Serializable {
 
     public void destroyRefreshToken() {
         this.refreshToken = null;
+    }
+
+    public void verifyEmail() {
+        this.is_email_verified = true;
+        this.member_status = Status.ACTIVE;
     }
 }

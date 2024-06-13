@@ -54,4 +54,14 @@ public class MemberController {
         memberService.removeMember(member_id, email);
         return CustomResponse.ok("deleteMemberById", null);
     }
+
+    @GetMapping("/verify")
+    public CustomResponse<String> verifyEmail(@RequestParam String token) {
+        boolean isVerified = memberService.verifyEmail(token);
+        if (isVerified) {
+            return CustomResponse.ok("Email verified successfully.");
+        } else {
+            return CustomResponse.error("Invalid token or token expired.");
+        }
+    }
 }
