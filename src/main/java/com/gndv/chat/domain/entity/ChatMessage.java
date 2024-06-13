@@ -17,4 +17,5 @@ public class ChatMessage {
     private Date read_at;
     private ChatMessageType message_type;
     private ChatMessageUserType message_user_type;
+    private String content_type;
 }
