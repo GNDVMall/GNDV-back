@@ -44,17 +44,20 @@ public class TokenAuthenticationSuccessHandler implements AuthenticationSuccessH
         response.setStatus(HttpStatus.OK.value());
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
 
+        // JSON 객체 생성
         Map<String, Object> jsonResponse = new HashMap<>();
         jsonResponse.put("status", "success");
         jsonResponse.put("email", email);
         jsonResponse.put("id", id);
 
+        // JSON 형식으로 변환
         ObjectMapper objectMapper = new ObjectMapper();
         String jsonResponseString = objectMapper.writeValueAsString(jsonResponse);
         response.getWriter().write(jsonResponseString);
 
         clearAuthenticationAttributes(request);
     }
+
 
     protected final void clearAuthenticationAttributes(HttpServletRequest request) {
         HttpSession session = request.getSession(false);
