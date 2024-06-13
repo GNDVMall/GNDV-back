@@ -1,5 +1,6 @@
 package com.gndv.security.handler;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gndv.member.domain.dto.MemberContext;
 import com.gndv.member.mapper.MemberMapper;
 import com.gndv.security.token.TokenProvider;
@@ -15,6 +16,8 @@ import org.springframework.security.web.authentication.AuthenticationSuccessHand
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 @Component("jwtSuccessHandler")
 @RequiredArgsConstructor
@@ -40,7 +43,17 @@ public class TokenAuthenticationSuccessHandler implements AuthenticationSuccessH
 
         response.setStatus(HttpStatus.OK.value());
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
-        response.getWriter().write("success");
+
+        // JSON 객체 생성
+        Map<String, Object> jsonResponse = new HashMap<>();
+        jsonResponse.put("status", "success");
+        jsonResponse.put("email", email);
+        jsonResponse.put("id", id);
+
+        // JSON 형식으로 변환
+        ObjectMapper objectMapper = new ObjectMapper();
+        String jsonResponseString = objectMapper.writeValueAsString(jsonResponse);
+        response.getWriter().write(jsonResponseString);
 
         clearAuthenticationAttributes(request);
     }

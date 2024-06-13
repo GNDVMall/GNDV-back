@@ -45,14 +45,14 @@ public class ProductController {
     }
 
     @PostMapping("")
-    public CustomResponse insertProduct(@RequestBody ProductInsertRequest request) {
+    public CustomResponse insertProduct(@ModelAttribute ProductInsertRequest request) throws Exception {
         log.info("Insert New Product {}", request);
         productService.insertProduct(request);
-        return CustomResponse.ok("Insert new Product", null);
+        return CustomResponse.ok("Insert new Product", request.getProduct_id());
     }
 
     @PutMapping("/{product_id}")
-    public CustomResponse<Integer> updateProduct(@RequestBody ProductUpdateRequest request, @PathVariable Long product_id) throws Exception {
+    public CustomResponse<Integer> updateProduct(@ModelAttribute ProductUpdateRequest request, @PathVariable Long product_id) throws Exception {
         log.info("Update a Product {}", request);
         request.setProduct_id(product_id);
 
