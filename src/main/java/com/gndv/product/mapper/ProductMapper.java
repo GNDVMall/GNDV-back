@@ -1,5 +1,6 @@
 package com.gndv.product.mapper;
 
+import com.gndv.image.domain.dto.ImageRequest;
 import com.gndv.product.domain.dto.request.ProductInsertRequest;
 import com.gndv.product.domain.dto.request.ProductListPagingRequest;
 import com.gndv.product.domain.dto.request.ProductUpdateRequest;
@@ -26,14 +27,14 @@ public interface ProductMapper {
     @Options(useGeneratedKeys = true, keyProperty = "product_id", keyColumn = "product_id")
     void insert(ProductInsertRequest request);
 
-//    @Update("UPDATE Product SET title = #{title}, content = #{content}, price = #{price}, product_status = #{product_status}, product_trade_opt1 = #{product_trade_opt1}, product_trade_opt2 = #{product_trade_opt2} WHERE product_id = #{product_id} AND member_id = (SELECT member_id FROM Member WHERE email = #{email})")
-//    int update(ProductUpdateRequest request);
-
     @UpdateProvider(type = SqlBuilder.class, method = "buildUpdateProduct")
     int update(ProductUpdateRequest request);
 
     @Delete("DELETE FROM Product WHERE product_id = #{product_id} AND member_id = (SELECT member_id FROM Member WHERE email = #{email})")
     int delete(Long product_id, String email);
 
+    @Insert("INSERT INTO Image (image_type, use_id, original_name, real_filename, content_type, size)" +
+            "VALUES (#{image_type}, #{use_id}, #{original_name}, #{real_filename}, #{content_type}, #{size})")
+    int insertImages(ImageRequest imageRequest);
 }
 
