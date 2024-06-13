@@ -26,10 +26,6 @@ public class Member implements Serializable {
     private Long report_count;
     private Date last_login;
 
-    // Email Verification
-    private String email_verification_token;
-    private boolean is_email_verified;
-
     // Enum
     private Role role;
     private Status member_status;
@@ -50,10 +46,5 @@ public class Member implements Serializable {
 
     public void destroyRefreshToken() {
         this.refreshToken = null;
-    }
-
-    public void verifyEmail() {
-        this.is_email_verified = true;
-        this.member_status = Status.ACTIVE;
     }
 }

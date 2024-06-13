@@ -5,6 +5,7 @@ import com.gndv.image.service.ImageService;
 import com.gndv.member.domain.dto.request.EditRequest;
 import com.gndv.member.domain.dto.request.JoinRequest;
 import com.gndv.member.domain.entity.Member;
+import com.gndv.member.service.EmailService;
 import com.gndv.member.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -22,6 +23,7 @@ public class MemberController {
 
     private final MemberService memberService;
     private final ImageService imageService;
+    private final EmailService emailService;
 
     @PostMapping("/new")
     public CustomResponse<JoinRequest> createMember(@RequestBody JoinRequest request) {
@@ -55,13 +57,23 @@ public class MemberController {
         return CustomResponse.ok("deleteMemberById", null);
     }
 
-    @GetMapping("/verify")
-    public CustomResponse<String> verifyEmail(@RequestParam String token) {
-        boolean isVerified = memberService.verifyEmail(token);
-        if (isVerified) {
-            return CustomResponse.ok("Email verified successfully.");
+    @PostMapping("/sendEmailVerification")
+    public CustomResponse<String> sendEmailVerification(@RequestParam String email) {
+        boolean isSent = emailService.sendEmail(email);
+        if (isSent) {
+            return CustomResponse.ok("Email sent successfully", null);
         } else {
-            return CustomResponse.error("Invalid token or token expired.");
+            return CustomResponse.error("Failed to send email");
+        }
+    }
+
+    @GetMapping("/verifyEmail")
+    public CustomResponse<String> verifyEmail(@RequestParam String email, @RequestParam String code) {
+        boolean isVerified = emailService.verifyCode(email, code);
+        if (isVerified) {
+            return CustomResponse.ok("Email verified successfully", null);
+        } else {
+            return CustomResponse.error("Verification failed");
         }
     }
 }

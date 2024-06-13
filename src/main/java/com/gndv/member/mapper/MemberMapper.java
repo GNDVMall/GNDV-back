@@ -20,7 +20,7 @@ public interface MemberMapper {
     @Select("SELECT * FROM member")
     List<Member> findAll();
 
-    @Insert("INSERT INTO Member (email, password, member_status, email_verification_token, is_email_verified) VALUES (#{email}, #{password}, #{member_status}, #{email_verification_token}, #{is_email_verified})")
+    @Insert("INSERT INTO Member (email, password) VALUES (#{email}, #{password})")
     @Transactional
     void insert(Member member);
 
@@ -56,10 +56,4 @@ public interface MemberMapper {
 
     @Update("UPDATE Member SET accessToken = #{accessToken}, refreshToken = #{refreshToken} WHERE member_id = #{member_id}")
     void updateTokens(Long member_id, String accessToken, String refreshToken);
-
-    @Update("UPDATE Member SET member_status = #{member_status} WHERE member_id = #{member_id}")
-    void updateMemberStatus(@Param("member_id") Long member_id, @Param("member_status") Status member_status);
-
-    @Update("UPDATE Member SET is_email_verified = #{isEmailVerified} WHERE email = #{email}")
-    void updateEmailVerifiedStatus(@Param("email") String email, @Param("isEmailVerified") boolean isEmailVerified);
 }

@@ -26,25 +26,17 @@ public class MemberService {
     private final MemberMapper memberMapper;
     private final PasswordEncoder passwordEncoder;
     private final RedisTemplate<String, Object> redisTemplate;
-    private final EmailService emailService;
-
-    private static final String REDIS_PREFIX = "email-verification:";
 
     @Transactional
     public void createMember(JoinRequest request) {
         String encodedPassword = passwordEncoder.encode(request.getPassword());
-        String emailVerificationToken = UUID.randomUUID().toString();
 
         Member member = Member.builder()
                 .email(request.getEmail())
                 .password(encodedPassword)
-                .member_status(Status.PENDING)
-                .email_verification_token(emailVerificationToken)
-                .is_email_verified(false)
                 .build();
 
         memberMapper.insert(member);
-        sendVerificationEmail(member);
     }
 
     public Optional<Member> getMember(Long member_id) {
@@ -71,26 +63,5 @@ public class MemberService {
     @PreAuthorize("#email == authentication.name")
     public void removeMember(Long member_id, String email) {
         memberMapper.delete(member_id);
-    }
-
-    public void sendVerificationEmail(Member member) {
-        String token = member.getEmail_verification_token();
-        redisTemplate.opsForValue().set(REDIS_PREFIX + token, member.getEmail(), 1, TimeUnit.HOURS);
-
-        String verificationLink = "http://localhost:8080/api/v2/members/verify?token=" + token;
-        emailService.sendSimpleMessage(member.getEmail(), "Email Verification", verificationLink);
-    }
-
-    public boolean verifyEmail(String token) {
-        String email = (String) redisTemplate.opsForValue().get(REDIS_PREFIX + token);
-        if (email != null) {
-            Member member = memberMapper.findByEmail(email).orElse(null);
-            if (member != null) {
-                memberMapper.updateEmailVerifiedStatus(email, true);
-                redisTemplate.delete(REDIS_PREFIX + token);
-                return true;
-            }
-        }
-        return false;
     }
 }
