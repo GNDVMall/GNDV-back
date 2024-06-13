@@ -4,6 +4,7 @@ import com.gndv.item.domain.entity.Item;
 import com.gndv.item.mapper.ItemMapper;
 import com.gndv.search.domain.entity.Code;
 import com.gndv.search.domain.entity.Search;
+import com.gndv.search.domain.request.SearchItemRequest;
 import com.gndv.search.mapper.CodeMapper;
 import com.gndv.search.mapper.SearchMapper;
 import lombok.RequiredArgsConstructor;
@@ -20,6 +21,7 @@ public class SearchService {
 
     private final SearchMapper searchMapper;
     private final CodeMapper codeMapper;
+    private final ItemMapper itemMapper;
 
     @Transactional
     public void saveSearchKeyword(String keyword) {
@@ -45,7 +47,7 @@ public class SearchService {
         return codeMapper.findCodesByType("CATEGORY");
     }
 
-    public List<Item> searchItems(String keyword) {
+    public List<SearchItemRequest> searchItems(String keyword) {
         return searchMapper.findItemsByKeyword(keyword);
     }
 }
