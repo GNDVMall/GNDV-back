@@ -6,6 +6,9 @@ import com.gndv.constant.ProductStatus;
 import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.util.List;
 
 @Data
 public class ProductUpdateRequest {
@@ -18,4 +21,6 @@ public class ProductUpdateRequest {
     private Boolean product_trade_opt1;
     private Boolean product_trade_opt2;
     private ProductSalesStatus product_sales_status;
+    private List<MultipartFile> images;
+    private List<String> delete_images;
 }

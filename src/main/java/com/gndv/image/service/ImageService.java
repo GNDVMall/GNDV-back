@@ -19,6 +19,8 @@ public class ImageService {
     @Value("${spring.s3.bucket}")
     private String bucketName;
 
+    private String baseURL = "https://gndv.kr.object.ncloudstorage.com/";
+
     public Object getImage(String image_type, Long image_id) {
         return amazonS3Client.getUrl(bucketName, image_type + "/" + image_id);
     }
@@ -41,5 +43,22 @@ public class ImageService {
         amazonS3Client.setObjectAcl(bucketName, key, CannedAccessControlList.PublicRead);
 
         return amazonS3Client.getUrl(bucketName, key).toString();
+    }
+
+    public void deleteCloud(String url) throws IllegalArgumentException {
+        String key = extractKeyNameFromUrl(url);
+        amazonS3Client.deleteObject(bucketName, key);
+    }
+
+    public void deleteImages(){
+
+    }
+
+    public String extractKeyNameFromUrl(String url) throws IllegalArgumentException {
+        if (url.startsWith(baseURL)) {
+            return url.substring(baseURL.length());
+        } else {
+            throw new IllegalArgumentException("URL 형식이 올바르지않습니다.");
+        }
     }
 }

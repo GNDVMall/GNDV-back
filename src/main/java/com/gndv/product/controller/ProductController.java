@@ -14,7 +14,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
-import java.io.IOException;
 import java.util.List;
 
 @RestController
@@ -53,7 +52,7 @@ public class ProductController {
     }
 
     @PutMapping("/{product_id}")
-    public CustomResponse<Integer> updateProduct(@RequestBody ProductUpdateRequest request, @PathVariable Long product_id) throws Exception {
+    public CustomResponse<Integer> updateProduct(@ModelAttribute ProductUpdateRequest request, @PathVariable Long product_id) throws Exception {
         log.info("Update a Product {}", request);
         request.setProduct_id(product_id);
 
