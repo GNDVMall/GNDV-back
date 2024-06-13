@@ -93,7 +93,7 @@ public class ProductService {
         }
 
         // 사용 안하는 이미지 삭제하기
-        if (request.getDelete_images() != null) {
+        if (request.getDelete_images() != null && request.getDelete_images().size() > 0) {
             List<String> deleteURLs = new ArrayList<>();
             for (String url : request.getDelete_images()) {
                 // 클라우드에서 삭제
