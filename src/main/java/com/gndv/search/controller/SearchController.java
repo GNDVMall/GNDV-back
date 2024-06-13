@@ -1,6 +1,7 @@
 package com.gndv.search.controller;
 
 import com.gndv.item.domain.entity.Item;
+import com.gndv.search.domain.request.SearchItemRequest;
 import com.gndv.search.service.SearchService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -31,9 +32,9 @@ public class SearchController {
     }
 
     @GetMapping
-    public ResponseEntity<List<Item>> searchItems(@RequestParam String keyword) {
+    public ResponseEntity<List<SearchItemRequest>> searchItems(@RequestParam String keyword) {
         searchService.saveSearchKeyword(keyword);
-        List<Item> items = searchService.searchItems(keyword);
+        List<SearchItemRequest> items = searchService.searchItems(keyword);
         return ResponseEntity.ok(items);
     }
 }
