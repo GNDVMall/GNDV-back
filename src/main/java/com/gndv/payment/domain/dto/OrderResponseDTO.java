@@ -16,5 +16,6 @@ public class OrderResponseDTO {
     private String payment_status;
     private Long paymentPrice;
     private Long review_id;
+    private Long product_id;
     private String item_image; // 이미지 URL을 위한 필드 추가
 }

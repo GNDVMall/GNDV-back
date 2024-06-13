@@ -87,7 +87,7 @@ public interface OrderMapper {
             "FROM Orders o " +
             "JOIN Member b ON o.buyer_id = b.member_id " +
             "JOIN Gangnum_Payment p ON o.payment_id = p.payment_id " +
-            "LEFT JOIN Review r ON o.product_id = r.product_id AND o.buyer_id = r.email " + // 리뷰 테이블을 조인 (product_id와 email을 사용하여 조인 조건 수정)
+            "LEFT JOIN Review r ON o.product_id = r.product_id AND o.buyer_id = r.email " +
             "WHERE o.seller_id = #{sellerId}")
     @Results({
             @Result(column = "order_id", property = "order_id"),

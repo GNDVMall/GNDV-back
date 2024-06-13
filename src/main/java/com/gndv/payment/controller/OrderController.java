@@ -123,6 +123,7 @@ public class OrderController {
                 .buyer_tel(order.getBuyer() != null ? order.getBuyer().getPhone() : "N/A")
                 .buyer_postcode("123-456")
                 .review_id(order.getReview_id())
+                .product_id(order.getProduct_id())  // Ensure product_id is included
                 .build()).collect(Collectors.toList());
         return CustomResponse.ok("Sales list fetched successfully", salesList);
     }
