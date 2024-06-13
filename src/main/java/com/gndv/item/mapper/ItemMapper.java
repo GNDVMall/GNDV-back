@@ -12,11 +12,14 @@ import java.util.Optional;
 @Mapper
 public interface ItemMapper {
 
-    @Select("SELECT * FROM Item i \n" +
+    @Select("SELECT i.*, i2.*, lt.*, COUNT(*) as wish_count  \n" +
+            "FROM Item i \n" +
             "INNER JOIN Image i2 ON i.item_id = i2.use_id \n" +
-            "JOIN Lego_Theme lt ON i.theme_id = lt.theme_id \n" +
+            "JOIN Lego_Theme lt ON i.theme_id = lt.theme_id\n" +
+            "RIGHT JOIN Wish w ON i.item_id = w.item_id \n" +
             "WHERE i2.image_type = 'item'\n" +
-            "AND i.item_id = #{item_id}")
+            "AND i.item_id = #{item_id}\n" +
+            "GROUP BY i.item_id")
     Optional<ItemDetailResponse> findById(Long item_id);
 
     @Select("SELECT * FROM Item i INNER JOIN Image i2 ON i.item_id = i2.use_id WHERE i2.image_type = 'item'")
