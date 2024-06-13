@@ -45,13 +45,6 @@ public class ProductController {
         return CustomResponse.ok("Get Products", response);
     }
 
-//    @PostMapping("")
-//    public CustomResponse insertProduct(@RequestBody ProductInsertRequest request) {
-//        log.info("Insert New Product {}", request);
-//        productService.insertProduct(request);
-//        return CustomResponse.ok("Insert new Product", request.getProduct_id());
-//    }
-
     @PostMapping("")
     public CustomResponse insertProduct(@ModelAttribute ProductInsertRequest request) throws Exception {
         log.info("Insert New Product {}", request);

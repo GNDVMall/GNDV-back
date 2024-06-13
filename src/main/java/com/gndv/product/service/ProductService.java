@@ -48,7 +48,7 @@ public class ProductService {
 
         for (MultipartFile file: request.getImages()) {
             // 클라우드에 업로드해서 url 가져오기
-            String url = imageService.uploadCloud("items", file);
+            String url = imageService.uploadCloud("product", file);
             
             // ImageRequest 객체 생성하기
             ImageRequest imageRequest = ImageRequest.builder()
@@ -57,7 +57,7 @@ public class ProductService {
                     .original_name(file.getOriginalFilename())
                     .real_filename(url)
                     .size(file.getSize())
-                    .image_type("items").build();
+                    .image_type("product").build();
             
             // 생성된 객체를 DB에 저장하기
             int updated = productMapper.insertImages(imageRequest);
