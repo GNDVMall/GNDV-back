@@ -39,6 +39,7 @@ public class ChatWebSocketController {
                 .content(chatMessageRequest.getContent())
                 .email(chatMessageRequest.getEmail()) // 나
                 .message_user_type(chatMessageRequest.getMessage_user_type()) // USER or SYSTEM
+                .content_type(chatMessageRequest.getContent_type())
                 .build();
 
         // chat/send/채팅방으로 온 메시지를 구독한 곳으로 보내준다.
