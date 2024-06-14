@@ -2,8 +2,7 @@ package com.gndv.constant;
 
 public enum Status {
 
-    ACTIVE,
-    INACTIVE,
-    PENDING,
-    BANNED
-} 
+    active,
+    inactive,
+    banned
+}
