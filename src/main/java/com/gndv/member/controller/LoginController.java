@@ -7,6 +7,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
@@ -44,6 +45,7 @@ public class LoginController {
     }
 
     @GetMapping("/v2/logout")
+    @PreAuthorize("isAuthenticated()")
     public CustomResponse<Object> tokenLogout(HttpServletRequest request, HttpServletResponse response) {
 
         Authentication authentication = SecurityContextHolder.getContextHolderStrategy().getContext().getAuthentication();

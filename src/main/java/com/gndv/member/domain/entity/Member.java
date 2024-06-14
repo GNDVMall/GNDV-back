@@ -24,11 +24,11 @@ public class Member implements Serializable {
     private Date created_at;
     private Long rating;
     private Long report_count;
-    private Status member_status;
     private Date last_login;
 
     // Enum
     private Role role;
+    private Status member_status;
 
     // UserDetails
     private boolean is_account_non_expired;
