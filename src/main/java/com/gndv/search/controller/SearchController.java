@@ -1,6 +1,8 @@
 package com.gndv.search.controller;
 
 import com.gndv.common.CustomResponse;
+import com.gndv.common.domain.request.PagingRequest;
+import com.gndv.common.domain.response.PageResponse;
 import com.gndv.item.domain.entity.Item;
 import com.gndv.search.domain.entity.Theme;
 import com.gndv.search.domain.request.SearchItemRequest;
@@ -34,16 +36,19 @@ public class SearchController {
     }
 
     @GetMapping
-    public CustomResponse<List<SearchItemRequest>> searchItems(
+    public CustomResponse<PageResponse<SearchItemRequest>> searchItems(
             @RequestParam String keyword,
             @RequestParam(required = false) String sortBy,
             @RequestParam(required = false) String sortOrder,
             @RequestParam(required = false) Long minPrice,
             @RequestParam(required = false) Long maxPrice,
             @RequestParam(required = false) String ageRange,
-            @RequestParam(required = false) List<Long> themeIds) {
+            @RequestParam(required = false) List<Long> themeIds,
+            @RequestParam(required = false, defaultValue = "1") int pageNo,
+            @RequestParam(required = false, defaultValue = "10") int size) {
 
-        List<SearchItemRequest> items = searchService.searchItems(keyword, sortBy, sortOrder, minPrice, maxPrice, ageRange, themeIds);
+        PagingRequest pagingRequest = new PagingRequest(pageNo, size);
+        PageResponse<SearchItemRequest> items = searchService.searchItems(keyword, sortBy, sortOrder, minPrice, maxPrice, ageRange, themeIds, pagingRequest);
         return CustomResponse.ok("Items fetched successfully", items);
     }
 

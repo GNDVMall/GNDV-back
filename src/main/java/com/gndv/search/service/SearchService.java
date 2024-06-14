@@ -1,5 +1,7 @@
 package com.gndv.search.service;
 
+import com.gndv.common.domain.request.PagingRequest;
+import com.gndv.common.domain.response.PageResponse;
 import com.gndv.search.domain.entity.Search;
 import com.gndv.search.domain.entity.Theme;
 import com.gndv.search.domain.request.SearchItemRequest;
@@ -39,8 +41,10 @@ public class SearchService {
         return searchMapper.findPopularSearches();
     }
 
-    public List<SearchItemRequest> searchItems(String keyword, String sortBy, String sortOrder, Long minPrice, Long maxPrice, String ageRange, List<Long> themeIds) {
-        return searchMapper.findItemsByKeyword(keyword, sortBy, sortOrder, minPrice, maxPrice, ageRange, themeIds);
+    public PageResponse<SearchItemRequest> searchItems(String keyword, String sortBy, String sortOrder, Long minPrice, Long maxPrice, String ageRange, List<Long> themeIds, PagingRequest pagingRequest) {
+        List<SearchItemRequest> items = searchMapper.findItemsByKeyword(keyword, sortBy, sortOrder, minPrice, maxPrice, ageRange, themeIds, pagingRequest.getSkip(), pagingRequest.getSize());
+        int total = searchMapper.countItemsByKeyword(keyword, minPrice, maxPrice, ageRange, themeIds);
+        return new PageResponse<>(items, total, pagingRequest.getPageNo(), pagingRequest.getSize());
     }
 
     public List<Theme> getAllThemes() {

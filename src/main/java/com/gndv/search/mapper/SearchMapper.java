@@ -55,5 +55,15 @@ public interface SearchMapper {
             @Param("minPrice") Long minPrice,
             @Param("maxPrice") Long maxPrice,
             @Param("ageRange") String ageRange,
+            @Param("themeIds") List<Long> themeIds,
+            @Param("skip") int skip,
+            @Param("size") int size);
+
+    @SelectProvider(type = SearchProvider.class, method = "countItemsByKeyword")
+    int countItemsByKeyword(
+            @Param("keyword") String keyword,
+            @Param("minPrice") Long minPrice,
+            @Param("maxPrice") Long maxPrice,
+            @Param("ageRange") String ageRange,
             @Param("themeIds") List<Long> themeIds);
 }
