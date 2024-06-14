@@ -94,16 +94,25 @@ public class OrderController {
         }
         Long memberId = memberContext.getMemberDTO().getMember_id();
         List<Orders> orders = orderService.findOrdersByBuyerId(memberId);
-        List<OrderResponseDTO> purchaseList = orders.stream().map(order -> OrderResponseDTO.builder()
-                .order_uid(order.getOrder_uid())
-                .item_name(order.getItem_name())
-                .price(order.getPrice())
-                .buyer_name(order.getBuyer().getNickname())
-                .buyer_email(order.getBuyer().getEmail())
-                .buyer_tel(order.getBuyer().getPhone())
-                .buyer_postcode("123-456")
-                .payment_status(order.getPayment().getStatus().toString())
-                .build()).collect(Collectors.toList());
+        List<OrderResponseDTO> purchaseList = orders.stream().map(order -> {
+            OrderResponseDTO.OrderResponseDTOBuilder builder = OrderResponseDTO.builder()
+                    .order_uid(order.getOrder_uid())
+                    .item_name(order.getItem_name())
+                    .price(order.getPrice())
+                    .product_id(order.getProduct_id() != null ? order.getProduct_id() : 0) // Default value or handle accordingly
+                    .buyer_name(order.getBuyer().getNickname())
+                    .buyer_email(order.getBuyer().getEmail())
+                    .buyer_tel(order.getBuyer().getPhone())
+                    .buyer_postcode("123-456"); // Assuming this is a static value as in your original code
+
+            if (order.getPayment() != null && order.getPayment().getStatus() != null) {
+                builder.payment_status(order.getPayment().getStatus().toString());
+            } else {
+                builder.payment_status("N/A"); // Or any default value you prefer
+            }
+
+            return builder.build();
+        }).collect(Collectors.toList());
         return CustomResponse.ok("Purchase list fetched successfully", purchaseList);
     }
 

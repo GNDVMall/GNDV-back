@@ -21,10 +21,12 @@ public interface ReviewMapper {
     @Update("UPDATE Review SET review_content = #{review_content}, review_rating = #{review_rating}, review_type = #{review_type}, review_report_count = #{review_report_count} WHERE review_id = #{review_id}")
     void update(Review review);
 
-    @Select("SELECT COUNT(*) FROM gndv.Review WHERE product_id = #{productId} AND email = #{email}")
-    boolean reviewExists(@Param("productId") Long productId, @Param("email") String email);
+    @Select("SELECT COUNT(*) > 0 FROM gndv.Review WHERE product_id = #{productId} AND email = #{email}")
+    boolean existsByProductIdAndEmail(@Param("productId") Long productId, @Param("email") String email);
 
-
-    @Select("SELECT COUNT(*) > 0 FROM  gndv.Review WHERE product_id = #{productId} AND email = #{email}")
-    boolean existsByProductIdAndEmail(Long productId, String email);
+    @Select("SELECT p.product_id " +
+            "FROM gndv.Order_List o " +
+            "JOIN gndv.Orders p ON o.order_id = p.order_id " +
+            "WHERE o.order_list_id = #{order_list_id}")
+    Long findProductIdByOrderListId(@Param("order_list_id") Long order_list_id);
 }
