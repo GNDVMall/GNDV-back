@@ -11,11 +11,16 @@ import com.gndv.payment.service.PaymentService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @RestController
 @RequiredArgsConstructor
@@ -79,5 +84,66 @@ public class OrderController {
             log.error("Failed to update payment status", e);
             return CustomResponse.error("Failed to update payment status: " + e.getMessage());
         }
+    }
+
+
+    @GetMapping("/purchaseList")
+    public CustomResponse<List<OrderResponseDTO>> getPurchaseList(@AuthenticationPrincipal MemberContext memberContext) {
+        if (memberContext == null) {
+            return CustomResponse.failure("Not an authenticated user");
+        }
+        Long memberId = memberContext.getMemberDTO().getMember_id();
+        List<Orders> orders = orderService.findOrdersByBuyerId(memberId);
+        List<OrderResponseDTO> purchaseList = orders.stream().map(order -> {
+            OrderResponseDTO.OrderResponseDTOBuilder builder = OrderResponseDTO.builder()
+                    .order_uid(order.getOrder_uid())
+                    .item_name(order.getItem_name())
+                    .price(order.getPrice())
+                    .product_id(order.getProduct_id() != null ? order.getProduct_id() : 0) // Default value or handle accordingly
+                    .buyer_name(order.getBuyer().getNickname())
+                    .buyer_email(order.getBuyer().getEmail())
+                    .buyer_tel(order.getBuyer().getPhone())
+                    .buyer_postcode("123-456"); // Assuming this is a static value as in your original code
+
+            if (order.getPayment() != null && order.getPayment().getStatus() != null) {
+                builder.payment_status(order.getPayment().getStatus().toString());
+            } else {
+                builder.payment_status("N/A"); // Or any default value you prefer
+            }
+
+            return builder.build();
+        }).collect(Collectors.toList());
+        return CustomResponse.ok("Purchase list fetched successfully", purchaseList);
+    }
+
+    @GetMapping("/salesList")
+    public CustomResponse<List<OrderResponseDTO>> getSalesList(@AuthenticationPrincipal MemberContext memberContext) {
+        if (memberContext == null) {
+            return CustomResponse.failure("Not an authenticated user");
+        }
+        Long memberId = memberContext.getMemberDTO().getMember_id();
+        List<Orders> orders = orderService.findOrdersBySellerId(memberId);
+        List<OrderResponseDTO> salesList = orders.stream().map(order -> OrderResponseDTO.builder()
+                .order_uid(order.getOrder_uid())
+                .item_name(order.getItem_name())
+                .price(order.getPrice())
+                .buyer_name(order.getBuyer() != null ? order.getBuyer().getNickname() : "N/A")
+                .buyer_email(order.getBuyer() != null ? order.getBuyer().getEmail() : "N/A")
+                .buyer_tel(order.getBuyer() != null ? order.getBuyer().getPhone() : "N/A")
+                .buyer_postcode("123-456")
+                .review_id(order.getReview_id())
+                .product_id(order.getProduct_id())  // Ensure product_id is included
+                .build()).collect(Collectors.toList());
+        return CustomResponse.ok("Sales list fetched successfully", salesList);
+    }
+
+
+    @GetMapping("/product/{orderUid}")
+    public CustomResponse<Map<String, Long>> getProductIdByOrderUid(@PathVariable String orderUid) {
+        Orders order = orderService.findOrderAndPaymentAndMember(orderUid)
+                .orElseThrow(() -> new RuntimeException("Order not found"));
+        Map<String, Long> response = new HashMap<>();
+        response.put("product_id", order.getProduct_id());
+        return CustomResponse.ok("Product ID fetched successfully", response);
     }
 }

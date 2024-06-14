@@ -32,7 +32,7 @@ public interface ChatMapper {
             "GROUP BY chatroom_id )\n" +
             "SELECT cr.*, cu.*, m.nickname, rm.chat_content, m.profile_url, uc.unread_count\n" +
             "FROM Chat_Room cr JOIN Chat_User cu ON cr.chatroom_id = cu.chatroom_id\n" +
-            "JOIN `Member_With_Profile` m ON cu.member_id = m.member_id\n" +
+            "JOIN `Member` m ON cu.member_id = m.member_id\n" +
             "LEFT JOIN Recent_Messages rm ON cr.chatroom_id = rm.chatroom_id AND rm.rn = 1\n" +
             "LEFT JOIN Unread_Message_Count uc ON uc.chatroom_id = cr.chatroom_id \n" +
             "WHERE m.email = #{email} AND cu.`leave` != 'Y'\n" +
@@ -42,7 +42,7 @@ public interface ChatMapper {
     @Select("SELECT cr.*, cu.*, m.nickname , m.rating , m.email, m.profile_url, p.product_sales_status, p.images, p.title, p.price, p.product_status\n" +
             "FROM Chat_Room cr \n" +
             "JOIN Chat_User cu ON cr.chatroom_id = cu.chatroom_id \n" +
-            "JOIN Member_With_Profile m ON cu.member_id = m.member_id\n" +
+            "JOIN Member m ON cu.member_id = m.member_id\n" +
             "JOIN Product_With_Image p ON cr.product_id = p.product_id \n" +
             "WHERE cr.chatroom_id = #{chatroom_id} AND m.email != #{name}")
     ChatRoomDetail findByIdWithName(Long chatroom_id, String name);
