@@ -3,9 +3,11 @@ package com.gndv.search.mapper;
 import com.gndv.item.domain.entity.Item;
 import com.gndv.search.domain.entity.Search;
 import com.gndv.search.domain.request.SearchItemRequest;
+import com.gndv.search.provider.SearchProvider;
 import org.apache.ibatis.annotations.*;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @Mapper
@@ -42,13 +44,26 @@ public interface SearchMapper {
             @Result(column = "view_count", property = "view_count"),
             @Result(column = "theme_id", property = "theme_id"),
             @Result(column = "recommend", property = "recommend"),
-            @Result(column = "image_url", property = "image_url")
+            @Result(column = "image_url", property = "image_url"),
+            @Result(column = "theme_name", property = "theme_name")
     })
-    @Select("""
-            SELECT i.*, img.real_filename AS image_url
-            FROM Item i
-            LEFT JOIN Image img ON img.use_id = i.item_id AND img.image_type = 'Item'
-            WHERE i.item_name LIKE CONCAT('%', #{keyword}, '%')
-            """)
-    List<SearchItemRequest> findItemsByKeyword(@Param("keyword") String keyword);
+    @SelectProvider(type = SearchProvider.class, method = "findItemsByKeyword")
+    List<SearchItemRequest> findItemsByKeyword(
+            @Param("keyword") String keyword,
+            @Param("sortBy") String sortBy,
+            @Param("sortOrder") String sortOrder,
+            @Param("minPrice") Long minPrice,
+            @Param("maxPrice") Long maxPrice,
+            @Param("ageRange") String ageRange,
+            @Param("themeIds") List<Long> themeIds,
+            @Param("skip") int skip,
+            @Param("size") int size);
+
+    @SelectProvider(type = SearchProvider.class, method = "countItemsByKeyword")
+    int countItemsByKeyword(
+            @Param("keyword") String keyword,
+            @Param("minPrice") Long minPrice,
+            @Param("maxPrice") Long maxPrice,
+            @Param("ageRange") String ageRange,
+            @Param("themeIds") List<Long> themeIds);
 }
