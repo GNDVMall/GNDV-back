@@ -11,4 +11,5 @@ public class ChatMessageResponse {
     private String email;
     private Long message_id;
     private ChatMessageUserType message_user_type;
+    private String content_type;
 }

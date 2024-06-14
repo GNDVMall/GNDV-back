@@ -1,5 +1,6 @@
 package com.gndv.chat.domain.dto.request;
 
+import com.gndv.constant.ChatMessageType;
 import com.gndv.constant.ChatMessageUserType;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -13,4 +14,5 @@ public class ChatMessageRequest {
     private Long chatroom_id;
     private Long message_id;
     private ChatMessageUserType message_user_type;
+    private String content_type;
 }
