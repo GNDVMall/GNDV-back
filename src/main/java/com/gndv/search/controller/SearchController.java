@@ -1,6 +1,10 @@
 package com.gndv.search.controller;
 
+import com.gndv.common.CustomResponse;
+import com.gndv.common.domain.request.PagingRequest;
+import com.gndv.common.domain.response.PageResponse;
 import com.gndv.item.domain.entity.Item;
+import com.gndv.search.domain.entity.Theme;
 import com.gndv.search.domain.request.SearchItemRequest;
 import com.gndv.search.service.SearchService;
 import lombok.RequiredArgsConstructor;
@@ -20,21 +24,37 @@ public class SearchController {
     private final SearchService searchService;
 
     @GetMapping("/recent")
-    public ResponseEntity<List<String>> getRecentSearches() {
+    public CustomResponse<List<String>> getRecentSearches() {
         List<String> recentSearches = searchService.getRecentSearches();
-        return ResponseEntity.ok(recentSearches);
+        return CustomResponse.ok("Recent searches fetched successfully", recentSearches);
     }
 
     @GetMapping("/popular")
-    public ResponseEntity<List<String>> getPopularSearches() {
+    public CustomResponse<List<String>> getPopularSearches() {
         List<String> popularSearches = searchService.getPopularSearches();
-        return ResponseEntity.ok(popularSearches);
+        return CustomResponse.ok("Popular searches fetched successfully", popularSearches);
     }
 
     @GetMapping
-    public ResponseEntity<List<SearchItemRequest>> searchItems(@RequestParam String keyword) {
-        searchService.saveSearchKeyword(keyword);
-        List<SearchItemRequest> items = searchService.searchItems(keyword);
-        return ResponseEntity.ok(items);
+    public CustomResponse<PageResponse<SearchItemRequest>> searchItems(
+            @RequestParam String keyword,
+            @RequestParam(required = false) String sortBy,
+            @RequestParam(required = false) String sortOrder,
+            @RequestParam(required = false) Long minPrice,
+            @RequestParam(required = false) Long maxPrice,
+            @RequestParam(required = false) String ageRange,
+            @RequestParam(required = false) List<Long> themeIds,
+            @RequestParam(required = false, defaultValue = "1") int pageNo,
+            @RequestParam(required = false, defaultValue = "10") int size) {
+
+        PagingRequest pagingRequest = new PagingRequest(pageNo, size);
+        PageResponse<SearchItemRequest> items = searchService.searchItems(keyword, sortBy, sortOrder, minPrice, maxPrice, ageRange, themeIds, pagingRequest);
+        return CustomResponse.ok("Items fetched successfully", items);
+    }
+
+    @GetMapping("/themes")
+    public CustomResponse<List<Theme>> getAllThemes() {
+        List<Theme> themes = searchService.getAllThemes();
+        return CustomResponse.ok("Themes fetched successfully", themes);
     }
 }
