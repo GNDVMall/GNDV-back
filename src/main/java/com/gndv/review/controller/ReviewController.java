@@ -5,17 +5,20 @@ import com.gndv.review.domain.dto.request.ReviewInsertRequest;
 import com.gndv.review.domain.dto.response.ReviewDetailResponse;
 import com.gndv.review.service.ReviewService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/v2/reviews")
 @RequiredArgsConstructor
+@Slf4j
 public class ReviewController {
 
     private final ReviewService reviewService;
 
     @PostMapping
     public CustomResponse<ReviewDetailResponse> createReview(@RequestBody ReviewInsertRequest request) {
+        System.out.println("here"+request);
         ReviewDetailResponse response = reviewService.createReview(request);
         return CustomResponse.ok("Review created successfully", response);
     }
