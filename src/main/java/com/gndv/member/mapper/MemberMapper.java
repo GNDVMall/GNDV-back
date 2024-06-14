@@ -1,6 +1,6 @@
 package com.gndv.member.mapper;
 
-import com.gndv.constant.Status;
+import com.gndv.constant.Role;
 import com.gndv.member.domain.entity.Member;
 import org.apache.ibatis.annotations.*;
 import org.springframework.transaction.annotation.Transactional;
@@ -56,4 +56,7 @@ public interface MemberMapper {
 
     @Update("UPDATE Member SET accessToken = #{accessToken}, refreshToken = #{refreshToken} WHERE member_id = #{member_id}")
     void updateTokens(Long member_id, String accessToken, String refreshToken);
+
+    @Update("UPDATE Member SET role = #{role} WHERE member_id = #{member_id}")
+    void updateSeller(@Param("member_id") Long member_id, @Param("role") Role role);
 }

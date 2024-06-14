@@ -4,9 +4,11 @@ import com.gndv.common.CustomResponse;
 import com.gndv.image.service.ImageService;
 import com.gndv.member.domain.dto.request.EditRequest;
 import com.gndv.member.domain.dto.request.JoinRequest;
+import com.gndv.member.domain.dto.request.SmsRequest;
 import com.gndv.member.domain.entity.Member;
 import com.gndv.member.service.EmailService;
 import com.gndv.member.service.MemberService;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -80,5 +82,17 @@ public class MemberController {
         } else {
             return CustomResponse.error("Verification failed");
         }
+    }
+
+    @PostMapping("/sms/send")
+    public CustomResponse<Void> sendSms(@RequestBody SmsRequest request) {
+        memberService.sendSms(request);
+        return CustomResponse.ok("SMS sent successfully", null);
+    }
+
+    @PostMapping("/sms/confirm")
+    public CustomResponse<Void> confirmSms(@RequestBody SmsRequest request, HttpServletRequest httpRequest) {
+        memberService.verifySms(request, httpRequest);
+        return CustomResponse.ok("SMS verified successfully, role updated to SELLER", null);
     }
 }
