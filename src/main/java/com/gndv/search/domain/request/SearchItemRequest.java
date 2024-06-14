@@ -18,6 +18,7 @@ public class SearchItemRequest {
     private Long wish_count;
     private Long view_count;
     private Long theme_id;
+    private String theme_name;
     private Long recommend;
     private String image_url;
 }
