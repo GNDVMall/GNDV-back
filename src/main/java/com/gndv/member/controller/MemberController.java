@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.Map;
 import java.util.Optional;
 
 @RestController
@@ -36,7 +37,7 @@ public class MemberController {
     }
 
     @GetMapping("/{member_id}")
-    @PreAuthorize("isAuthenticated()")
+//    @PreAuthorize("isAuthenticated()")
     public CustomResponse<Optional<Member>> getMember(@PathVariable Long member_id) {
         Optional<Member> member = memberService.getMember(member_id);
         return CustomResponse.ok("getMember", member);
@@ -50,13 +51,24 @@ public class MemberController {
     }
 
     @PostMapping("/{member_id}/uploadProfileImage")
-    @PreAuthorize("isAuthenticated()")
+//    @PreAuthorize("isAuthenticated()")
     public CustomResponse<String> uploadProfileImage(@PathVariable Long member_id, @RequestParam MultipartFile file) throws IOException {
         String imageUrl = imageService.uploadCloud("profile", file);
         memberService.updateProfileImage(member_id, imageUrl);
+
         return CustomResponse.ok("Profile image uploaded", imageUrl);
     }
 
+    @PutMapping("/{member_id}/edit")
+    public CustomResponse<String> editMemberProfile(@PathVariable Long member_id,
+                                                    @RequestBody Map<String, String> updateData) {
+        String nickname = updateData.get("nickname");
+        String introduction = updateData.get("introduction");
+
+        memberService.updateProfile(member_id, nickname, introduction);
+
+        return CustomResponse.ok("Profile updated successfully");
+    }
     @DeleteMapping("/{member_id}/delete/{email}")
     @PreAuthorize("isAuthenticated()")
     public CustomResponse<Object> deleteMember(@PathVariable Long member_id, @PathVariable String email) {
@@ -65,7 +77,8 @@ public class MemberController {
     }
 
     @PostMapping("/sendEmailVerification")
-    public CustomResponse<String> sendEmailVerification(@RequestParam String email) {
+    public CustomResponse<String> sendEmailVerification(@RequestBody Map<String, String> payload) {
+        String email = payload.get("email");
         boolean isSent = emailService.sendEmail(email);
         if (isSent) {
             return CustomResponse.ok("Email sent successfully", null);
