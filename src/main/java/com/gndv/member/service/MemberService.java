@@ -15,13 +15,16 @@ import com.gndv.review.mapper.ReviewMapper;
 import com.gndv.security.token.TokenProvider;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import org.apache.ibatis.annotations.Param;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @Service
@@ -106,11 +109,11 @@ public class MemberService {
     }
 
     @Transactional(readOnly = true)
-    public ProfileRequest getMemberProfile(String email, PagingRequest pagingRequest) {
+    public ProfileRequest getMemberProfile(@Param("email") String email, PagingRequest pagingRequest) {
         Member member = memberMapper.findByEmail(email).orElseThrow(() -> new RuntimeException("Member not found"));
 
-        List<Review> reviews = reviewMapper.findReviewsByEmail(email, pagingRequest.getSkip(), pagingRequest.getSize());
-        int totalReviews = reviewMapper.countReviewsByEmail(email);
+        List<Review> reviews = reviewMapper.findReviewsByEmail(member.getMember_id(), pagingRequest.getSkip(), pagingRequest.getSize());
+        int totalReviews = reviewMapper.countReviewsByEmail(member.getMember_id());
 
         PageResponse<Review> reviewPage = new PageResponse<>(reviews, totalReviews, pagingRequest.getPageNo(), pagingRequest.getSize());
 
