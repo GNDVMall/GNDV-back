@@ -29,4 +29,19 @@ public interface ReviewMapper {
             "JOIN gndv.Orders p ON o.order_id = p.order_id " +
             "WHERE o.order_list_id = #{order_list_id}")
     Long findProductIdByOrderListId(@Param("order_list_id") Long order_list_id);
+
+    @Select("SELECT * FROM Review WHERE email = #{email} LIMIT #{skip}, #{size}")
+    @Results(id = "reviewResultMap", value = {
+            @Result(column = "review_id", property = "review_id"),
+            @Result(column = "review_content", property = "review_content"),
+            @Result(column = "review_rating", property = "review_rating"),
+            @Result(column = "review_report_count", property = "review_report_count"),
+            @Result(column = "review_type", property = "review_type"),
+            @Result(column = "product_id", property = "product_id"),
+            @Result(column = "email", property = "email")
+    })
+    List<Review> findReviewsByEmail(@Param("email") String email, @Param("skip") int skip, @Param("size") int size);
+
+    @Select("SELECT COUNT(*) FROM Review WHERE email = #{email}")
+    int countReviewsByEmail(@Param("email") String email);
 }

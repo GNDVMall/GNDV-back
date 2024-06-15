@@ -1,12 +1,17 @@
 package com.gndv.member.service;
 
+import com.gndv.common.domain.request.PagingRequest;
+import com.gndv.common.domain.response.PageResponse;
 import com.gndv.configs.SmsConfig;
 import com.gndv.constant.Role;
 import com.gndv.member.domain.dto.request.EditRequest;
 import com.gndv.member.domain.dto.request.JoinRequest;
+import com.gndv.member.domain.dto.request.ProfileRequest;
 import com.gndv.member.domain.dto.request.SmsRequest;
 import com.gndv.member.domain.entity.Member;
 import com.gndv.member.mapper.MemberMapper;
+import com.gndv.review.domain.entity.Review;
+import com.gndv.review.mapper.ReviewMapper;
 import com.gndv.security.token.TokenProvider;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
@@ -16,6 +21,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -23,6 +29,7 @@ import java.util.Optional;
 public class MemberService {
 
     private final MemberMapper memberMapper;
+    private final ReviewMapper reviewMapper;
     private final PasswordEncoder passwordEncoder;
     private final RedisTemplate<String, Object> redisTemplate;
     private final SmsService smsService;
@@ -96,5 +103,21 @@ public class MemberService {
     @Transactional
     public void updateRoleToSeller(Long memberId) {
         memberMapper.updateSeller(memberId, Role.SELLER);
+    }
+
+    @Transactional(readOnly = true)
+    public ProfileRequest getMemberProfile(String email, PagingRequest pagingRequest) {
+        Member member = memberMapper.findByEmail(email).orElseThrow(() -> new RuntimeException("Member not found"));
+
+        List<Review> reviews = reviewMapper.findReviewsByEmail(email, pagingRequest.getSkip(), pagingRequest.getSize());
+        int totalReviews = reviewMapper.countReviewsByEmail(email);
+
+        PageResponse<Review> reviewPage = new PageResponse<>(reviews, totalReviews, pagingRequest.getPageNo(), pagingRequest.getSize());
+
+        ProfileRequest memberProfile = new ProfileRequest();
+        memberProfile.setMember(member);
+        memberProfile.setReviews(reviewPage.getList());
+
+        return memberProfile;
     }
 }
