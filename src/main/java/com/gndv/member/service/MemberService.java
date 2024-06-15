@@ -22,9 +22,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 
 @Service
@@ -109,11 +107,11 @@ public class MemberService {
     }
 
     @Transactional(readOnly = true)
-    public ProfileRequest getMemberProfile(@Param("email") String email, PagingRequest pagingRequest) {
+    public ProfileRequest getMemberProfile(String email, PagingRequest pagingRequest) {
         Member member = memberMapper.findByEmail(email).orElseThrow(() -> new RuntimeException("Member not found"));
 
-        List<Review> reviews = reviewMapper.findReviewsByEmail(member.getMember_id(), pagingRequest.getSkip(), pagingRequest.getSize());
-        int totalReviews = reviewMapper.countReviewsByEmail(member.getMember_id());
+        List<Review> reviews = reviewMapper.findReviewsByMemberId(member.getMember_id(), pagingRequest.getSkip(), pagingRequest.getSize());
+        int totalReviews = reviewMapper.countReviewsByMemberId(member.getMember_id());
 
         PageResponse<Review> reviewPage = new PageResponse<>(reviews, totalReviews, pagingRequest.getPageNo(), pagingRequest.getSize());
 

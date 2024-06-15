@@ -4,7 +4,6 @@ import com.gndv.review.domain.entity.Review;
 import org.apache.ibatis.annotations.*;
 
 import java.util.List;
-import java.util.Map;
 
 @Mapper
 public interface ReviewMapper {
@@ -32,17 +31,8 @@ public interface ReviewMapper {
     Long findProductIdByOrderListId(@Param("order_list_id") Long order_list_id);
 
     @Select("SELECT * FROM Review WHERE member_id = #{member_id} LIMIT #{skip}, #{size}")
-    @Results(id = "reviewResultMap", value = {
-            @Result(column = "review_id", property = "review_id"),
-            @Result(column = "review_content", property = "review_content"),
-            @Result(column = "review_rating", property = "review_rating"),
-            @Result(column = "review_report_count", property = "review_report_count"),
-            @Result(column = "review_type", property = "review_type"),
-            @Result(column = "product_id", property = "product_id"),
-            @Result(column = "member_id", property = "member_id")
-    })
-    List<Review> findReviewsByEmail(Long member_id, @Param("skip") int skip, @Param("size") int size);
+    List<Review> findReviewsByMemberId(Long member_id, @Param("skip") int skip, @Param("size") int size);
 
     @Select("SELECT COUNT(*) FROM Review WHERE member_id = #{member_id}")
-    int countReviewsByEmail(Long member_id);
+    int countReviewsByMemberId(Long member_id);
 }

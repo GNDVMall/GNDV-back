@@ -54,7 +54,7 @@ public class ReviewServiceImpl implements ReviewService {
         Review review = Review.builder()
                 .review_content(request.getReview_content())
                 .review_rating(request.getReview_rating())
-                .review_type(request.getReview_type())
+                //.review_type(request.getReview_type())
                 .email(member.getEmail())
                 .product_id(request.getProduct_id())
                 .build();
@@ -97,7 +97,7 @@ public class ReviewServiceImpl implements ReviewService {
                 .review_id(review_id)
                 .review_content(request.getReview_content())
                 .review_rating(request.getReview_rating())
-                .review_type(request.getReview_type())
+                //.review_type(request.getReview_type())
                 .email(member.getEmail())
                 .product_id(productId)
                 .build();
