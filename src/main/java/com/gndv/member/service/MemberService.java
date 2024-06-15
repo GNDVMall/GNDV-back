@@ -120,4 +120,33 @@ public class MemberService {
 
         return memberProfile;
     }
+
+    @Transactional
+    public void updateProfile(Long memberId, String nickname, String introduction) {
+        Member member = memberMapper.findById(memberId)
+                .orElseThrow(() -> new RuntimeException("Member not found"));
+
+        Member updatedMember = Member.builder()
+                .member_id(member.getMember_id())
+                .email(member.getEmail())
+                .password(member.getPassword())
+                .nickname(nickname != null ? nickname : member.getNickname())
+                .phone(member.getPhone())
+                .introduction(introduction != null ? introduction : member.getIntroduction())
+                .profile_url(member.getProfile_url())
+                .created_at(member.getCreated_at())
+                .rating(member.getRating())
+                .report_count(member.getReport_count())
+                .last_login(member.getLast_login())
+                .role(member.getRole())
+                .member_status(member.getMember_status())
+                .is_account_non_expired(member.is_account_non_expired())
+                .is_account_non_locked(member.is_account_non_locked())
+                .is_credentials_non_expired(member.is_credentials_non_expired())
+                .is_enabled(member.is_enabled())
+                .build();
+
+        memberMapper.update(updatedMember.getMember_id(), updatedMember.getEmail(), updatedMember.getPassword(),
+                updatedMember.getNickname(), updatedMember.getPhone(), updatedMember.getIntroduction());
+    }
 }
