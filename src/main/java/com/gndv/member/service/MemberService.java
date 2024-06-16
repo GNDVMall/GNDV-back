@@ -108,7 +108,7 @@ public class MemberService {
 
     @Transactional(readOnly = true)
     public ProfileRequest getMemberProfile(String email, PagingRequest pagingRequest) {
-        Member member = memberMapper.findByEmail(email).orElseThrow(() -> new RuntimeException("Member not found"));
+        Member member = memberMapper.getMemberProfile(email).orElseThrow(() -> new RuntimeException("Member not found"));
 
         List<Review> reviews = reviewMapper.findReviewsByMemberId(member.getMember_id(), pagingRequest.getSkip(), pagingRequest.getSize());
         int totalReviews = reviewMapper.countReviewsByMemberId(member.getMember_id());
