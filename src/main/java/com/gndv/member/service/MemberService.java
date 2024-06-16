@@ -88,9 +88,9 @@ public class MemberService {
         smsConfig.removeSmsCertification(request.getPhone());
 
         String token = httpRequest.getHeader("Authorization").substring(7);
-        Long memberId = tokenProvider.extractMemberId(token).orElseThrow(() -> new RuntimeException("Invalid Token"));
+        Long member_id = tokenProvider.extractMemberId(token).orElseThrow(() -> new RuntimeException("Invalid Token"));
 
-        updateRoleToSeller(memberId);
+        updateRoleToSeller(member_id);
     }
 
     public boolean isVerify(SmsRequest request) {
@@ -99,8 +99,8 @@ public class MemberService {
     }
 
     @Transactional
-    public void updateRoleToSeller(Long memberId) {
-        memberMapper.updateSeller(memberId, Role.SELLER);
+    public void updateRoleToSeller(Long member_id) {
+        memberMapper.updateSeller(member_id, Role.SELLER);
     }
 
     @Transactional(readOnly = true)

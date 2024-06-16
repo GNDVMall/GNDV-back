@@ -12,18 +12,18 @@ import java.util.Optional;
 @Mapper
 public interface MemberMapper {
 
-    @Select("SELECT * FROM Member WHERE member_id = #{memberId}")
-    Optional<Member> findById(Long memberId);
+    @Select("SELECT * FROM Member WHERE member_id = #{member_id}")
+    Optional<Member> findById(Long member_id);
 
     @Select("SELECT * FROM Member WHERE email = #{email}")
-    Optional<Member> findByEmail(@Param("email") String email);
+    Optional<Member> findByEmail(String email);
 
     @Select("SELECT member_id FROM Member WHERE email = #{email}")
     Long findMemberIdByEmail(String email);
 
     @Select("SELECT member_id, email, nickname, phone, introduction, profile_url, created_at, rating, report_count, last_login, role " +
             "FROM Member WHERE email = #{email}")
-    Optional<Member> getMemberProfile(@Param("email") String email);
+    Optional<Member> getMemberProfile(String email);
 
     @Select("SELECT * FROM member")
     List<Member> findAll();
@@ -53,7 +53,7 @@ public interface MemberMapper {
                 @Param("introduction") String introduction);
 
     @Update("UPDATE Member SET profile_url = #{profile_url} WHERE member_id = #{member_id}")
-    void updateProfileImage(@Param("member_id") Long member_id, @Param("profile_url") String profile_url);
+    void updateProfileImage(Long member_id, String profile_url);
 
     @Delete("DELETE FROM Member WHERE member_id = #{member_id}")
     @Transactional
@@ -66,8 +66,8 @@ public interface MemberMapper {
     void updateTokens(Long member_id, String accessToken, String refreshToken);
 
     @Update("UPDATE Member SET role = #{role} WHERE member_id = #{member_id}")
-    void updateSeller(@Param("member_id") Long member_id, @Param("role") Role role);
+    void updateSeller(Long member_id, Role role);
 
     @Select("SELECT * FROM MemberProfileView WHERE reviewer_email = #{email}")
-    List<ProfileDetailsRequest> getMemberProfileDetails(@Param("email") String email);
+    List<ProfileDetailsRequest> getMemberProfileDetails(String email);
 }
