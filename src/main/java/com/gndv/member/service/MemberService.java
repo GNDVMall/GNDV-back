@@ -27,7 +27,6 @@ import java.util.Optional;
 public class MemberService {
 
     private final MemberMapper memberMapper;
-    private final ReviewMapper reviewMapper;
     private final PasswordEncoder passwordEncoder;
     private final RedisTemplate<String, Object> redisTemplate;
     private final SmsService smsService;
@@ -88,9 +87,9 @@ public class MemberService {
         smsConfig.removeSmsCertification(request.getPhone());
 
         String token = httpRequest.getHeader("Authorization").substring(7);
-        Long memberId = tokenProvider.extractMemberId(token).orElseThrow(() -> new RuntimeException("Invalid Token"));
+        Long member_id = tokenProvider.extractMemberId(token).orElseThrow(() -> new RuntimeException("Invalid Token"));
 
-        updateRoleToSeller(memberId);
+        updateRoleToSeller(member_id);
     }
 
     public boolean isVerify(SmsRequest request) {
@@ -99,22 +98,27 @@ public class MemberService {
     }
 
     @Transactional
-    public void updateRoleToSeller(Long memberId) {
-        memberMapper.updateSeller(memberId, Role.SELLER);
+    public void updateRoleToSeller(Long member_id) {
+        memberMapper.updateSeller(member_id, Role.SELLER);
     }
 
     @Transactional(readOnly = true)
-    public ProfileRequest getMemberProfile(String email, PagingRequest pagingRequest) {
-        Member member = memberMapper.getMemberProfile(email).orElseThrow(() -> new RuntimeException("Member not found"));
+    public ProfileRequest getMemberProfileWithPagedReviews(String email, PagingRequest pagingRequest) {
+        Member member = memberMapper.getMemberProfile(email)
+                .orElseThrow(() -> new RuntimeException("Member not found"));
 
-        List<ProfileDetailsRequest> reviews = memberMapper.getMemberProfileDetails(email);
-        int totalReviews = reviewMapper.countReviewsByMemberId(member.getMember_id());
+        int offset = pagingRequest.getSkip();
+        int limit = pagingRequest.getSize();
+
+        List<ProfileDetailsRequest> reviews = memberMapper.getMemberProfileDetails(member.getMember_id(), offset, limit);
+        int totalReviews = memberMapper.countReviewsByMemberId(member.getMember_id());
 
         PageResponse<ProfileDetailsRequest> reviewPage = new PageResponse<>(reviews, totalReviews, pagingRequest.getPageNo(), pagingRequest.getSize());
 
         ProfileRequest memberProfile = new ProfileRequest();
         memberProfile.setMember(member);
-        memberProfile.setReviews(reviews);
+        memberProfile.setReviews(reviewPage);
+        memberProfile.setLastLogin(member.getLast_login());
 
         return memberProfile;
     }
