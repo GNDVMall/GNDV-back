@@ -1,14 +1,13 @@
 package com.gndv.search.service;
 
-import com.gndv.item.domain.entity.Item;
-import com.gndv.item.mapper.ItemMapper;
-import com.gndv.search.domain.entity.Code;
+import com.gndv.common.domain.request.PagingRequest;
+import com.gndv.common.domain.response.PageResponse;
 import com.gndv.search.domain.entity.Search;
+import com.gndv.search.domain.entity.Theme;
 import com.gndv.search.domain.request.SearchItemRequest;
-import com.gndv.search.mapper.CodeMapper;
 import com.gndv.search.mapper.SearchMapper;
+import com.gndv.search.mapper.ThemeMapper;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -20,8 +19,7 @@ import java.util.Optional;
 public class SearchService {
 
     private final SearchMapper searchMapper;
-    private final CodeMapper codeMapper;
-    private final ItemMapper itemMapper;
+    private final ThemeMapper themeMapper;
 
     @Transactional
     public void saveSearchKeyword(String keyword) {
@@ -43,11 +41,13 @@ public class SearchService {
         return searchMapper.findPopularSearches();
     }
 
-    public List<Code> getCategoryCodes() {
-        return codeMapper.findCodesByType("CATEGORY");
+    public PageResponse<SearchItemRequest> searchItems(String keyword, String sortBy, String sortOrder, Long minPrice, Long maxPrice, String ageRange, List<Long> themeIds, PagingRequest pagingRequest) {
+        List<SearchItemRequest> items = searchMapper.findItemsByKeyword(keyword, sortBy, sortOrder, minPrice, maxPrice, ageRange, themeIds, pagingRequest.getSkip(), pagingRequest.getSize());
+        int total = searchMapper.countItemsByKeyword(keyword, minPrice, maxPrice, ageRange, themeIds);
+        return new PageResponse<>(items, total, pagingRequest.getPageNo(), pagingRequest.getSize());
     }
 
-    public List<SearchItemRequest> searchItems(String keyword) {
-        return searchMapper.findItemsByKeyword(keyword);
+    public List<Theme> getAllThemes() {
+        return themeMapper.findAllThemes();
     }
 }

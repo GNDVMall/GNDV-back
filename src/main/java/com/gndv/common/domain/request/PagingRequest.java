@@ -13,6 +13,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class PagingRequest {
+
     @Min(value = 1)
     @Positive
     @Builder.Default
@@ -26,7 +27,12 @@ public class PagingRequest {
 
     private String searchKey;
 
-    public int getSkip(){ // sql에 쓸 데이터의 시작 위치
+    public int getSkip() {
         return (pageNo - 1) * size;
+    }
+
+    public PagingRequest(int pageNo, int size) {
+        this.pageNo = pageNo;
+        this.size = size;
     }
 }
