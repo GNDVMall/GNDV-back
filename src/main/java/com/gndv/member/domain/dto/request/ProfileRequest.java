@@ -16,5 +16,5 @@ import java.util.List;
 public class ProfileRequest {
 
     private Member member;
-    private List<Review> reviews;
+    private List<ProfileDetailsRequest> reviews;
 }
