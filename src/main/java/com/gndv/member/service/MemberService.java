@@ -122,17 +122,20 @@ public class MemberService {
         return memberProfile;
     }
 
+
     @Transactional
-    public void updateProfile(Long memberId, String nickname, String introduction) {
+    public void updateProfile(Long memberId, String nickname, String introduction, String phone, String password) {
         Member member = memberMapper.findById(memberId)
                 .orElseThrow(() -> new RuntimeException("Member not found"));
+
+        String encodedPassword = password != null ? passwordEncoder.encode(password) : member.getPassword();
 
         Member updatedMember = Member.builder()
                 .member_id(member.getMember_id())
                 .email(member.getEmail())
-                .password(member.getPassword())
+                .password(encodedPassword)
                 .nickname(nickname != null ? nickname : member.getNickname())
-                .phone(member.getPhone())
+                .phone(phone != null ? phone : member.getPhone())
                 .introduction(introduction != null ? introduction : member.getIntroduction())
                 .profile_url(member.getProfile_url())
                 .created_at(member.getCreated_at())
