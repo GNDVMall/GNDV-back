@@ -18,4 +18,5 @@ public class Item {
     private Long view_count;
     private Long theme_id;
     private Long recommend;
+    private String image_url;
 }
