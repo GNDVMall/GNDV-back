@@ -5,10 +5,11 @@ import org.springframework.http.HttpStatus;
 
 @Getter
 public class CustomResponse<T> {
+
     private int code;
     private HttpStatus status;
     private String message;
-    private T data; // = body
+    private T data;
 
     public CustomResponse(HttpStatus status, String message) {
         this(status, message, null);
