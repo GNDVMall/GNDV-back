@@ -4,10 +4,7 @@ import com.gndv.common.domain.request.PagingRequest;
 import com.gndv.common.domain.response.PageResponse;
 import com.gndv.configs.SmsConfig;
 import com.gndv.constant.Role;
-import com.gndv.member.domain.dto.request.EditRequest;
-import com.gndv.member.domain.dto.request.JoinRequest;
-import com.gndv.member.domain.dto.request.ProfileRequest;
-import com.gndv.member.domain.dto.request.SmsRequest;
+import com.gndv.member.domain.dto.request.*;
 import com.gndv.member.domain.entity.Member;
 import com.gndv.member.mapper.MemberMapper;
 import com.gndv.review.domain.entity.Review;
@@ -110,18 +107,17 @@ public class MemberService {
     public ProfileRequest getMemberProfile(String email, PagingRequest pagingRequest) {
         Member member = memberMapper.getMemberProfile(email).orElseThrow(() -> new RuntimeException("Member not found"));
 
-        List<Review> reviews = reviewMapper.findReviewsByMemberId(member.getMember_id(), pagingRequest.getSkip(), pagingRequest.getSize());
+        List<ProfileDetailsRequest> reviews = memberMapper.getMemberProfileDetails(email);
         int totalReviews = reviewMapper.countReviewsByMemberId(member.getMember_id());
 
-        PageResponse<Review> reviewPage = new PageResponse<>(reviews, totalReviews, pagingRequest.getPageNo(), pagingRequest.getSize());
+        PageResponse<ProfileDetailsRequest> reviewPage = new PageResponse<>(reviews, totalReviews, pagingRequest.getPageNo(), pagingRequest.getSize());
 
         ProfileRequest memberProfile = new ProfileRequest();
         memberProfile.setMember(member);
-        memberProfile.setReviews(reviewPage.getList());
+        memberProfile.setReviews(reviews);
 
         return memberProfile;
     }
-
 
     @Transactional
     public void updateProfile(Long memberId, String nickname, String introduction, String phone, String password) {
