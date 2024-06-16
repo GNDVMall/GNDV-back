@@ -49,6 +49,7 @@ public class SearchController {
 
     @GetMapping
     public CustomResponse<PageResponse<SearchItemRequest>> searchItems(
+            @AuthenticationPrincipal UserDetails user,
             @RequestParam String keyword,
             @RequestParam(required = false) String sortBy,
             @RequestParam(required = false) String sortOrder,
@@ -60,7 +61,14 @@ public class SearchController {
             @RequestParam(required = false, defaultValue = "10") int size) {
 
         PagingRequest pagingRequest = new PagingRequest(pageNo, size);
-        PageResponse<SearchItemRequest> items = searchService.searchItems(keyword, sortBy, sortOrder, minPrice, maxPrice, ageRange, themeIds, pagingRequest);
+        Long member_id = null;
+
+        if (user != null) {
+            String email = user.getUsername();
+            member_id = searchService.getMemberIdByEmail(email);
+        }
+
+        PageResponse<SearchItemRequest> items = searchService.searchItems(member_id, keyword, sortBy, sortOrder, minPrice, maxPrice, ageRange, themeIds, pagingRequest);
         return CustomResponse.ok("Items fetched successfully", items);
     }
 
