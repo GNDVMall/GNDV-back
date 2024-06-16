@@ -5,10 +5,11 @@ import org.springframework.http.HttpStatus;
 
 @Getter
 public class CustomResponse<T> {
+
     private int code;
     private HttpStatus status;
     private String message;
-    private T data; // = body
+    private T data;
 
     public CustomResponse(HttpStatus status, String message) {
         this(status, message, null);
@@ -45,8 +46,16 @@ public class CustomResponse<T> {
         return CustomResponse.of(HttpStatus.BAD_REQUEST, message);
     }
 
+    public static <T> CustomResponse<T> failure(String message, T data) {
+        return CustomResponse.of(HttpStatus.BAD_REQUEST, message, data);
+    }
+
     public static <T> CustomResponse<T> error(String message) {
         return CustomResponse.of(HttpStatus.INTERNAL_SERVER_ERROR, message);
+    }
+
+    public static <T> CustomResponse<T> error(String message, T data) {
+        return CustomResponse.of(HttpStatus.INTERNAL_SERVER_ERROR, message, data);
     }
 
     public static <T> CustomResponse<T> from(T data) {
