@@ -1,9 +1,11 @@
 package com.gndv.member.controller;
 
 import com.gndv.common.CustomResponse;
+import com.gndv.common.domain.request.PagingRequest;
 import com.gndv.image.service.ImageService;
 import com.gndv.member.domain.dto.request.EditRequest;
 import com.gndv.member.domain.dto.request.JoinRequest;
+import com.gndv.member.domain.dto.request.ProfileRequest;
 import com.gndv.member.domain.dto.request.SmsRequest;
 import com.gndv.member.domain.entity.Member;
 import com.gndv.member.service.EmailService;
@@ -107,5 +109,17 @@ public class MemberController {
     public CustomResponse<Void> confirmSms(@RequestBody SmsRequest request, HttpServletRequest httpRequest) {
         memberService.verifySms(request, httpRequest);
         return CustomResponse.ok("SMS verified successfully, role updated to SELLER", null);
+    }
+
+    @GetMapping("/profile")
+    public CustomResponse<ProfileRequest> getMemberProfile(
+            @RequestParam String email,
+            @RequestParam(required = false, defaultValue = "1") int pageNo,
+            @RequestParam(required = false, defaultValue = "10") int size) {
+
+        PagingRequest pagingRequest = new PagingRequest(pageNo, size);
+        ProfileRequest memberProfile = memberService.getMemberProfile(email, pagingRequest);
+
+        return CustomResponse.ok("Member profile fetched successfully", memberProfile);
     }
 }

@@ -29,4 +29,10 @@ public interface ReviewMapper {
             "JOIN gndv.Orders p ON o.order_id = p.order_id " +
             "WHERE o.order_list_id = #{order_list_id}")
     Long findProductIdByOrderListId(@Param("order_list_id") Long order_list_id);
+
+    @Select("SELECT * FROM Review WHERE member_id = #{member_id} LIMIT #{skip}, #{size}")
+    List<Review> findReviewsByMemberId(Long member_id, @Param("skip") int skip, @Param("size") int size);
+
+    @Select("SELECT COUNT(*) FROM Review WHERE member_id = #{member_id}")
+    int countReviewsByMemberId(Long member_id);
 }
