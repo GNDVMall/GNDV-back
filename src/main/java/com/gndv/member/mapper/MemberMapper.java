@@ -17,6 +17,9 @@ public interface MemberMapper {
     @Select("SELECT * FROM Member WHERE email = #{email}")
     Optional<Member> findByEmail(@Param("email") String email);
 
+    @Select("SELECT member_id FROM Member WHERE email = #{email}")
+    Long findMemberIdByEmail(String email);
+
     @Select("SELECT member_id, email, nickname, phone, introduction, profile_url, created_at, rating, report_count, last_login, role " +
             "FROM Member WHERE email = #{email}")
     Optional<Member> getMemberProfile(@Param("email") String email);
