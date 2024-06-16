@@ -43,7 +43,8 @@ public class SearchService {
         return searchMapper.findPopularSearches();
     }
 
-    public PageResponse<SearchItemRequest> searchItems(String keyword, String sortBy, String sortOrder, Long minPrice, Long maxPrice, String ageRange, List<Long> themeIds, PagingRequest pagingRequest) {
+    public PageResponse<SearchItemRequest> searchItems(Long member_id, String keyword, String sortBy, String sortOrder, Long minPrice, Long maxPrice, String ageRange, List<Long> themeIds, PagingRequest pagingRequest) {
+        saveSearchKeyword(member_id, keyword);
         List<SearchItemRequest> items = searchMapper.findItemsByKeyword(keyword, sortBy, sortOrder, minPrice, maxPrice, ageRange, themeIds, pagingRequest.getSkip(), pagingRequest.getSize());
         int total = searchMapper.countItemsByKeyword(keyword, minPrice, maxPrice, ageRange, themeIds);
         return new PageResponse<>(items, total, pagingRequest.getPageNo(), pagingRequest.getSize());
