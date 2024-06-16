@@ -16,6 +16,7 @@ import org.springframework.security.web.authentication.AuthenticationSuccessHand
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -31,9 +32,11 @@ public class TokenAuthenticationSuccessHandler implements AuthenticationSuccessH
 
         MemberContext memberContext = (MemberContext) authentication.getPrincipal();
         String email = memberContext.getMemberDTO().getEmail();
-        Long id = memberContext.getMemberDTO().getMember_id();
+        Long member_id = memberContext.getMemberDTO().getMember_id();
 
-        String accessToken = tokenProvider.createAccessToken(email, id);
+        memberMapper.updateLastLogin(member_id, new Date());
+
+        String accessToken = tokenProvider.createAccessToken(email, member_id);
         String refreshToken = tokenProvider.createRefreshToken();
 
         tokenProvider.sendAccessAndRefreshToken(response, accessToken, refreshToken);
@@ -48,7 +51,7 @@ public class TokenAuthenticationSuccessHandler implements AuthenticationSuccessH
         Map<String, Object> jsonResponse = new HashMap<>();
         jsonResponse.put("status", "success");
         jsonResponse.put("email", email);
-        jsonResponse.put("id", id);
+        jsonResponse.put("member_id", member_id);
 
         // JSON 형식으로 변환
         ObjectMapper objectMapper = new ObjectMapper();

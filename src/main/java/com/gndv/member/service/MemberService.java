@@ -118,6 +118,7 @@ public class MemberService {
         ProfileRequest memberProfile = new ProfileRequest();
         memberProfile.setMember(member);
         memberProfile.setReviews(reviewPage);
+        memberProfile.setLastLogin(member.getLast_login());
 
         return memberProfile;
     }

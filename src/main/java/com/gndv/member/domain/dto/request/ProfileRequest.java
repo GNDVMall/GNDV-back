@@ -7,6 +7,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.Date;
+
 @Data
 @Builder
 @AllArgsConstructor
@@ -15,4 +17,5 @@ public class ProfileRequest {
 
     private Member member;
     private PageResponse<ProfileDetailsRequest> reviews;
+    private Date lastLogin;
 }

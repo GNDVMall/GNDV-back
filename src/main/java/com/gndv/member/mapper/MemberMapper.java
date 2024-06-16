@@ -6,6 +6,7 @@ import com.gndv.member.domain.entity.Member;
 import org.apache.ibatis.annotations.*;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -73,4 +74,7 @@ public interface MemberMapper {
 
     @Select("SELECT COUNT(*) FROM MemberProfileView WHERE reviewer_id = #{member_id}")
     int countReviewsByMemberId(Long member_id);
+
+    @Update("UPDATE Member SET last_login = #{last_login} WHERE member_id = #{member_id}")
+    void updateLastLogin(Long member_id, Date last_login);
 }
