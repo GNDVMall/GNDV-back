@@ -2,6 +2,7 @@ package com.gndv.search.service;
 
 import com.gndv.common.domain.request.PagingRequest;
 import com.gndv.common.domain.response.PageResponse;
+import com.gndv.member.mapper.MemberMapper;
 import com.gndv.search.domain.entity.Search;
 import com.gndv.search.domain.entity.Theme;
 import com.gndv.search.domain.request.SearchItemRequest;
@@ -20,10 +21,11 @@ public class SearchService {
 
     private final SearchMapper searchMapper;
     private final ThemeMapper themeMapper;
+    private final MemberMapper memberMapper;
 
     @Transactional
-    public void saveSearchKeyword(String keyword) {
-        searchMapper.insertSearchInput(keyword);
+    public void saveSearchKeyword(Long member_id, String keyword) {
+        searchMapper.insertSearchInput(member_id, keyword);
 
         Optional<Search> existingSearch = searchMapper.findSearchByKeyword(keyword);
         if (existingSearch.isPresent()) {
@@ -33,8 +35,8 @@ public class SearchService {
         }
     }
 
-    public List<String> getRecentSearches() {
-        return searchMapper.findRecentSearches();
+    public List<String> getRecentSearchesByMemberId(Long member_id) {
+        return searchMapper.findRecentSearchesByMemberId(member_id);
     }
 
     public List<String> getPopularSearches() {
@@ -49,5 +51,9 @@ public class SearchService {
 
     public List<Theme> getAllThemes() {
         return themeMapper.findAllThemes();
+    }
+
+    public Long getMemberIdByEmail(String email) {
+        return memberMapper.findMemberIdByEmail(email);
     }
 }
