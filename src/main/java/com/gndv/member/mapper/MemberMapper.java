@@ -68,6 +68,9 @@ public interface MemberMapper {
     @Update("UPDATE Member SET role = #{role} WHERE member_id = #{member_id}")
     void updateSeller(Long member_id, Role role);
 
-    @Select("SELECT * FROM MemberProfileView WHERE reviewer_email = #{email}")
-    List<ProfileDetailsRequest> getMemberProfileDetails(String email);
+    @Select("SELECT * FROM MemberProfileView WHERE reviewer_id = #{member_id} LIMIT #{limit} OFFSET #{offset}")
+    List<ProfileDetailsRequest> getMemberProfileDetails(Long member_id, int offset, int limit);
+
+    @Select("SELECT COUNT(*) FROM MemberProfileView WHERE reviewer_id = #{member_id}")
+    int countReviewsByMemberId(Long member_id);
 }

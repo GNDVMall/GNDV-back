@@ -27,7 +27,6 @@ import java.util.Optional;
 public class MemberService {
 
     private final MemberMapper memberMapper;
-    private final ReviewMapper reviewMapper;
     private final PasswordEncoder passwordEncoder;
     private final RedisTemplate<String, Object> redisTemplate;
     private final SmsService smsService;
@@ -104,17 +103,21 @@ public class MemberService {
     }
 
     @Transactional(readOnly = true)
-    public ProfileRequest getMemberProfile(String email, PagingRequest pagingRequest) {
-        Member member = memberMapper.getMemberProfile(email).orElseThrow(() -> new RuntimeException("Member not found"));
+    public ProfileRequest getMemberProfileWithPagedReviews(String email, PagingRequest pagingRequest) {
+        Member member = memberMapper.getMemberProfile(email)
+                .orElseThrow(() -> new RuntimeException("Member not found"));
 
-        List<ProfileDetailsRequest> reviews = memberMapper.getMemberProfileDetails(email);
-        int totalReviews = reviewMapper.countReviewsByMemberId(member.getMember_id());
+        int offset = pagingRequest.getSkip();
+        int limit = pagingRequest.getSize();
+
+        List<ProfileDetailsRequest> reviews = memberMapper.getMemberProfileDetails(member.getMember_id(), offset, limit);
+        int totalReviews = memberMapper.countReviewsByMemberId(member.getMember_id());
 
         PageResponse<ProfileDetailsRequest> reviewPage = new PageResponse<>(reviews, totalReviews, pagingRequest.getPageNo(), pagingRequest.getSize());
 
         ProfileRequest memberProfile = new ProfileRequest();
         memberProfile.setMember(member);
-        memberProfile.setReviews(reviews);
+        memberProfile.setReviews(reviewPage);
 
         return memberProfile;
     }

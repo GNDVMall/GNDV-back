@@ -1,5 +1,6 @@
 package com.gndv.member.domain.dto.request;
 
+import com.gndv.common.domain.response.PageResponse;
 import com.gndv.member.domain.entity.Member;
 import com.gndv.review.domain.entity.Review;
 import lombok.AllArgsConstructor;
@@ -16,5 +17,5 @@ import java.util.List;
 public class ProfileRequest {
 
     private Member member;
-    private List<ProfileDetailsRequest> reviews;
+    private PageResponse<ProfileDetailsRequest> reviews;
 }
