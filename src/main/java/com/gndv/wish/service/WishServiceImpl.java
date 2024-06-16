@@ -20,7 +20,9 @@ public class WishServiceImpl implements WishService {
 
     @Override
     public Long getMemberIdByEmail(String email) {
-        return memberMapper.findByEmail(email).get().getMember_id();
+        return memberMapper.findByEmail(email)
+                .map(Member::getMember_id)
+                .orElseThrow(() -> new IllegalArgumentException("Member with email " + email + " not found"));
     }
 
     @Override
