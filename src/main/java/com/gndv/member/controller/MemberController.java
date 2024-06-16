@@ -44,7 +44,7 @@ public class MemberController {
     }
 
     @PutMapping("/{member_id}/edit/{email}")
-    @PreAuthorize("isAuthenticated()")
+    // @PreAuthorize("isAuthenticated()")
     public CustomResponse<EditRequest> editMember(@PathVariable Long member_id, @PathVariable String email, @RequestBody EditRequest request) {
         memberService.editMember(member_id, email, request);
         return CustomResponse.ok("modify", request);
@@ -60,15 +60,19 @@ public class MemberController {
     }
 
     @PutMapping("/{member_id}/edit")
-    public CustomResponse<String> editMemberProfile(@PathVariable Long member_id,
-                                                    @RequestBody Map<String, String> updateData) {
+    public CustomResponse<String> editMemberProfile(@PathVariable Long member_id, @RequestBody Map<String, String> updateData) {
         String nickname = updateData.get("nickname");
         String introduction = updateData.get("introduction");
+        String phone = updateData.get("phone");
+        String password = updateData.get("password");
 
-        memberService.updateProfile(member_id, nickname, introduction);
+        log.info("Received update data: nickname={}, introduction={}, phone={}, password={}", nickname, introduction, phone, password);
+
+        memberService.updateProfile(member_id, nickname, introduction, phone, password);
 
         return CustomResponse.ok("Profile updated successfully");
     }
+
     @DeleteMapping("/{member_id}/delete/{email}")
     @PreAuthorize("isAuthenticated()")
     public CustomResponse<Object> deleteMember(@PathVariable Long member_id, @PathVariable String email) {
