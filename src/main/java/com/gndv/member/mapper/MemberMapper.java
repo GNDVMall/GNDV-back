@@ -69,11 +69,11 @@ public interface MemberMapper {
     @Update("UPDATE Member SET role = #{role} WHERE member_id = #{member_id}")
     void updateSeller(Long member_id, Role role);
 
-    @Select("SELECT * FROM MemberProfileView WHERE reviewer_id = #{member_id} LIMIT #{limit} OFFSET #{offset}")
-    List<ProfileDetailsRequest> getMemberProfileDetails(Long member_id, int offset, int limit);
+    @Select("SELECT * FROM MemberProfileView WHERE email = #{email} LIMIT #{limit} OFFSET #{offset}")
+    List<ProfileDetailsRequest> getMemberProfileDetails(String email, int offset, int limit);
 
-    @Select("SELECT COUNT(*) FROM MemberProfileView WHERE reviewer_id = #{member_id}")
-    int countReviewsByMemberId(Long member_id);
+    @Select("SELECT COUNT(*) FROM MemberProfileView WHERE email = #{email}")
+    int countReviewsByEmail(String email);
 
     @Update("UPDATE Member SET last_login = #{last_login} WHERE member_id = #{member_id}")
     void updateLastLogin(Long member_id, Date last_login);

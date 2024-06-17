@@ -61,6 +61,16 @@ public class ProductController {
         return CustomResponse.ok("Update a Product", updated);
     }
 
+    @PutMapping("/status/{product_id}")
+    public CustomResponse<Integer> updateProductStatus(@RequestBody ProductUpdateRequest request, @PathVariable Long product_id) throws Exception {
+        log.info("Update a Product Status {}", request);
+        request.setProduct_id(product_id);
+
+        int updated = productService.updateProductStatus(request);
+        if(updated != 1) throw new Exception(); // 나중에 전역 예외 처리 시, 변경할 부분
+        return CustomResponse.ok("Update a Product Status ", updated);
+    }
+
     @DeleteMapping("/{product_id}")
     public CustomResponse<Integer> deleteProduct(@PathVariable Long product_id) throws Exception {
         log.info("Delete a Product");
