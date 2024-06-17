@@ -4,10 +4,7 @@ import com.gndv.common.domain.request.PagingRequest;
 import com.gndv.common.domain.response.PageResponse;
 import com.gndv.configs.SmsConfig;
 import com.gndv.constant.Role;
-import com.gndv.member.domain.dto.request.EditRequest;
-import com.gndv.member.domain.dto.request.JoinRequest;
-import com.gndv.member.domain.dto.request.ProfileRequest;
-import com.gndv.member.domain.dto.request.SmsRequest;
+import com.gndv.member.domain.dto.request.*;
 import com.gndv.member.domain.entity.Member;
 import com.gndv.member.mapper.MemberMapper;
 import com.gndv.review.domain.entity.Review;
@@ -30,7 +27,6 @@ import java.util.Optional;
 public class MemberService {
 
     private final MemberMapper memberMapper;
-    private final ReviewMapper reviewMapper;
     private final PasswordEncoder passwordEncoder;
     private final RedisTemplate<String, Object> redisTemplate;
     private final SmsService smsService;
@@ -54,7 +50,7 @@ public class MemberService {
     }
 
     @Transactional
-    @PreAuthorize("#email == authentication.name")
+    //@PreAuthorize("#email == authentication.name")
     public void editMember(Long member_id, String email, EditRequest request) {
         String encodedPassword = null;
         if (request.getPassword() != null) {
@@ -70,7 +66,7 @@ public class MemberService {
     }
 
     @Transactional
-    @PreAuthorize("#email == authentication.name")
+    //@PreAuthorize("#email == authentication.name")
     public void removeMember(Long member_id, String email) {
         memberMapper.delete(member_id);
     }
@@ -91,9 +87,9 @@ public class MemberService {
         smsConfig.removeSmsCertification(request.getPhone());
 
         String token = httpRequest.getHeader("Authorization").substring(7);
-        Long memberId = tokenProvider.extractMemberId(token).orElseThrow(() -> new RuntimeException("Invalid Token"));
+        Long member_id = tokenProvider.extractMemberId(token).orElseThrow(() -> new RuntimeException("Invalid Token"));
 
-        updateRoleToSeller(memberId);
+        updateRoleToSeller(member_id);
     }
 
     public boolean isVerify(SmsRequest request) {
@@ -102,37 +98,44 @@ public class MemberService {
     }
 
     @Transactional
-    public void updateRoleToSeller(Long memberId) {
-        memberMapper.updateSeller(memberId, Role.SELLER);
+    public void updateRoleToSeller(Long member_id) {
+        memberMapper.updateSeller(member_id, Role.SELLER);
     }
 
     @Transactional(readOnly = true)
-    public ProfileRequest getMemberProfile(String email, PagingRequest pagingRequest) {
-        Member member = memberMapper.getMemberProfile(email).orElseThrow(() -> new RuntimeException("Member not found"));
+    public ProfileRequest getMemberProfileWithPagedReviews(String email, PagingRequest pagingRequest) {
+        Member member = memberMapper.getMemberProfile(email)
+                .orElseThrow(() -> new RuntimeException("Member not found"));
 
-        List<Review> reviews = reviewMapper.findReviewsByMemberId(member.getMember_id(), pagingRequest.getSkip(), pagingRequest.getSize());
-        int totalReviews = reviewMapper.countReviewsByMemberId(member.getMember_id());
+        int offset = pagingRequest.getSkip();
+        int limit = pagingRequest.getSize();
 
-        PageResponse<Review> reviewPage = new PageResponse<>(reviews, totalReviews, pagingRequest.getPageNo(), pagingRequest.getSize());
+        List<ProfileDetailsRequest> reviews = memberMapper.getMemberProfileDetails(email, offset, limit);
+        int totalReviews = memberMapper.countReviewsByEmail(email);
+
+        PageResponse<ProfileDetailsRequest> reviewPage = new PageResponse<>(reviews, totalReviews, pagingRequest.getPageNo(), pagingRequest.getSize());
 
         ProfileRequest memberProfile = new ProfileRequest();
         memberProfile.setMember(member);
-        memberProfile.setReviews(reviewPage.getList());
+        memberProfile.setReviews(reviewPage);
+        memberProfile.setLastLogin(member.getLast_login());
 
         return memberProfile;
     }
 
     @Transactional
-    public void updateProfile(Long memberId, String nickname, String introduction) {
+    public void updateProfile(Long memberId, String nickname, String introduction, String phone, String password) {
         Member member = memberMapper.findById(memberId)
                 .orElseThrow(() -> new RuntimeException("Member not found"));
+
+        String encodedPassword = password != null ? passwordEncoder.encode(password) : member.getPassword();
 
         Member updatedMember = Member.builder()
                 .member_id(member.getMember_id())
                 .email(member.getEmail())
-                .password(member.getPassword())
+                .password(encodedPassword)
                 .nickname(nickname != null ? nickname : member.getNickname())
-                .phone(member.getPhone())
+                .phone(phone != null ? phone : member.getPhone())
                 .introduction(introduction != null ? introduction : member.getIntroduction())
                 .profile_url(member.getProfile_url())
                 .created_at(member.getCreated_at())

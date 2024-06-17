@@ -4,11 +4,14 @@ import com.gndv.common.CustomResponse;
 import com.gndv.common.domain.request.PagingRequest;
 import com.gndv.common.domain.response.PageResponse;
 import com.gndv.item.domain.entity.Item;
+import com.gndv.member.mapper.MemberMapper;
 import com.gndv.search.domain.entity.Theme;
 import com.gndv.search.domain.request.SearchItemRequest;
 import com.gndv.search.service.SearchService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -24,8 +27,17 @@ public class SearchController {
     private final SearchService searchService;
 
     @GetMapping("/recent")
-    public CustomResponse<List<String>> getRecentSearches() {
-        List<String> recentSearches = searchService.getRecentSearches();
+    public CustomResponse<List<String>> getRecentSearches(@AuthenticationPrincipal UserDetails user) {
+        List<String> recentSearches;
+
+        if (user == null) {
+            recentSearches = List.of();
+        } else {
+            String email = user.getUsername();
+            Long member_id = searchService.getMemberIdByEmail(email);
+            recentSearches = searchService.getRecentSearchesByMemberId(member_id);
+        }
+
         return CustomResponse.ok("Recent searches fetched successfully", recentSearches);
     }
 
@@ -37,6 +49,7 @@ public class SearchController {
 
     @GetMapping
     public CustomResponse<PageResponse<SearchItemRequest>> searchItems(
+            @AuthenticationPrincipal UserDetails user,
             @RequestParam String keyword,
             @RequestParam(required = false) String sortBy,
             @RequestParam(required = false) String sortOrder,
@@ -48,7 +61,14 @@ public class SearchController {
             @RequestParam(required = false, defaultValue = "10") int size) {
 
         PagingRequest pagingRequest = new PagingRequest(pageNo, size);
-        PageResponse<SearchItemRequest> items = searchService.searchItems(keyword, sortBy, sortOrder, minPrice, maxPrice, ageRange, themeIds, pagingRequest);
+        Long member_id = null;
+
+        if (user != null) {
+            String email = user.getUsername();
+            member_id = searchService.getMemberIdByEmail(email);
+        }
+
+        PageResponse<SearchItemRequest> items = searchService.searchItems(member_id, keyword, sortBy, sortOrder, minPrice, maxPrice, ageRange, themeIds, pagingRequest);
         return CustomResponse.ok("Items fetched successfully", items);
     }
 

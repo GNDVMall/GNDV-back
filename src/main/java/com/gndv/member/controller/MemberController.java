@@ -2,11 +2,9 @@ package com.gndv.member.controller;
 
 import com.gndv.common.CustomResponse;
 import com.gndv.common.domain.request.PagingRequest;
+import com.gndv.common.domain.response.PageResponse;
 import com.gndv.image.service.ImageService;
-import com.gndv.member.domain.dto.request.EditRequest;
-import com.gndv.member.domain.dto.request.JoinRequest;
-import com.gndv.member.domain.dto.request.ProfileRequest;
-import com.gndv.member.domain.dto.request.SmsRequest;
+import com.gndv.member.domain.dto.request.*;
 import com.gndv.member.domain.entity.Member;
 import com.gndv.member.service.EmailService;
 import com.gndv.member.service.MemberService;
@@ -39,21 +37,21 @@ public class MemberController {
     }
 
     @GetMapping("/{member_id}")
-//    @PreAuthorize("isAuthenticated()")
+    //@PreAuthorize("isAuthenticated()")
     public CustomResponse<Optional<Member>> getMember(@PathVariable Long member_id) {
         Optional<Member> member = memberService.getMember(member_id);
         return CustomResponse.ok("getMember", member);
     }
 
     @PutMapping("/{member_id}/edit/{email}")
-    @PreAuthorize("isAuthenticated()")
+    //@PreAuthorize("isAuthenticated()")
     public CustomResponse<EditRequest> editMember(@PathVariable Long member_id, @PathVariable String email, @RequestBody EditRequest request) {
         memberService.editMember(member_id, email, request);
         return CustomResponse.ok("modify", request);
     }
 
     @PostMapping("/{member_id}/uploadProfileImage")
-//    @PreAuthorize("isAuthenticated()")
+    //@PreAuthorize("isAuthenticated()")
     public CustomResponse<String> uploadProfileImage(@PathVariable Long member_id, @RequestParam MultipartFile file) throws IOException {
         String imageUrl = imageService.uploadCloud("profile", file);
         memberService.updateProfileImage(member_id, imageUrl);
@@ -62,25 +60,28 @@ public class MemberController {
     }
 
     @PutMapping("/{member_id}/edit")
-    public CustomResponse<String> editMemberProfile(@PathVariable Long member_id,
-                                                    @RequestBody Map<String, String> updateData) {
+    public CustomResponse<String> editMemberProfile(@PathVariable Long member_id, @RequestBody Map<String, String> updateData) {
         String nickname = updateData.get("nickname");
         String introduction = updateData.get("introduction");
+        String phone = updateData.get("phone");
+        String password = updateData.get("password");
 
-        memberService.updateProfile(member_id, nickname, introduction);
+        log.info("Received update data: nickname={}, introduction={}, phone={}, password={}", nickname, introduction, phone, password);
+
+        memberService.updateProfile(member_id, nickname, introduction, phone, password);
 
         return CustomResponse.ok("Profile updated successfully");
     }
+
     @DeleteMapping("/{member_id}/delete/{email}")
-    @PreAuthorize("isAuthenticated()")
+    //@PreAuthorize("isAuthenticated()")
     public CustomResponse<Object> deleteMember(@PathVariable Long member_id, @PathVariable String email) {
         memberService.removeMember(member_id, email);
         return CustomResponse.ok("deleteMemberById", null);
     }
 
-    @PostMapping("/sendEmailVerification")
-    public CustomResponse<String> sendEmailVerification(@RequestBody Map<String, String> payload) {
-        String email = payload.get("email");
+    @PostMapping(value = "/sendEmailVerification", consumes = "multipart/form-data")
+    public CustomResponse<String> sendEmailVerification(@RequestParam("email") String email) {
         boolean isSent = emailService.sendEmail(email);
         if (isSent) {
             return CustomResponse.ok("Email sent successfully", null);
@@ -118,7 +119,7 @@ public class MemberController {
             @RequestParam(required = false, defaultValue = "10") int size) {
 
         PagingRequest pagingRequest = new PagingRequest(pageNo, size);
-        ProfileRequest memberProfile = memberService.getMemberProfile(email, pagingRequest);
+        ProfileRequest memberProfile = memberService.getMemberProfileWithPagedReviews(email, pagingRequest);
 
         return CustomResponse.ok("Member profile fetched successfully", memberProfile);
     }
