@@ -50,7 +50,7 @@ public class MemberService {
     }
 
     @Transactional
-    @PreAuthorize("#email == authentication.name")
+    //@PreAuthorize("#email == authentication.name")
     public void editMember(Long member_id, String email, EditRequest request) {
         String encodedPassword = null;
         if (request.getPassword() != null) {
@@ -66,7 +66,7 @@ public class MemberService {
     }
 
     @Transactional
-    @PreAuthorize("#email == authentication.name")
+    //@PreAuthorize("#email == authentication.name")
     public void removeMember(Long member_id, String email) {
         memberMapper.delete(member_id);
     }

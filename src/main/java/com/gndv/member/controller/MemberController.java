@@ -80,9 +80,8 @@ public class MemberController {
         return CustomResponse.ok("deleteMemberById", null);
     }
 
-    @PostMapping("/sendEmailVerification")
-    public CustomResponse<String> sendEmailVerification(@RequestBody Map<String, String> payload) {
-        String email = payload.get("email");
+    @PostMapping(value = "/sendEmailVerification", consumes = "multipart/form-data")
+    public CustomResponse<String> sendEmailVerification(@RequestParam("email") String email) {
         boolean isSent = emailService.sendEmail(email);
         if (isSent) {
             return CustomResponse.ok("Email sent successfully", null);
