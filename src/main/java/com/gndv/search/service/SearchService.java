@@ -25,6 +25,10 @@ public class SearchService {
 
     @Transactional
     public void saveSearchKeyword(Long member_id, String keyword) {
+        if (keyword == null || keyword.trim().isEmpty()) {
+            return;
+        }
+
         searchMapper.insertSearchInput(member_id, keyword);
 
         Optional<Search> existingSearch = searchMapper.findSearchByKeyword(keyword);
