@@ -49,6 +49,27 @@ public class MemberService {
         return memberMapper.findById(member_id);
     }
 
+    @Transactional(readOnly = true)
+    public ProfileRequest getMemberProfileWithPagedReviews(String email, PagingRequest pagingRequest) {
+        Member member = memberMapper.getMemberProfile(email)
+                .orElseThrow(() -> new RuntimeException("Member not found"));
+
+        int offset = pagingRequest.getSkip();
+        int limit = pagingRequest.getSize();
+
+        List<ProfileDetailsRequest> reviews = memberMapper.getMemberProfileDetails(email, offset, limit);
+        int totalReviews = memberMapper.countReviewsByEmail(email);
+
+        PageResponse<ProfileDetailsRequest> reviewPage = new PageResponse<>(reviews, totalReviews, pagingRequest.getPageNo(), pagingRequest.getSize());
+
+        ProfileRequest memberProfile = new ProfileRequest();
+        memberProfile.setMember(member);
+        memberProfile.setReviews(reviewPage);
+        memberProfile.setLastLogin(member.getLast_login());
+
+        return memberProfile;
+    }
+
     @Transactional
     //@PreAuthorize("#email == authentication.name")
     public void editMember(Long member_id, String email, EditRequest request) {
@@ -63,6 +84,11 @@ public class MemberService {
     @Transactional
     public void updateProfileImage(Long member_id, String profile_url) {
         memberMapper.updateProfileImage(member_id, profile_url);
+    }
+
+    @Transactional
+    public void updateRoleToSeller(Long member_id) {
+        memberMapper.updateSeller(member_id, Role.SELLER);
     }
 
     @Transactional
@@ -95,62 +121,5 @@ public class MemberService {
     public boolean isVerify(SmsRequest request) {
         return smsConfig.hasKey(request.getPhone()) &&
                 smsConfig.getSmsCertification(request.getPhone()).equals(request.getCertificationNumber());
-    }
-
-    @Transactional
-    public void updateRoleToSeller(Long member_id) {
-        memberMapper.updateSeller(member_id, Role.SELLER);
-    }
-
-    @Transactional(readOnly = true)
-    public ProfileRequest getMemberProfileWithPagedReviews(String email, PagingRequest pagingRequest) {
-        Member member = memberMapper.getMemberProfile(email)
-                .orElseThrow(() -> new RuntimeException("Member not found"));
-
-        int offset = pagingRequest.getSkip();
-        int limit = pagingRequest.getSize();
-
-        List<ProfileDetailsRequest> reviews = memberMapper.getMemberProfileDetails(email, offset, limit);
-        int totalReviews = memberMapper.countReviewsByEmail(email);
-
-        PageResponse<ProfileDetailsRequest> reviewPage = new PageResponse<>(reviews, totalReviews, pagingRequest.getPageNo(), pagingRequest.getSize());
-
-        ProfileRequest memberProfile = new ProfileRequest();
-        memberProfile.setMember(member);
-        memberProfile.setReviews(reviewPage);
-        memberProfile.setLastLogin(member.getLast_login());
-
-        return memberProfile;
-    }
-
-    @Transactional
-    public void updateProfile(Long memberId, String nickname, String introduction, String phone, String password) {
-        Member member = memberMapper.findById(memberId)
-                .orElseThrow(() -> new RuntimeException("Member not found"));
-
-        String encodedPassword = password != null ? passwordEncoder.encode(password) : member.getPassword();
-
-        Member updatedMember = Member.builder()
-                .member_id(member.getMember_id())
-                .email(member.getEmail())
-                .password(encodedPassword)
-                .nickname(nickname != null ? nickname : member.getNickname())
-                .phone(phone != null ? phone : member.getPhone())
-                .introduction(introduction != null ? introduction : member.getIntroduction())
-                .profile_url(member.getProfile_url())
-                .created_at(member.getCreated_at())
-                .rating(member.getRating())
-                .report_count(member.getReport_count())
-                .last_login(member.getLast_login())
-                .role(member.getRole())
-                .member_status(member.getMember_status())
-                .is_account_non_expired(member.is_account_non_expired())
-                .is_account_non_locked(member.is_account_non_locked())
-                .is_credentials_non_expired(member.is_credentials_non_expired())
-                .is_enabled(member.is_enabled())
-                .build();
-
-        memberMapper.update(updatedMember.getMember_id(), updatedMember.getEmail(), updatedMember.getPassword(),
-                updatedMember.getNickname(), updatedMember.getPhone(), updatedMember.getIntroduction());
     }
 }

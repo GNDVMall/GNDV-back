@@ -43,6 +43,18 @@ public class MemberController {
         return CustomResponse.ok("getMember", member);
     }
 
+    @GetMapping("/profile")
+    public CustomResponse<ProfileRequest> getMemberProfile(
+            @RequestParam String email,
+            @RequestParam(required = false, defaultValue = "1") int pageNo,
+            @RequestParam(required = false, defaultValue = "10") int size) {
+
+        PagingRequest pagingRequest = new PagingRequest(pageNo, size);
+        ProfileRequest memberProfile = memberService.getMemberProfileWithPagedReviews(email, pagingRequest);
+
+        return CustomResponse.ok("Member profile fetched successfully", memberProfile);
+    }
+
     @PutMapping("/{member_id}/edit/{email}")
     //@PreAuthorize("isAuthenticated()")
     public CustomResponse<EditRequest> editMember(@PathVariable Long member_id, @PathVariable String email, @RequestBody EditRequest request) {
@@ -57,20 +69,6 @@ public class MemberController {
         memberService.updateProfileImage(member_id, imageUrl);
 
         return CustomResponse.ok("Profile image uploaded", imageUrl);
-    }
-
-    @PutMapping("/{member_id}/edit")
-    public CustomResponse<String> editMemberProfile(@PathVariable Long member_id, @RequestBody Map<String, String> updateData) {
-        String nickname = updateData.get("nickname");
-        String introduction = updateData.get("introduction");
-        String phone = updateData.get("phone");
-        String password = updateData.get("password");
-
-        log.info("Received update data: nickname={}, introduction={}, phone={}, password={}", nickname, introduction, phone, password);
-
-        memberService.updateProfile(member_id, nickname, introduction, phone, password);
-
-        return CustomResponse.ok("Profile updated successfully");
     }
 
     @DeleteMapping("/{member_id}/delete/{email}")
@@ -110,17 +108,5 @@ public class MemberController {
     public CustomResponse<Void> confirmSms(@RequestBody SmsRequest request, HttpServletRequest httpRequest) {
         memberService.verifySms(request, httpRequest);
         return CustomResponse.ok("SMS verified successfully, role updated to SELLER", null);
-    }
-
-    @GetMapping("/profile")
-    public CustomResponse<ProfileRequest> getMemberProfile(
-            @RequestParam String email,
-            @RequestParam(required = false, defaultValue = "1") int pageNo,
-            @RequestParam(required = false, defaultValue = "10") int size) {
-
-        PagingRequest pagingRequest = new PagingRequest(pageNo, size);
-        ProfileRequest memberProfile = memberService.getMemberProfileWithPagedReviews(email, pagingRequest);
-
-        return CustomResponse.ok("Member profile fetched successfully", memberProfile);
     }
 }
