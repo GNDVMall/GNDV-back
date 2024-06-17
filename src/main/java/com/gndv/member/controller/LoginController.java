@@ -45,11 +45,12 @@ public class LoginController {
     }
 
     @GetMapping("/v2/logout")
-    @PreAuthorize("isAuthenticated()")
+    //@PreAuthorize("isAuthenticated()")
     public CustomResponse<Object> tokenLogout(HttpServletRequest request, HttpServletResponse response) {
 
         Authentication authentication = SecurityContextHolder.getContextHolderStrategy().getContext().getAuthentication();
 
+        System.out.println(authentication);
         log.info("authentication: {}", authentication);
 
         if (authentication != null) {

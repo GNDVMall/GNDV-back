@@ -1,13 +1,13 @@
 package com.gndv.member.domain.dto.request;
 
+import com.gndv.common.domain.response.PageResponse;
 import com.gndv.member.domain.entity.Member;
-import com.gndv.review.domain.entity.Review;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.List;
+import java.util.Date;
 
 @Data
 @Builder
@@ -16,5 +16,6 @@ import java.util.List;
 public class ProfileRequest {
 
     private Member member;
-    private List<ProfileDetailsRequest> reviews;
+    private PageResponse<ProfileDetailsRequest> reviews;
+    private Date lastLogin;
 }

@@ -5,7 +5,6 @@ import lombok.Data;
 
 @Data
 public class ItemDetailResponse extends Item {
-    private String real_filename;
     private String theme_name;
     private Long wish_count;
 }

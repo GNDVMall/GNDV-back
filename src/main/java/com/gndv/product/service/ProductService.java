@@ -113,4 +113,9 @@ public class ProductService {
         int update = productMapper.delete(product_id, email);
         return update;
     }
+
+    public int updateProductStatus(ProductUpdateRequest request) {
+        int updated = productMapper.update(request);
+        return updated;
+    }
 }
