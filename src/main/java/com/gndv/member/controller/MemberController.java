@@ -74,7 +74,7 @@ public class MemberController {
     }
 
     @DeleteMapping("/{member_id}/delete/{email}")
-    @PreAuthorize("isAuthenticated()")
+    //@PreAuthorize("isAuthenticated()")
     public CustomResponse<Object> deleteMember(@PathVariable Long member_id, @PathVariable String email) {
         memberService.removeMember(member_id, email);
         return CustomResponse.ok("deleteMemberById", null);

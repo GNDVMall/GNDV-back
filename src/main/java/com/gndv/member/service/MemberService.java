@@ -110,8 +110,8 @@ public class MemberService {
         int offset = pagingRequest.getSkip();
         int limit = pagingRequest.getSize();
 
-        List<ProfileDetailsRequest> reviews = memberMapper.getMemberProfileDetails(member.getMember_id(), offset, limit);
-        int totalReviews = memberMapper.countReviewsByMemberId(member.getMember_id());
+        List<ProfileDetailsRequest> reviews = memberMapper.getMemberProfileDetails(email, offset, limit);
+        int totalReviews = memberMapper.countReviewsByEmail(email);
 
         PageResponse<ProfileDetailsRequest> reviewPage = new PageResponse<>(reviews, totalReviews, pagingRequest.getPageNo(), pagingRequest.getSize());
 
