@@ -50,7 +50,7 @@ public class MemberService {
     }
 
     @Transactional
-    @PreAuthorize("#email == authentication.name")
+    //@PreAuthorize("#email == authentication.name")
     public void editMember(Long member_id, String email, EditRequest request) {
         String encodedPassword = null;
         if (request.getPassword() != null) {
@@ -66,7 +66,7 @@ public class MemberService {
     }
 
     @Transactional
-    @PreAuthorize("#email == authentication.name")
+    //@PreAuthorize("#email == authentication.name")
     public void removeMember(Long member_id, String email) {
         memberMapper.delete(member_id);
     }
@@ -110,8 +110,8 @@ public class MemberService {
         int offset = pagingRequest.getSkip();
         int limit = pagingRequest.getSize();
 
-        List<ProfileDetailsRequest> reviews = memberMapper.getMemberProfileDetails(member.getMember_id(), offset, limit);
-        int totalReviews = memberMapper.countReviewsByMemberId(member.getMember_id());
+        List<ProfileDetailsRequest> reviews = memberMapper.getMemberProfileDetails(email, offset, limit);
+        int totalReviews = memberMapper.countReviewsByEmail(email);
 
         PageResponse<ProfileDetailsRequest> reviewPage = new PageResponse<>(reviews, totalReviews, pagingRequest.getPageNo(), pagingRequest.getSize());
 

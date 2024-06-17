@@ -74,15 +74,14 @@ public class MemberController {
     }
 
     @DeleteMapping("/{member_id}/delete/{email}")
-    @PreAuthorize("isAuthenticated()")
+    //@PreAuthorize("isAuthenticated()")
     public CustomResponse<Object> deleteMember(@PathVariable Long member_id, @PathVariable String email) {
         memberService.removeMember(member_id, email);
         return CustomResponse.ok("deleteMemberById", null);
     }
 
-    @PostMapping("/sendEmailVerification")
-    public CustomResponse<String> sendEmailVerification(@RequestBody Map<String, String> payload) {
-        String email = payload.get("email");
+    @PostMapping(value = "/sendEmailVerification", consumes = "multipart/form-data")
+    public CustomResponse<String> sendEmailVerification(@RequestParam("email") String email) {
         boolean isSent = emailService.sendEmail(email);
         if (isSent) {
             return CustomResponse.ok("Email sent successfully", null);
