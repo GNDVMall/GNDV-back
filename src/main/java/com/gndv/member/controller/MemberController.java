@@ -59,19 +59,19 @@ public class MemberController {
         return CustomResponse.ok("Profile image uploaded", imageUrl);
     }
 
-    @PutMapping("/{member_id}/edit")
-    public CustomResponse<String> editMemberProfile(@PathVariable Long member_id, @RequestBody Map<String, String> updateData) {
-        String nickname = updateData.get("nickname");
-        String introduction = updateData.get("introduction");
-        String phone = updateData.get("phone");
-        String password = updateData.get("password");
-
-        log.info("Received update data: nickname={}, introduction={}, phone={}, password={}", nickname, introduction, phone, password);
-
-        memberService.updateProfile(member_id, nickname, introduction, phone, password);
-
-        return CustomResponse.ok("Profile updated successfully");
-    }
+//    @PutMapping("/{member_id}/edit")
+//    public CustomResponse<String> editMemberProfile(@PathVariable Long member_id, @RequestBody Map<String, String> updateData) {
+//        String nickname = updateData.get("nickname");
+//        String introduction = updateData.get("introduction");
+//        String phone = updateData.get("phone");
+//        String password = updateData.get("password");
+//
+//        log.info("Received update data: nickname={}, introduction={}, phone={}, password={}", nickname, introduction, phone, password);
+//
+//        memberService.updateProfile(member_id, nickname, introduction, phone, password);
+//
+//        return CustomResponse.ok("Profile updated successfully");
+//    }
 
     @DeleteMapping("/{member_id}/delete/{email}")
     //@PreAuthorize("isAuthenticated()")
