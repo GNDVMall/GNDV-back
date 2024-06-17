@@ -13,6 +13,9 @@ import java.util.Optional;
 @Mapper
 public interface SearchMapper {
 
+    @Insert("INSERT INTO Search(keyword, search_count) VALUES(#{keyword}, 1)")
+    void insertSearch(String keyword);
+
     @Insert("INSERT INTO Search_Input(member_id, search_input) VALUES(#{member_id}, #{searchInput})")
     void insertSearchInput(Long member_id, String searchInput);
 
@@ -24,12 +27,6 @@ public interface SearchMapper {
 
     @Select("SELECT * FROM Search WHERE keyword = #{keyword}")
     Optional<Search> findSearchByKeyword(String keyword);
-
-    @Update("UPDATE Search SET search_count = search_count + 1 WHERE keyword = #{keyword}")
-    void updateSearchCount(String keyword);
-
-    @Insert("INSERT INTO Search(keyword, search_count) VALUES(#{keyword}, 1)")
-    void insertSearch(String keyword);
 
     @SelectProvider(type = SearchProvider.class, method = "findItemsByKeyword")
     List<SearchItemRequest> findItemsByKeyword(
@@ -50,4 +47,7 @@ public interface SearchMapper {
             @Param("maxPrice") Long maxPrice,
             @Param("ageRange") String ageRange,
             @Param("themeIds") List<Long> themeIds);
+
+    @Update("UPDATE Search SET search_count = search_count + 1 WHERE keyword = #{keyword}")
+    void updateSearchCount(String keyword);
 }
