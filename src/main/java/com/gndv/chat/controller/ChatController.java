@@ -12,6 +12,13 @@ import com.gndv.chat.domain.entity.ChatRoom;
 import com.gndv.chat.domain.entity.ChatRoomDetail;
 import com.gndv.chat.service.ChatService;
 import com.gndv.common.CustomResponse;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
@@ -25,12 +32,19 @@ import java.util.List;
 @Slf4j
 @RequiredArgsConstructor
 @RequestMapping("/api/v2/chat")
+@Tag(name = "Chat API", description = "채팅 관련 API")
 public class ChatController {
     private final ChatService chatService;
     private final ModelMapper modelMapper;
-    
+
+    @Operation(summary = "채팅방 존재 여부 확인", description = "이미 생성된 채팅방이 있는지 확인합니다.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "확인 성공", content = @Content(schema = @Schema(implementation = CustomResponse.class))),
+            @ApiResponse(responseCode = "400", description = "잘못된 요청"),
+            @ApiResponse(responseCode = "500", description = "서버 오류")
+    })
     @GetMapping("/check")
-    public CustomResponse<Object> checkIsRoom(Long product_id){
+    public CustomResponse<Object> checkIsRoom(@Parameter(description = "상품 ID") @RequestParam Long product_id) {
         log.info("이미 생성된 채팅방이 있는지 확인");
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 
@@ -38,12 +52,18 @@ public class ChatController {
                 .buyer_email(auth.getName()).product_id(product_id).build();
 
         ChatRoom chatroom = chatService.checkIsRoom(cr);
-        if(chatroom == null) return CustomResponse.ok("채팅방이 존재하지 않습니다.", null);
+        if (chatroom == null) return CustomResponse.ok("채팅방이 존재하지 않습니다.", null);
         return CustomResponse.ok("채팅방이 이미 존재합니다.", chatroom.getChatroom_id());
     }
 
+    @Operation(summary = "채팅방 목록 조회", description = "사용자가 참여한 채팅방 목록을 조회합니다.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "목록 조회 성공", content = @Content(schema = @Schema(implementation = ChatRoomListResponse.class))),
+            @ApiResponse(responseCode = "400", description = "잘못된 요청"),
+            @ApiResponse(responseCode = "500", description = "서버 오류")
+    })
     @GetMapping("")
-    public CustomResponse<ChatRoomListResponse> getChatRooms(){
+    public CustomResponse<ChatRoomListResponse> getChatRooms() {
         log.info("Get ChatRoom list");
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         List<ChatRoomResponse> chatrooms = chatService.getChatRooms(auth.getName());
@@ -54,8 +74,14 @@ public class ChatController {
                         .list(chatrooms).build());
     }
 
+    @Operation(summary = "채팅방 상세 조회", description = "특정 채팅방의 상세 정보를 조회합니다.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "상세 조회 성공", content = @Content(schema = @Schema(implementation = ChatRoomDetailResponse.class))),
+            @ApiResponse(responseCode = "400", description = "잘못된 요청"),
+            @ApiResponse(responseCode = "500", description = "서버 오류")
+    })
     @GetMapping("/{chatrooom_id}")
-    public CustomResponse<ChatRoomDetailResponse> getChatRoom(@PathVariable Long chatrooom_id){
+    public CustomResponse<ChatRoomDetailResponse> getChatRoom(@Parameter(description = "채팅방 ID") @PathVariable Long chatrooom_id) {
         log.info("Get a ChatRoom");
 
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
@@ -65,35 +91,48 @@ public class ChatController {
         return CustomResponse.ok("Get ChatRoom", chatRoomDetailResponse);
     }
 
+    @Operation(summary = "채팅방 생성", description = "새로운 채팅방을 생성합니다.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "채팅방 생성 성공", content = @Content(schema = @Schema(implementation = ChatRoomCreateRequest.class))),
+            @ApiResponse(responseCode = "400", description = "잘못된 요청"),
+            @ApiResponse(responseCode = "500", description = "서버 오류")
+    })
     @PostMapping("")
-    public CustomResponse<ChatRoomCreateRequest> createRoom(@RequestBody ChatRoomCreateRequest chatRoomCreateRequest) throws Exception {
+    public CustomResponse<ChatRoomCreateRequest> createRoom(@RequestBody @Parameter(description = "채팅방 생성 요청 정보") ChatRoomCreateRequest chatRoomCreateRequest) throws Exception {
         log.info("Create ChatRoom {} ", chatRoomCreateRequest);
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         chatRoomCreateRequest.setEmail(auth.getName());
 
-        // 채팅방을 만들 때, 채팅방 + 채팅방 유저도 만들어야 한다.
         chatService.createChatRoom(chatRoomCreateRequest);
-        // 채팅방 번호를 바로 돌려줘야, 생성 후 바로 이동 가능
         return CustomResponse.ok("Create new ChatRoom", chatRoomCreateRequest);
     }
 
-
+    @Operation(summary = "채팅방 나가기", description = "사용자가 특정 채팅방에서 나갑니다.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "채팅방 나가기 성공"),
+            @ApiResponse(responseCode = "400", description = "잘못된 요청"),
+            @ApiResponse(responseCode = "500", description = "서버 오류")
+    })
     @DeleteMapping("/{chatroom_id}")
-    public CustomResponse deleteUserFromChatroom(@PathVariable Long chatroom_id) throws Exception {
+    public CustomResponse<Object> deleteUserFromChatroom(@Parameter(description = "채팅방 ID") @PathVariable Long chatroom_id) throws Exception {
         log.info("Leave ChatRoom {}", chatroom_id);
-        // 현재 로그인한 사용자가 채팅방을 떠나야함
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         int updated = chatService.deleteUserFromChatroom(chatroom_id, auth.getName());
-        if(updated != 1){
-            // 나중에 예외처리 강의 후 수정
+        if (updated != 1) {
             throw new Exception("채팅방 떠나기 실패");
         }
         return CustomResponse.ok("Leave ChatRoom ok");
     }
 
+    @Operation(summary = "채팅 메시지 조회", description = "특정 채팅방의 메시지를 조회합니다.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "메시지 조회 성공", content = @Content(schema = @Schema(implementation = ChatRoomMessageResponse.class))),
+            @ApiResponse(responseCode = "400", description = "잘못된 요청"),
+            @ApiResponse(responseCode = "500", description = "서버 오류")
+    })
     @GetMapping("/{chatroom_id}/messages")
-    public CustomResponse getChatMessages(@PathVariable Long chatroom_id){
-        log.info("채팅방 메시지들 가져오기 - {}" , chatroom_id);
+    public CustomResponse<ChatRoomMessageResponse> getChatMessages(@Parameter(description = "채팅방 ID") @PathVariable Long chatroom_id) {
+        log.info("채팅방 메시지들 가져오기 - {}", chatroom_id);
 
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         ChatRoomMessageRequest request = ChatRoomMessageRequest.builder()
@@ -108,12 +147,18 @@ public class ChatController {
         return CustomResponse.ok("채팅방 메시지들 반환", cmr);
     }
 
+    @Operation(summary = "채팅 메시지 읽음 처리", description = "특정 채팅 메시지를 읽음 처리합니다.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "읽음 처리 성공"),
+            @ApiResponse(responseCode = "400", description = "잘못된 요청"),
+            @ApiResponse(responseCode = "500", description = "서버 오류")
+    })
     @PutMapping("/messages/{message_id}")
-    public CustomResponse readChatMessage(@PathVariable Long message_id) throws Exception {
+    public CustomResponse<Object> readChatMessage(@Parameter(description = "메시지 ID") @PathVariable Long message_id) throws Exception {
         log.info("채팅 읽음 처리 : {}", message_id);
         int updated = chatService.readChatMessage(message_id);
 
-        if(updated != 1) throw new Exception("채팅 메시지 읽음 처리 실패");
+        if (updated != 1) throw new Exception("채팅 메시지 읽음 처리 실패");
         return CustomResponse.ok("채팅 메시지 읽음 처리");
     }
 }
