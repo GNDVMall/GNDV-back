@@ -75,7 +75,6 @@ public class LoginController {
     })
     //@PreAuthorize("isAuthenticated()")
     public CustomResponse<Object> tokenLogout(HttpServletRequest request, HttpServletResponse response) {
-
         Authentication authentication = SecurityContextHolder.getContextHolderStrategy().getContext().getAuthentication();
 
         System.out.println(authentication);
