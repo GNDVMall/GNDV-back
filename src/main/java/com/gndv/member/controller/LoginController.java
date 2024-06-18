@@ -5,14 +5,14 @@ import com.gndv.member.domain.dto.request.LoginRequest;
 import com.gndv.security.token.TokenProvider;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
@@ -22,34 +22,30 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api")
 @RequiredArgsConstructor
 @Slf4j
+@Tag(name = "Login API", description = "로그인 및 로그아웃 API")
 public class LoginController {
 
     private final TokenProvider tokenProvider;
 
     @PostMapping("/v1/login")
-    @ResponseBody
-    @Operation(summary = "세션 로그인", description = "세션 기반 로그인 요청을 처리합니다.")
+    @Operation(summary = "세션 로그인", description = "세션을 사용하여 로그인합니다.")
     @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "로그인 성공", content = @Content(schema = @Schema(implementation = LoginRequest.class))),
+            @ApiResponse(responseCode = "200", description = "로그인 성공"),
             @ApiResponse(responseCode = "400", description = "잘못된 요청"),
-            @ApiResponse(responseCode = "500", description = "서버 오류")
+            @ApiResponse(responseCode = "401", description = "인증 실패")
     })
+    @ResponseBody
     public CustomResponse<LoginRequest> sessionLogin(
-            @RequestBody @Parameter(description = "로그인 요청 정보") LoginRequest request) {
+            @Parameter(description = "로그인 요청 객체", required = true) @RequestBody LoginRequest request) {
         return CustomResponse.ok("LoginRequest", request);
     }
 
     @GetMapping("/v1/logout")
-    @Operation(summary = "세션 로그아웃", description = "세션 기반 로그아웃 요청을 처리합니다.")
+    @Operation(summary = "세션 로그아웃", description = "세션을 사용하여 로그아웃합니다.")
     @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "로그아웃 성공"),
-            @ApiResponse(responseCode = "400", description = "잘못된 요청"),
-            @ApiResponse(responseCode = "500", description = "서버 오류")
+            @ApiResponse(responseCode = "200", description = "로그아웃 성공")
     })
-    public CustomResponse<Object> sessionLogout(
-            @Parameter(description = "HTTP 요청 객체") HttpServletRequest request,
-            @Parameter(description = "HTTP 응답 객체") HttpServletResponse response) {
-
+    public CustomResponse<Object> sessionLogout(HttpServletRequest request, HttpServletResponse response) {
         Authentication authentication = SecurityContextHolder.getContextHolderStrategy().getContext().getAuthentication();
         log.info("authentication: {}", authentication);
         if (authentication != null) {
@@ -60,30 +56,29 @@ public class LoginController {
     }
 
     @PostMapping("/v2/login")
-    @ResponseBody
-    @Operation(summary = "토큰 로그인", description = "토큰 기반 로그인 요청을 처리합니다.")
+    @Operation(summary = "토큰 로그인", description = "JWT 토큰을 사용하여 로그인합니다.")
     @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "로그인 성공", content = @Content(schema = @Schema(implementation = LoginRequest.class))),
+            @ApiResponse(responseCode = "200", description = "로그인 성공"),
             @ApiResponse(responseCode = "400", description = "잘못된 요청"),
-            @ApiResponse(responseCode = "500", description = "서버 오류")
+            @ApiResponse(responseCode = "401", description = "인증 실패")
     })
+    @ResponseBody
     public CustomResponse<LoginRequest> tokenLogin(
-            @RequestBody @Parameter(description = "로그인 요청 정보") LoginRequest request) {
+            @Parameter(description = "로그인 요청 객체", required = true) @RequestBody LoginRequest request) {
         return CustomResponse.ok("LoginRequest", request);
     }
 
     @GetMapping("/v2/logout")
-    @Operation(summary = "토큰 로그아웃", description = "토큰 기반 로그아웃 요청을 처리합니다.")
+    @Operation(summary = "토큰 로그아웃", description = "JWT 토큰을 사용하여 로그아웃합니다.")
     @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "로그아웃 성공"),
-            @ApiResponse(responseCode = "400", description = "잘못된 요청"),
-            @ApiResponse(responseCode = "500", description = "서버 오류")
+            @ApiResponse(responseCode = "200", description = "로그아웃 성공")
     })
-    public CustomResponse<Object> tokenLogout(
-            @Parameter(description = "HTTP 요청 객체") HttpServletRequest request,
-            @Parameter(description = "HTTP 응답 객체") HttpServletResponse response) {
+    //@PreAuthorize("isAuthenticated()")
+    public CustomResponse<Object> tokenLogout(HttpServletRequest request, HttpServletResponse response) {
 
         Authentication authentication = SecurityContextHolder.getContextHolderStrategy().getContext().getAuthentication();
+
+        System.out.println(authentication);
         log.info("authentication: {}", authentication);
 
         if (authentication != null) {
