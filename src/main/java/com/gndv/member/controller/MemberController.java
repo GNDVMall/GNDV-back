@@ -62,6 +62,18 @@ public class MemberController {
         return CustomResponse.ok("getMember", member);
     }
 
+    @GetMapping("/profile")
+    public CustomResponse<ProfileRequest> getMemberProfile(
+            @RequestParam String email,
+            @RequestParam(required = false, defaultValue = "1") int pageNo,
+            @RequestParam(required = false, defaultValue = "10") int size) {
+
+        PagingRequest pagingRequest = new PagingRequest(pageNo, size);
+        ProfileRequest memberProfile = memberService.getMemberProfileWithPagedReviews(email, pagingRequest);
+
+        return CustomResponse.ok("Member profile fetched successfully", memberProfile);
+    }
+
     @PutMapping("/{member_id}/edit/{email}")
     @Operation(summary = "회원 정보 수정", description = "회원 정보를 수정합니다.")
     @ApiResponses({
@@ -166,23 +178,5 @@ public class MemberController {
             HttpServletRequest httpRequest) {
         memberService.verifySms(request, httpRequest);
         return CustomResponse.ok("SMS verified successfully, role updated to SELLER", null);
-    }
-
-    @GetMapping("/profile")
-    @Operation(summary = "회원 프로필 조회", description = "회원의 프로필 정보를 조회합니다.")
-    @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "프로필 조회 성공"),
-            @ApiResponse(responseCode = "404", description = "회원 없음"),
-            @ApiResponse(responseCode = "500", description = "서버 오류")
-    })
-    public CustomResponse<ProfileRequest> getMemberProfile(
-            @Parameter(description = "이메일 주소") @RequestParam String email,
-            @Parameter(description = "페이지 번호") @RequestParam(required = false, defaultValue = "1") int pageNo,
-            @Parameter(description = "페이지 크기") @RequestParam(required = false, defaultValue = "10") int size) {
-
-        PagingRequest pagingRequest = new PagingRequest(pageNo, size);
-        ProfileRequest memberProfile = memberService.getMemberProfileWithPagedReviews(email, pagingRequest);
-
-        return CustomResponse.ok("Member profile fetched successfully", memberProfile);
     }
 }
