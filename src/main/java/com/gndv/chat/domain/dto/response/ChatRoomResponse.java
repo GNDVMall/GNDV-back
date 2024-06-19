@@ -1,6 +1,7 @@
 package com.gndv.chat.domain.dto.response;
 
 import com.gndv.constant.ChatUserType;
+import com.gndv.constant.MessageUserType;
 import lombok.Data;
 
 import java.util.Date;
@@ -20,4 +21,5 @@ public class ChatRoomResponse {
     private String chat_content;
     private String nickname;
     private Long unread_count;
+    private MessageUserType message_user_type;
 }

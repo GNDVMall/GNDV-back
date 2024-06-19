@@ -24,7 +24,7 @@ public interface ChatMapper {
     int deleteUserFromChatroom(Long chatroom_id, String email);
 
     @Select("WITH Recent_Messages AS (\n" +
-            "    SELECT chatroom_id, chat_content, sent_at, member_id, \n" +
+            "    SELECT chatroom_id, chat_content, sent_at, member_id, message_user_type,\n" +
             "           ROW_NUMBER() OVER (PARTITION BY chatroom_id ORDER BY sent_at DESC) as rn\n" +
             "    FROM Chat_Message\n" +
             "),\n" +
@@ -36,7 +36,7 @@ public interface ChatMapper {
             "    GROUP BY chatroom_id \n" +
             ")\n" +
             "SELECT cr.chatroom_id , cr.product_id , cr.item_id , cu.chat_user_type , cu.`leave`, m.nickname, cu.chat_user_id ,\n" +
-            "rm.chat_content, rm.sent_at, rm.member_id, m.profile_url, uc.unread_count\n" +
+            "rm.chat_content, rm.sent_at, rm.member_id, m.profile_url, uc.unread_count, rm.message_user_type\n" +
             "FROM Chat_Room cr \n" +
             "JOIN Chat_User_With_Member cu ON cr.chatroom_id  = cu.chatroom_id \n" +
             "JOIN Recent_Messages rm ON rm.chatroom_id = cr.chatroom_id  AND rm.rn = 1\n" +
