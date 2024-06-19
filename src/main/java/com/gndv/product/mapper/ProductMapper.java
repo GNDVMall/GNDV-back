@@ -19,6 +19,10 @@ public interface ProductMapper {
             "WHERE p.product_id = #{product_id} GROUP BY p.product_id")
     Optional<ProductDetailResponse> findById(Long product_id);
 
+
+    @Update("UPDATE Product SET view_count = view_count + 1 WHERE product_id = #{product_id}")
+    int updatedViewCount(Long product_id);
+
     @Select("SELECT p.* , GROUP_CONCAT(i.real_filename) AS images, (SELECT COUNT(*) FROM Product WHERE item_id = #{item_id}) AS total" +
             " FROM  Product p LEFT JOIN Image i ON p.product_id = i.use_id GROUP BY p.product_id HAVING p.item_id = #{item_id} order by p.created_at desc LIMIT #{skip}, #{size}")
     List<ProductDetail> findAllById(ProductListPagingRequest pagingRequest);
