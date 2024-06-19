@@ -8,8 +8,7 @@ import java.util.Date;
 @Data
 public class ChatRoomResponse {
     private Long chatroom_id;
-    private Date created_at;
-    private Date updated_at;
+    private Date sent_at;
     private Long product_id;
     private Long item_id;
     private String profile_url;
