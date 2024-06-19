@@ -19,6 +19,7 @@ public class CorsConfig {
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS", "HEAD"));
         //configuration.setAllowedHeaders(Arrays.asList("X-Requested-With", "Content-Type", "Authorization", "X-XSRF-token"));
         configuration.addAllowedHeader("*");
+        configuration.addExposedHeader("Authorization"); // 프론트에서 토큰 사용을 위한 값
         configuration.setAllowCredentials(true);
         configuration.setMaxAge(3600L);
 

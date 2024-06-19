@@ -8,4 +8,7 @@ public class ProductDetailResponse extends ProductResponse {
     private String nickname;
     private String introduction;
     private Long rating;
+    private String profile_url;
+    private String theme_name;
+    private String email;
 }

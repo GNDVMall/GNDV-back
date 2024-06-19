@@ -1,6 +1,7 @@
 package com.gndv.product.domain.entity;
 
 import com.gndv.constant.Boolean;
+import com.gndv.constant.ProductSalesStatus;
 import com.gndv.constant.ProductStatus;
 import lombok.Getter;
 
@@ -18,4 +19,6 @@ public class Product {
     private Boolean product_trade_opt2;
     private ProductStatus product_status;
     private LocalDateTime created_at;
+    private Long view_count;
+    private ProductSalesStatus product_sales_status;
 }

@@ -20,14 +20,15 @@ public class Member implements Serializable {
     private String nickname;
     private String phone;
     private String introduction;
+    private String profile_url;
     private Date created_at;
     private Long rating;
     private Long report_count;
-    private Status member_status;
     private Date last_login;
 
     // Enum
     private Role role;
+    private Status member_status;
 
     // UserDetails
     private boolean is_account_non_expired;
@@ -36,6 +37,7 @@ public class Member implements Serializable {
     private boolean is_enabled;
 
     // Jwt
+    private String accessToken;
     private String refreshToken;
 
     public void updateRefreshToken(String refreshToken) {

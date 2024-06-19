@@ -2,6 +2,7 @@ package com.gndv.security.configs;
 
 import com.gndv.security.dsl.RestApiDsl;
 import com.gndv.security.entrypoint.RestAuthenticationEntryPoint;
+import com.gndv.security.filters.TokenAuthenticationFilter;
 import com.gndv.security.handler.*;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
@@ -16,13 +17,16 @@ import org.springframework.security.config.annotation.authentication.builders.Au
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.WebAuthenticationDetails;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfigurationSource;
 
 @Configuration
 @EnableWebSecurity
+@EnableMethodSecurity
 @RequiredArgsConstructor
 public class SecurityConfig {
 
@@ -33,9 +37,9 @@ public class SecurityConfig {
     private final FormAuthenticationFailureHandler failureHandler;
     private final RestAuthenticationSuccessHandler restSuccessHandler;
     private final RestAuthenticationFailureHandler restFailureHandler;
-    private final JwtAuthenticationSuccessHandler jwtSuccessHandler;
-    private final JwtAuthenticationFailureHandler jwtFailureHandler;
-
+    private final TokenAuthenticationSuccessHandler tokenSuccessHandler;
+    private final TokenAuthenticationFailureHandler tokenFailureHandler;
+    private final TokenAuthenticationFilter tokenAuthenticationFilter;
     private final CorsConfigurationSource corsConfigurationSource;
 
     @Bean
@@ -87,7 +91,7 @@ public class SecurityConfig {
 
     @Bean
     @Order(1)
-    public SecurityFilterChain jwtSecurityFilterChain(HttpSecurity http) throws Exception {
+    public SecurityFilterChain tokenSecurityFilterChain(HttpSecurity http) throws Exception {
 
         AuthenticationManagerBuilder authenticationManagerBuilder = http.getSharedObject(AuthenticationManagerBuilder.class);
         authenticationManagerBuilder.authenticationProvider(restAuthenticationProvider);
@@ -98,17 +102,19 @@ public class SecurityConfig {
                 .securityMatcher("/api/v2/**")
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/v2/members/new", "/api/v2/login", "/api/v2/items","/api/v2/items/*"
-                        ,"/api/v2/products/*").permitAll()
+                                ,"/api/v2/products/*","/api/v2/order/*","/api/v2/order/payment/*","/api/v2/order","/api/v2/order/payment",
+                                "/api/v2/payment/","/api/v2/payment/*" ,"/api/v2/chat/**", "/api/v2/chat", "/api/v2/search**", "/api/v2/code/**", "/api/v2/**","/api/v2/recent-product").permitAll()
                         .requestMatchers(HttpMethod.GET,"/api/v2/products").permitAll()
                         .anyRequest().authenticated())
                 .csrf(AbstractHttpConfigurer::disable)
                 .authenticationManager(authenticationManager)
                 .exceptionHandling(exception -> exception
                         .authenticationEntryPoint(new RestAuthenticationEntryPoint())
-                        .accessDeniedHandler(new JwtAccessDeniedHandler()))
+                        .accessDeniedHandler(new TokenAccessDeniedHandler()))
+                .addFilterBefore(tokenAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
                 .with(new RestApiDsl<>(), restDsl -> restDsl
-                        .restSuccessHandler(jwtSuccessHandler)
-                        .restFailureHandler(jwtFailureHandler)
+                        .restSuccessHandler(tokenSuccessHandler)
+                        .restFailureHandler(tokenFailureHandler)
                         .loginPage("/api/v2/login")
                         .loginProcessingUrl("/api/v2/login"));
 

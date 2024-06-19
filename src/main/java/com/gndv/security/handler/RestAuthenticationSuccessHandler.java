@@ -2,12 +2,9 @@ package com.gndv.security.handler;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gndv.member.domain.dto.MemberContext;
-import com.gndv.member.mapper.MemberMapper;
-import com.gndv.security.Util.JwtUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
-import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.security.core.Authentication;
