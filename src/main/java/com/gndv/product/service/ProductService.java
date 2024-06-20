@@ -26,8 +26,11 @@ public class ProductService {
     private final ImageService imageService;
     private final ImageMapper imageMapper;
 
+
+    @Transactional
     public ProductDetailResponse getProduct(Long product_id) throws Exception {
         Optional<ProductDetailResponse> findById = productMapper.findById(product_id);
+        productMapper.updatedViewCount(product_id);
 
         if (findById.isPresent()) {
             return findById.get();

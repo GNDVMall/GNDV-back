@@ -24,19 +24,25 @@ public interface ChatMapper {
     int deleteUserFromChatroom(Long chatroom_id, String email);
 
     @Select("WITH Recent_Messages AS (\n" +
-            "SELECT chatroom_id, chat_content, ROW_NUMBER() OVER (PARTITION BY chatroom_id ORDER BY sent_at DESC) as rn\n" +
-            "FROM Chat_Message),\n" +
-            "Unread_Message_Count AS ( SELECT c.chatroom_id, COUNT(*) AS unread_count\n" +
-            "FROM Chat_Message c JOIN `Member` m ON m.member_id = c.member_id\n" +
-            "WHERE is_read = 'N' AND m.email != #{email}\n" +
-            "GROUP BY chatroom_id )\n" +
-            "SELECT cr.*, cu.*, m.nickname, rm.chat_content, m.profile_url, uc.unread_count\n" +
-            "FROM Chat_Room cr JOIN Chat_User cu ON cr.chatroom_id = cu.chatroom_id\n" +
-            "JOIN `Member` m ON cu.member_id = m.member_id\n" +
-            "LEFT JOIN Recent_Messages rm ON cr.chatroom_id = rm.chatroom_id AND rm.rn = 1\n" +
-            "LEFT JOIN Unread_Message_Count uc ON uc.chatroom_id = cr.chatroom_id \n" +
-            "WHERE m.email = #{email} AND cu.`leave` != 'Y'\n" +
-            "GROUP BY cr.chatroom_id")
+            "    SELECT chatroom_id, chat_content, sent_at, member_id, message_user_type,\n" +
+            "           ROW_NUMBER() OVER (PARTITION BY chatroom_id ORDER BY sent_at DESC) as rn\n" +
+            "    FROM Chat_Message\n" +
+            "),\n" +
+            "Unread_Message_Count AS ( \n" +
+            "    SELECT c.chatroom_id, COUNT(*) AS unread_count\n" +
+            "    FROM Chat_Message c \n" +
+            "    JOIN `Member` m ON m.member_id = c.member_id\n" +
+            "    WHERE c.is_read = 'N' AND m.email != #{email}\n" +
+            "    GROUP BY chatroom_id \n" +
+            ")\n" +
+            "SELECT cr.chatroom_id , cr.product_id , cr.item_id , cu.chat_user_type , cu.`leave`, m.nickname, cu.chat_user_id ,\n" +
+            "rm.chat_content, rm.sent_at, rm.member_id, m.profile_url, uc.unread_count, rm.message_user_type\n" +
+            "FROM Chat_Room cr \n" +
+            "JOIN Chat_User_With_Member cu ON cr.chatroom_id  = cu.chatroom_id \n" +
+            "JOIN Recent_Messages rm ON rm.chatroom_id = cr.chatroom_id  AND rm.rn = 1\n" +
+            "LEFT JOIN Unread_Message_Count uc ON uc.chatroom_id = rm.chatroom_id\n" +
+            "LEFT JOIN `Member` m ON rm.member_id = m.member_id\n" +
+            "WHERE cu.email = #{email} AND cu.`leave` != 'Y'")
     List<ChatRoomResponse> findAllbyName(String email);
 
     @Select("SELECT cr.*, cu.*, m.nickname , m.rating , m.email, m.profile_url, p.product_sales_status, p.images, p.title, p.price, p.product_status\n" +
