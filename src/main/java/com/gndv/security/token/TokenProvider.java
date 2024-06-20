@@ -61,19 +61,15 @@ public class TokenProvider {
     }
 
     public void updateRefreshToken(String email, String refreshToken) {
-        memberMapper.findByEmail(email)
-                .ifPresentOrElse(
-                        member -> member.updateRefreshToken(refreshToken),
-                        () -> new Exception("회원 조회 실패")
-                );
+        memberMapper.findByEmail(email).ifPresent(member -> {
+            member.updateRefreshToken(refreshToken);
+        });
     }
 
     public void destroyRefreshToken(String email) {
-        memberMapper.findByEmail(email)
-                .ifPresentOrElse(
-                        member -> member.destroyRefreshToken(),
-                        () -> new Exception("회원 조회 실패")
-                );
+        memberMapper.findByEmail(email).ifPresent(member -> {
+            member.destroyRefreshToken();
+        });
     }
 
     public void sendAccessAndRefreshToken(HttpServletResponse response, String accessToken, String refreshToken) {
