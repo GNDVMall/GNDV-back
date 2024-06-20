@@ -20,6 +20,10 @@ jobs:
         with:
           java-version: '17'
           distribution: 'temurin'
+          
+      # Gradle Wrapper에 실행 권한을 부여합니다.
+      - name: Grant execute permission for gradlew
+        run: chmod +x gradlew
 
       # Gradle 테스트를 실행합니다.
       - name: Test with Gradle
