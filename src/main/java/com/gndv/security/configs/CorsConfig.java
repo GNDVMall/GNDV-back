@@ -15,7 +15,7 @@ public class CorsConfig {
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
         // CORS 주소는 나중에 변경
-        configuration.setAllowedOrigins(Arrays.asList("http://localhost:5173","https://gndv-front-2w2h.vercel.app", "https://gndv-front-2w2h.vercel.app"));
+        configuration.setAllowedOrigins(Arrays.asList("http://localhost:5173", "http://175.45.203.235:5173", "http://175.45.203.235:80"));
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS", "HEAD"));
         //configuration.setAllowedHeaders(Arrays.asList("X-Requested-With", "Content-Type", "Authorization", "X-XSRF-token"));
         configuration.addAllowedHeader("*");
