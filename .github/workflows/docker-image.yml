@@ -55,7 +55,7 @@ jobs:
     needs: build
     name: Deploy
     # AWS에서 사용할 self-hosted runner와 라벨을 지정합니다.
-    runs-on: [ self-hosted, label-go ]
+    runs-on: [ self-hosted, gndv ]
     steps:
       # DockerHub에 로그인합니다.
       - name: docker login
