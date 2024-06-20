@@ -1,0 +1,67 @@
+name: CI/CD Docker
+
+# 트리거를 수행할 브랜치를 지정합니다.
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  # Spring Boot 애플리케이션을 빌드하여 Docker Hub에 푸시하는 과정
+  build:
+    # 최신 Ubuntu 환경에서 실행합니다.
+    runs-on: ubuntu-latest
+    steps:
+      # 소스 코드를 체크아웃합니다.
+      - uses: actions/checkout@v3
+
+      # 1. Java 17 세팅
+      - name: Set up JDK 17
+        uses: actions/setup-java@v3
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
+      # Gradle 테스트를 실행합니다.
+      - name: Test with Gradle
+        run: ./gradlew --info test
+
+      # 2. Spring Boot 애플리케이션 빌드
+      - name: Build with Gradle
+        uses: gradle/gradle-build-action@67421db6bd0bf253fb4bd25b31ebb98943c375e1
+        with:
+          arguments: clean bootJar
+
+      # 3. Docker 이미지 빌드
+      - name: docker image build
+        run: docker build -t ${{ secrets.DOCKER_USERNAME }}/gndv .
+
+      # 4. DockerHub 로그인
+      - name: docker login
+        uses: docker/login-action@v1
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      # 5. Docker Hub 이미지 푸시
+      - name: docker Hub push
+        run: docker push ${{ secrets.DOCKER_USERNAME }}/gndv
+
+  deploy:
+    # build job이 완료된 후에 실행되도록 정의합니다.
+    needs: build
+    name: Deploy
+    # AWS에서 사용할 self-hosted runner와 라벨을 지정합니다.
+    runs-on: [ self-hosted, label-go ]
+    steps:
+      # DockerHub에 로그인합니다.
+      - name: docker login
+        uses: docker/login-action@v1
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      # 8080 포트를 80 포트로 매핑하여 Docker 컨테이너를 실행합니다.
+      - name: Docker run
+        run: |
+          sudo docker stop gndv && sudo docker rm gndv && sudo docker rmi ${{ secrets.DOCKER_USERNAME }}/gndv:latest
+          sudo docker run -d -p 8080:8080 --name gndv --restart always ${{ secrets.DOCKER_USERNAME }}/gndv:latest
